@@ -64,17 +64,21 @@ class Bpost
      */
     private $userAgent;
 
+    private $apiUrl;
+
     // class methods
     /**
      * Create Bpost instance
      *
      * @param string $accountId
      * @param string $passPhrase
+     * @param string $apiUrl
      */
-    public function __construct($accountId, $passPhrase)
+    public function __construct($accountId, $passPhrase, $apiUrl = self::API_URL)
     {
-        $this->accountId = (string) $accountId;
+        $this->accountId  = (string) $accountId;
         $this->passPhrase = (string) $passPhrase;
+        $this->apiUrl     = (string) $apiUrl;
     }
 
     /**
@@ -160,7 +164,7 @@ class Bpost
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
-        $options[CURLOPT_URL] = self::API_URL . '/' . $this->accountId . $url;
+        $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $url;
         if ($this->getPort() != 0) {
             $options[CURLOPT_PORT] = $this->getPort();
         }

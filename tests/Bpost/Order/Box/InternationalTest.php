@@ -1,8 +1,6 @@
 <?php
 namespace Bpost;
 
-require_once __DIR__ . '/../../../../../../autoload.php';
-
 use TijsVerkoyen\Bpost\Bpost\Order\Address;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Customsinfo\CustomsInfo;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\International;
@@ -174,7 +172,7 @@ class InternationalTest extends \PHPUnit_Framework_TestCase
             $international->toXML($actualDocument)
         );
 
-        $this->assertEquals($expectedDocument, $actualDocument);
+        $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
     /**
@@ -188,7 +186,7 @@ class InternationalTest extends \PHPUnit_Framework_TestCase
             $international->setProduct(str_repeat('a', 10));
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals(
+            $this->assertSame(
                 sprintf(
                     'Invalid value, possible values are: %1$s.',
                     implode(', ', International::getPossibleProductValues())

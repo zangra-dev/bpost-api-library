@@ -1,8 +1,6 @@
 <?php
 namespace Bpost;
 
-require_once __DIR__ . '/../../../../../autoload.php';
-
 use TijsVerkoyen\Bpost\Bpost\Order\Customer;
 use TijsVerkoyen\Bpost\Bpost\Order\Address;
 
@@ -82,7 +80,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             $customer->toXML($actualDocument, null)
         );
 
-        $this->assertEquals($expectedDocument, $actualDocument);
+        $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
     /**
@@ -96,14 +94,14 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             $customer->setEmailAddress(str_repeat('a', 51));
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals('Invalid length, maximum is 50.', $e->getMessage());
+            $this->assertSame('Invalid length, maximum is 50.', $e->getMessage());
         }
 
         try {
             $customer->setPhoneNumber(str_repeat('a', 21));
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals('Invalid length, maximum is 20.', $e->getMessage());
+            $this->assertSame('Invalid length, maximum is 20.', $e->getMessage());
         }
     }
 }

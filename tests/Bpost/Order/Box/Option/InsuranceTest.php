@@ -1,8 +1,6 @@
 <?php
 namespace Bpost;
 
-require_once __DIR__ . '/../../../../../../../autoload.php';
-
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Insurance;
 
 class InsuranceTest extends \PHPUnit_Framework_TestCase
@@ -97,7 +95,7 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
         $actualDocument->appendChild(
             $insurance->toXML($actualDocument, 'foo')
         );
-        $this->assertEquals($expectedDocument, $actualDocument);
+        $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
     /**
@@ -111,7 +109,7 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
             );
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals(
+            $this->assertSame(
                 sprintf(
                     'Invalid value, possible values are: %1$s.',
                     implode(', ', Insurance::getPossibleTypeValues())
@@ -127,7 +125,7 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
             );
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals(
+            $this->assertSame(
                 sprintf(
                     'Invalid value, possible values are: %1$s.',
                     implode(', ', Insurance::getPossibleValueValues())

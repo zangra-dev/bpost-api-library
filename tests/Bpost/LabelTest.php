@@ -1,9 +1,6 @@
 <?php
 namespace Bpost;
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../../../../autoload.php';
-
 use TijsVerkoyen\Bpost\Bpost\Label;
 
 class LabelTest extends \PHPUnit_Framework_TestCase
@@ -49,9 +46,9 @@ class LabelTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals($data['barcode'], $label->getBarcode());
-        $this->assertEquals($data['mimeType'], $label->getMimeType());
-        $this->assertEquals(base64_decode($data['bytes']), $label->getBytes());
+        $this->assertSame($data['barcode'], $label->getBarcode());
+        $this->assertSame($data['mimeType'], $label->getMimeType());
+        $this->assertSame(base64_decode($data['bytes']), $label->getBytes());
     }
 
     /**
@@ -65,7 +62,7 @@ class LabelTest extends \PHPUnit_Framework_TestCase
             $label->setMimeType(str_repeat('a', 9));
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals(
+            $this->assertSame(
                 'Invalid value, possible values are: ' . implode(', ', Label::getPossibleMimeTypeValues()) . '.',
                 $e->getMessage()
             );

@@ -1,8 +1,6 @@
 <?php
 namespace Bpost;
 
-require_once __DIR__ . '/../../../../../../../autoload.php';
-
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Openinghour\Day;
 
 class DayTest extends \PHPUnit_Framework_TestCase
@@ -74,7 +72,7 @@ class DayTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        $this->assertEquals($expectedDocument, $actualDocument);
+        $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
     /**
@@ -89,7 +87,7 @@ class DayTest extends \PHPUnit_Framework_TestCase
             );
         } catch (\Exception $e) {
             $this->assertInstanceOf('TijsVerkoyen\Bpost\Exception', $e);
-            $this->assertEquals(
+            $this->assertSame(
                 sprintf(
                     'Invalid value, possible values are: %1$s.',
                     implode(', ', Day::getPossibleDayValues())

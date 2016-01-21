@@ -91,6 +91,7 @@ class Day
      * Get the index for a day
      *
      * @return int
+     * @throws BpostException
      */
     public function getDayIndex()
     {

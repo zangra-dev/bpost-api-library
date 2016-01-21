@@ -36,6 +36,7 @@ class Insurance extends Option
 
     /**
      * @param string $type
+     * @throws BpostException
      */
     public function setType($type)
     {
@@ -62,6 +63,7 @@ class Insurance extends Option
 
     /**
      * @param string $value
+     * @throws BpostException
      */
     public function setValue($value)
     {

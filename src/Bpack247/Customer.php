@@ -10,6 +10,14 @@ use TijsVerkoyen\Bpost\BpostException;
  */
 class Customer
 {
+
+    const CUSTOMER_PREFERRED_LANGUAGE_NL = 'nl-BE';
+    const CUSTOMER_PREFERRED_LANGUAGE_FR = 'fr-BE';
+    const CUSTOMER_PREFERRED_LANGUAGE_EN = 'en-US';
+
+    const CUSTOMER_TITLE_MR = 'Mr.';
+    const CUSTOMER_TITLE_MS = 'Ms.';
+
     /**
      * @var bool
      */
@@ -384,9 +392,9 @@ class Customer
     public static function getPossiblePreferredLanguageValues()
     {
         return array(
-            'nl-BE',
-            'fr-BE',
-            'en-US',
+            self::CUSTOMER_PREFERRED_LANGUAGE_NL,
+            self::CUSTOMER_PREFERRED_LANGUAGE_FR,
+            self::CUSTOMER_PREFERRED_LANGUAGE_EN,
         );
     }
 
@@ -454,8 +462,8 @@ class Customer
     public static function getPossibleTitleValues()
     {
         return array(
-            'Mr.',
-            'Ms.',
+            self::CUSTOMER_TITLE_MR,
+            self::CUSTOMER_TITLE_MS,
         );
     }
 

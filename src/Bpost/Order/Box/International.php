@@ -3,6 +3,7 @@ namespace TijsVerkoyen\Bpost\Bpost\Order\Box;
 
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Option;
+use TijsVerkoyen\Bpost\Bpost\ProductConfiguration\Product;
 use TijsVerkoyen\Bpost\BpostException;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Customsinfo\CustomsInfo;
 use TijsVerkoyen\Bpost\Bpost\Order\Receiver;
@@ -130,9 +131,9 @@ class International implements IBox
     public static function getPossibleProductValues()
     {
         return array(
-            'bpack World Business',
-            'bpack World Express Pro',
-            'bpack Europe Business',
+            Product::PRODUCT_NAME_BPACK_WORLD_BUSINESS,
+            Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO,
+            Product::PRODUCT_NAME_BPACK_EUROPE_BUSINESS,
         );
     }
 
@@ -233,7 +234,7 @@ class International implements IBox
             foreach ($xml->international->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
-                if (in_array($optionData->getName(), array('infoDistributed'))) {
+                if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
                     $className = '\\TijsVerkoyen\\Bpost\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());

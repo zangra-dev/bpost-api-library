@@ -13,6 +13,21 @@ use TijsVerkoyen\Bpost\BpostException;
  */
 class Insurance extends Option
 {
+
+    const INSURANCE_TYPE_BASIC_INSURANCE = 'basicInsurance';
+    const INSURANCE_TYPE_ADDITIONAL_INSURANCE = 'additionalInsurance';
+
+    const INSURANCE_AMOUNT_UP_TO_2500_EUROS = 2;
+    const INSURANCE_AMOUNT_UP_TO_5000_EUROS = 3;
+    const INSURANCE_AMOUNT_UP_TO_7500_EUROS = 4;
+    const INSURANCE_AMOUNT_UP_TO_10000_EUROS = 5;
+    const INSURANCE_AMOUNT_UP_TO_12500_EUROS = 6;
+    const INSURANCE_AMOUNT_UP_TO_15000_EUROS = 7;
+    const INSURANCE_AMOUNT_UP_TO_17500_EUROS = 8;
+    const INSURANCE_AMOUNT_UP_TO_20000_EUROS = 9;
+    const INSURANCE_AMOUNT_UP_TO_22500_EUROS = 10;
+    const INSURANCE_AMOUNT_UP_TO_25000_EUROS = 11;
+
     /**
      * @var string
      */
@@ -29,8 +44,8 @@ class Insurance extends Option
     public static function getPossibleTypeValues()
     {
         return array(
-            'basicInsurance',
-            'additionalInsurance',
+            self::INSURANCE_TYPE_BASIC_INSURANCE,
+            self::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
         );
     }
 
@@ -93,16 +108,16 @@ class Insurance extends Option
     public static function getPossibleValueValues()
     {
         return array(
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11
+            self::INSURANCE_AMOUNT_UP_TO_2500_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_5000_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_7500_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_10000_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_12500_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_15000_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_17500_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_20000_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_22500_EUROS,
+            self::INSURANCE_AMOUNT_UP_TO_25000_EUROS,
         );
     }
 

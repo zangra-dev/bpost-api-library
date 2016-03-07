@@ -1,11 +1,11 @@
 <?php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box;
 
-use TijsVerkoyen\Bpost\Bpost\Order\Address;
+use TijsVerkoyen\Bpost\Bpost\Order\Box\National\ShopHandlingInstruction;
 use TijsVerkoyen\Bpost\Bpost\Order\PugoAddress;
 use TijsVerkoyen\Bpost\Bpost\ProductConfiguration\Product;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
-use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\BpostLogicException\BpostInvalidValueException;
 use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
 
 /**
@@ -18,35 +18,26 @@ use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
  */
 class AtBpost extends National
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $product = Product::PRODUCT_NAME_BPACK_AT_BPOST;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pugoId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pugoName;
 
-    /**
-     * @var \TijsVerkoyen\Bpost\Bpost\Order\PugoAddress;
-     */
+    /** @var \TijsVerkoyen\Bpost\Bpost\Order\PugoAddress */
     private $pugoAddress;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $receiverName;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $receiverCompany;
+
+    /** @var ShopHandlingInstruction */
+    private $shopHandlingInstruction;
 
     /**
      * @param string $product Possible values are: bpack@bpost
@@ -152,6 +143,38 @@ class AtBpost extends National
     }
 
     /**
+     * @return string
+     */
+    public function getRequestedDeliveryDate()
+    {
+        return $this->requestedDeliveryDate;
+    }
+
+    /**
+     * @param string $requestedDeliveryDate
+     */
+    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    {
+        $this->requestedDeliveryDate = $requestedDeliveryDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShopHandlingInstruction()
+    {
+        return $this->shopHandlingInstruction->getValue();
+    }
+
+    /**
+     * @param string $shopHandlingInstruction
+     */
+    public function setShopHandlingInstruction($shopHandlingInstruction)
+    {
+        $this->shopHandlingInstruction = new ShopHandlingInstruction($shopHandlingInstruction);
+    }
+
+    /**
      * Return the object as an array for usage in the XML
      *
      * @param  \DomDocument $document
@@ -161,28 +184,22 @@ class AtBpost extends National
      */
     public function toXML(\DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = 'nationalBox';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-        $nationalElement = $document->createElement($tagName);
+        $nationalElement = $document->createElement($this->getPrefixedTagName($prefix, 'nationalBox'));
         $boxElement = parent::toXML($document, null, 'atBpost');
         $nationalElement->appendChild($boxElement);
 
         if ($this->getPugoId() !== null) {
-            $tagName = 'pugoId';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    $this->getPrefixedTagName($prefix, 'pugoId'),
                     $this->getPugoId()
                 )
             );
         }
         if ($this->getPugoName() !== null) {
-            $tagName = 'pugoName';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    $this->getPrefixedTagName($prefix, 'pugoName'),
                     $this->getPugoName()
                 )
             );
@@ -193,25 +210,54 @@ class AtBpost extends National
             );
         }
         if ($this->getReceiverName() !== null) {
-            $tagName = 'receiverName';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    $this->getPrefixedTagName($prefix, 'receiverName'),
                     $this->getReceiverName()
                 )
             );
         }
         if ($this->getReceiverCompany() !== null) {
-            $tagName = 'receiverCompany';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    $this->getPrefixedTagName($prefix, 'receiverCompany'),
                     $this->getReceiverCompany()
                 )
             );
         }
+        $this->addToXmlRequestedDeliveryDate($document, $boxElement, $prefix);
+        $this->addToXmlShopHandlingInstruction($document, $boxElement, $prefix);
 
         return $nationalElement;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement  $typeElement
+     * @param string       $prefix
+     */
+    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    {
+        if ($this->getRequestedDeliveryDate() !== null) {
+            $typeElement->appendChild(
+                $document->createElement(
+                    $this->getPrefixedTagName($prefix, 'requestedDeliveryDate'),
+                    $this->getRequestedDeliveryDate()
+                )
+            );
+        }
+    }
+
+    private function addToXmlShopHandlingInstruction(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    {
+        if ($this->getShopHandlingInstruction() !== null) {
+            $typeElement->appendChild(
+                $document->createElement(
+                    $this->getPrefixedTagName($prefix, 'shopHandlingInstruction'),
+                    $this->getShopHandlingInstruction()
+                )
+            );
+        }
     }
 
     /**
@@ -227,7 +273,7 @@ class AtBpost extends National
 
         if (isset($xml->atBpost->product) && $xml->atBpost->product != '') {
             $atBpost->setProduct(
-                (string) $xml->atBpost->product
+                (string)$xml->atBpost->product
             );
         }
         if (isset($xml->atBpost->options)) {
@@ -262,27 +308,27 @@ class AtBpost extends National
         }
         if (isset($xml->atBpost->weight) && $xml->atBpost->weight != '') {
             $atBpost->setWeight(
-                (int) $xml->atBpost->weight
+                (int)$xml->atBpost->weight
             );
         }
         if (isset($xml->atBpost->receiverName) && $xml->atBpost->receiverName != '') {
             $atBpost->setReceiverName(
-                (string) $xml->atBpost->receiverName
+                (string)$xml->atBpost->receiverName
             );
         }
         if (isset($xml->atBpost->receiverCompany) && $xml->atBpost->receiverCompany != '') {
             $atBpost->setReceiverCompany(
-                (string) $xml->atBpost->receiverCompany
+                (string)$xml->atBpost->receiverCompany
             );
         }
         if (isset($xml->atBpost->pugoId) && $xml->atBpost->pugoId != '') {
             $atBpost->setPugoId(
-                (string) $xml->atBpost->pugoId
+                (string)$xml->atBpost->pugoId
             );
         }
         if (isset($xml->atBpost->pugoName) && $xml->atBpost->pugoName != '') {
             $atBpost->setPugoName(
-                (string) $xml->atBpost->pugoName
+                (string)$xml->atBpost->pugoName
             );
         }
         if (isset($xml->atBpost->pugoAddress)) {
@@ -292,6 +338,16 @@ class AtBpost extends National
             );
             $atBpost->setPugoAddress(
                 PugoAddress::createFromXML($pugoAddressData)
+            );
+        }
+        if (isset($xml->atBpost->requestedDeliveryDate) && $xml->atBpost->requestedDeliveryDate != '') {
+            $atBpost->setRequestedDeliveryDate(
+                (string)$xml->atBpost->requestedDeliveryDate
+            );
+        }
+        if (isset($xml->atBpost->shopHandlingInstruction) && $xml->atBpost->shopHandlingInstruction != '') {
+            $atBpost->setShopHandlingInstruction(
+                (string)$xml->atBpost->shopHandlingInstruction
             );
         }
 

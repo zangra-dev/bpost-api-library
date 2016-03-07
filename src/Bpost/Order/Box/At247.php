@@ -1,10 +1,11 @@
 <?php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box;
 
+use TijsVerkoyen\Bpost\Bpost\Order\Box\National\UnregisteredParcelLockerMember;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
 use TijsVerkoyen\Bpost\Bpost\Order\ParcelsDepotAddress;
 use TijsVerkoyen\Bpost\Bpost\ProductConfiguration\Product;
-use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\BpostLogicException\BpostInvalidValueException;
 use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
 
 /**
@@ -17,40 +18,32 @@ use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
  */
 class At247 extends National
 {
-    /**
-     * @var string
-     */
+    /**@var string */
     private $parcelsDepotId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $parcelsDepotName;
 
-    /**
-     * @var \TijsVerkoyen\Bpost\Bpost\Order\ParcelsDepotAddress
-     */
+    /** @var \TijsVerkoyen\Bpost\Bpost\Order\ParcelsDepotAddress */
     private $parcelsDepotAddress;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $product = Product::PRODUCT_NAME_BPACK_24H_PRO;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $memberId;
 
-    /**
-     * @var string
-     */
+    /** @var UnregisteredParcelLockerMember */
+    private $unregisteredParcelLockerMember;
+
+    /** @var string */
     private $receiverName;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $receiverCompany;
+
+    /** @var string */
+    protected $requestedDeliveryDate;
 
     /**
      * @param string $memberId
@@ -117,6 +110,22 @@ class At247 extends National
     }
 
     /**
+     * @return UnregisteredParcelLockerMember
+     */
+    public function getUnregisteredParcelLockerMember()
+    {
+        return $this->unregisteredParcelLockerMember;
+    }
+
+    /**
+     * @param UnregisteredParcelLockerMember $unregisteredParcelLockerMember
+     */
+    public function setUnregisteredParcelLockerMember(UnregisteredParcelLockerMember $unregisteredParcelLockerMember)
+    {
+        $this->unregisteredParcelLockerMember = $unregisteredParcelLockerMember;
+    }
+
+    /**
      * @param string $product Possible values are: bpack 24h Pro
      * @throws BpostInvalidValueException
      */
@@ -172,6 +181,22 @@ class At247 extends National
     }
 
     /**
+     * @return string
+     */
+    public function getRequestedDeliveryDate()
+    {
+        return $this->requestedDeliveryDate;
+    }
+
+    /**
+     * @param string $requestedDeliveryDate
+     */
+    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    {
+        $this->requestedDeliveryDate = (string)$requestedDeliveryDate;
+    }
+
+    /**
      * Return the object as an array for usage in the XML
      *
      * @param  \DomDocument $document
@@ -190,19 +215,14 @@ class At247 extends National
         $nationalElement->appendChild($boxElement);
 
         if ($this->getParcelsDepotId() !== null) {
-            $tagName = 'parcelsDepotId';
             $boxElement->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getParcelsDepotId()
-                )
+                $document->createElement('parcelsDepotId', $this->getParcelsDepotId())
             );
         }
         if ($this->getParcelsDepotName() !== null) {
-            $tagName = 'parcelsDepotName';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    'parcelsDepotName',
                     $this->getParcelsDepotName()
                 )
             );
@@ -213,34 +233,64 @@ class At247 extends National
             );
         }
         if ($this->getMemberId() !== null) {
-            $tagName = 'memberId';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    'memberId',
                     $this->getMemberId()
                 )
             );
         }
+        $this->addToXmlUnregisteredParcelLockerMember($document, $boxElement, $prefix);
         if ($this->getReceiverName() !== null) {
-            $tagName = 'receiverName';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    'receiverName',
                     $this->getReceiverName()
                 )
             );
         }
         if ($this->getReceiverCompany() !== null) {
-            $tagName = 'receiverCompany';
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    'receiverCompany',
                     $this->getReceiverCompany()
                 )
             );
         }
+        $this->addToXmlRequestedDeliveryDate($document, $boxElement, $prefix);
 
         return $nationalElement;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement  $typeElement
+     * @param string       $prefix
+     */
+    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    {
+        if ($this->getRequestedDeliveryDate() !== null) {
+            $typeElement->appendChild(
+                $document->createElement(
+                    $this->getPrefixedTagName($prefix, 'requestedDeliveryDate'),
+                    $this->getRequestedDeliveryDate()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement  $typeElement
+     * @param string       $prefix
+     */
+    protected function addToXmlUnregisteredParcelLockerMember(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    {
+        if ($this->getUnregisteredParcelLockerMember() !== null) {
+            $typeElement->appendChild(
+                $this->getUnregisteredParcelLockerMember()->toXml($document)
+            );
+        }
     }
 
     /**
@@ -256,7 +306,7 @@ class At247 extends National
 
         if (isset($xml->{'at24-7'}->product) && $xml->{'at24-7'}->product != '') {
             $at247->setProduct(
-                (string) $xml->{'at24-7'}->product
+                (string)$xml->{'at24-7'}->product
             );
         }
         if (isset($xml->{'at24-7'}->options)) {
@@ -282,32 +332,32 @@ class At247 extends National
         }
         if (isset($xml->{'at24-7'}->weight) && $xml->{'at24-7'}->weight != '') {
             $at247->setWeight(
-                (int) $xml->{'at24-7'}->weight
+                (int)$xml->{'at24-7'}->weight
             );
         }
         if (isset($xml->{'at24-7'}->memberId) && $xml->{'at24-7'}->memberId != '') {
             $at247->setMemberId(
-                (string) $xml->{'at24-7'}->memberId
+                (string)$xml->{'at24-7'}->memberId
             );
         }
         if (isset($xml->{'at24-7'}->receiverName) && $xml->{'at24-7'}->receiverName != '') {
             $at247->setReceiverName(
-                (string) $xml->{'at24-7'}->receiverName
+                (string)$xml->{'at24-7'}->receiverName
             );
         }
         if (isset($xml->{'at24-7'}->receiverCompany) && $xml->{'at24-7'}->receiverCompany != '') {
             $at247->setReceiverCompany(
-                (string) $xml->{'at24-7'}->receiverCompany
+                (string)$xml->{'at24-7'}->receiverCompany
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotId) && $xml->{'at24-7'}->parcelsDepotId != '') {
             $at247->setParcelsDepotId(
-                (string) $xml->{'at24-7'}->parcelsDepotId
+                (string)$xml->{'at24-7'}->parcelsDepotId
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotName) && $xml->{'at24-7'}->parcelsDepotName != '') {
             $at247->setParcelsDepotName(
-                (string) $xml->{'at24-7'}->parcelsDepotName
+                (string)$xml->{'at24-7'}->parcelsDepotName
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotAddress)) {
@@ -317,6 +367,11 @@ class At247 extends National
             );
             $at247->setParcelsDepotAddress(
                 ParcelsDepotAddress::createFromXML($parcelsDepotAddressData)
+            );
+        }
+        if (isset($xml->{'at24-7'}->requestedDeliveryDate) && $xml->{'at24-7'}->requestedDeliveryDate != '') {
+            $at247->setRequestedDeliveryDate(
+                (string)$xml->{'at24-7'}->requestedDeliveryDate
             );
         }
 

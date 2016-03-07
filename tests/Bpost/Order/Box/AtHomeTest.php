@@ -6,7 +6,7 @@ use TijsVerkoyen\Bpost\Bpost\Order\Box\AtHome;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
 use TijsVerkoyen\Bpost\Bpost\Order\Receiver;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Openinghour\Day as OpeninghourDay;
-use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\BpostLogicException\BpostInvalidValueException;
 
 class AtHomeTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,6 +61,7 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
                     'emailAddress' => 'bpost@verkoyen.eu',
                     'phoneNumber' => '+32 9 395 02 51',
                 ),
+                'requestedDeliveryDate' => '2016-03-16',
             ),
         );
 
@@ -120,6 +121,9 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
                 );
             }
         }
+        $atHome->appendChild(
+            $expectedDocument->createElement('requestedDeliveryDate', $data['atHome']['requestedDeliveryDate'])
+        );
 
         $actualDocument = self::createDomDocument();
         $address = new Address(
@@ -149,6 +153,7 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
         $atHome = new AtHome();
         $atHome->setProduct($data['atHome']['product']);
         $atHome->setWeight($data['atHome']['weight']);
+        $atHome->setRequestedDeliveryDate($data['atHome']['requestedDeliveryDate']);
         $atHome->setReceiver($receiver);
         $atHome->setDesiredDeliveryPlace($data['atHome']['desiredDeliveryPlace']);
 

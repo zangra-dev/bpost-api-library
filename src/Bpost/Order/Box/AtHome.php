@@ -5,7 +5,7 @@ use TijsVerkoyen\Bpost\Bpost\Order\Box\Openinghour\Day;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
 use TijsVerkoyen\Bpost\Bpost\Order\Receiver;
 use TijsVerkoyen\Bpost\Bpost\ProductConfiguration\Product;
-use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\BpostLogicException\BpostInvalidValueException;
 use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
 
 /**
@@ -18,20 +18,17 @@ use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
  */
 class AtHome extends National
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $openingHours;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $desiredDeliveryPlace;
 
-    /**
-     * @var \TijsVerkoyen\Bpost\Bpost\Order\Receiver
-     */
+    /** @var \TijsVerkoyen\Bpost\Bpost\Order\Receiver */
     private $receiver;
+
+    /** @var string */
+    protected $requestedDeliveryDate;
 
     /**
      * @param string $desiredDeliveryPlace
@@ -74,12 +71,8 @@ class AtHome extends National
     }
 
     /**
-     * @param string $product Possible values are:
-     *                          * bpack 24h Pro,
-     *                          * bpack 24h business
-     *                          * bpack Bus
-     *                          * bpack Pallet
-     *                          * bpack Easy Retour
+     * @param string $product
+     * @see getPossibleProductValues
      * @throws BpostInvalidValueException
      */
     public function setProduct($product)
@@ -122,6 +115,22 @@ class AtHome extends National
     }
 
     /**
+     * @return string
+     */
+    public function getRequestedDeliveryDate()
+    {
+        return $this->requestedDeliveryDate;
+    }
+
+    /**
+     * @param string $requestedDeliveryDate
+     */
+    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    {
+        $this->requestedDeliveryDate = (string)$requestedDeliveryDate;
+    }
+
+    /**
      * Return the object as an array for usage in the XML
      *
      * @param  \DomDocument $document
@@ -131,11 +140,7 @@ class AtHome extends National
      */
     public function toXML(\DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = 'nationalBox';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-        $nationalElement = $document->createElement($tagName);
+        $nationalElement = $document->createElement($this->getPrefixedTagName($prefix, 'nationalBox'));
         $boxElement = parent::toXML($document, null, 'atHome');
         $nationalElement->appendChild($boxElement);
 
@@ -152,13 +157,9 @@ class AtHome extends National
         }
 
         if ($this->getDesiredDeliveryPlace() !== null) {
-            $tagName = 'desiredDeliveryPlace';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $boxElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    $this->getPrefixedTagName($prefix, 'desiredDeliveryPlace'),
                     $this->getDesiredDeliveryPlace()
                 )
             );
@@ -170,7 +171,26 @@ class AtHome extends National
             );
         }
 
+        $this->addToXmlRequestedDeliveryDate($document, $boxElement, $prefix);
+
         return $nationalElement;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement  $typeElement
+     * @param string       $prefix
+     */
+    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    {
+        if ($this->getRequestedDeliveryDate() !== null) {
+            $typeElement->appendChild(
+                $document->createElement(
+                    $this->getPrefixedTagName($prefix, 'requestedDeliveryDate'),
+                    $this->getRequestedDeliveryDate()
+                )
+            );
+        }
     }
 
     /**
@@ -186,7 +206,7 @@ class AtHome extends National
 
         if (isset($xml->atHome->product) && $xml->atHome->product != '') {
             $atHome->setProduct(
-                (string) $xml->atHome->product
+                (string)$xml->atHome->product
             );
         }
         if (isset($xml->atHome->options) && !empty($xml->atHome->options)) {
@@ -212,18 +232,18 @@ class AtHome extends National
         }
         if (isset($xml->atHome->weight) && $xml->atHome->weight != '') {
             $atHome->setWeight(
-                (int) $xml->atHome->weight
+                (int)$xml->atHome->weight
             );
         }
         if (isset($xml->atHome->openingHours) && $xml->atHome->openingHours != '') {
             throw new BpostNotImplementedException();
             $atHome->setProduct(
-                (string) $xml->atHome->openingHours
+                (string)$xml->atHome->openingHours
             );
         }
         if (isset($xml->atHome->desiredDeliveryPlace) && $xml->atHome->desiredDeliveryPlace != '') {
             $atHome->setDesiredDeliveryPlace(
-                (string) $xml->atHome->desiredDeliveryPlace
+                (string)$xml->atHome->desiredDeliveryPlace
             );
         }
         if (isset($xml->atHome->receiver)) {
@@ -231,6 +251,11 @@ class AtHome extends National
                 Receiver::createFromXML(
                     $xml->atHome->receiver->children('http://schema.post.be/shm/deepintegration/v3/common')
                 )
+            );
+        }
+        if (isset($xml->atHome->requestedDeliveryDate) && $xml->atHome->requestedDeliveryDate != '') {
+            $atHome->setRequestedDeliveryDate(
+                $xml->atHome->requestedDeliveryDate
             );
         }
 

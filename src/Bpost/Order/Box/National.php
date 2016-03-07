@@ -13,19 +13,13 @@ use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Option;
  */
 abstract class National implements IBox
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $product;
 
-    /**
-     * @var array
-     */
+    /** @var Option[] */
     protected $options;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $weight;
 
     /**
@@ -130,15 +124,8 @@ abstract class National implements IBox
         }
 
         if ($this->getWeight() !== null) {
-            $tagName = 'weight';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $typeElement->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getWeight()
-                )
+                $document->createElement($this->getPrefixedTagName($prefix, 'weight'), $this->getWeight())
             );
         }
 
@@ -146,11 +133,17 @@ abstract class National implements IBox
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
-     * @return National
+     * Prefix $tagName with the $prefix, if needed
+     * @param string $prefix
+     * @param string $tagName
+     * @return string
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    protected function getPrefixedTagName($prefix, $tagName)
     {
-        return;
+        if ($prefix !== null) {
+            return $prefix . ':' . $tagName;
+        }
+        return $tagName;
     }
+
 }

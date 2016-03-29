@@ -1,9 +1,9 @@
 <?php
 namespace Bpost\BpostApiClient;
 
-use Bpost\BpostApiClient\Exception\ApiResponseException\BpostCurlException;
-use Bpost\BpostApiClient\Exception\ApiResponseException\BpostInvalidXmlResponseException;
-use Bpost\BpostApiClient\Exception\ApiResponseException\BpostTaxipostLocatorException;
+use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
+use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
+use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostTaxipostLocatorException;
 use Bpost\BpostApiClient\Geo6\Poi;
 
 /**
@@ -17,10 +17,19 @@ use Bpost\BpostApiClient\Geo6\Poi;
 class Geo6
 {
     // URL for the api
-    const API_URL = 'http://taxipost.geo6.be/Locator';
+    const API_URL = 'https://taxipost.geo6.be/Locator';
 
     // current version
     const VERSION = '3';
+
+    /**
+     * @see getPointType
+     * @see getServicePointPageUrl
+     */
+    const POINT_TYPE_POST_OFFICE = 1;
+    const POINT_TYPE_POST_POINT = 2;
+    const POINT_TYPE_BPACK_247 = 4;
+    const POINT_TYPE_CLICK_COLLECT_SHOP = 8;
 
     /**
      * @var string
@@ -53,18 +62,30 @@ class Geo6
      */
     public function __construct($partner, $appId)
     {
-        $this->setPartner((string) $partner);
-        $this->setAppId((string) $appId);
+        $this->setPartner((string)$partner);
+        $this->setAppId((string)$appId);
     }
 
     /**
      * Build the url to be called
      *
-     * @param  string     $method
-     * @param  array|null $parameters
+     * @param string $method
+     * @param array  $parameters
      * @return string
      */
-    private function buildUrl($method, $parameters = null)
+    private function buildUrl($method, array $parameters = array())
+    {
+        return self::API_URL . '?' . $this->buildParameters($method, $parameters);
+    }
+
+    /**
+     * Build the parameters to send (URL-encoded string)
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     * @return string
+     */
+    private function buildParameters($method, array $parameters = array())
     {
         // add credentials
         $parameters['Function'] = $method;
@@ -72,28 +93,33 @@ class Geo6
         $parameters['AppId'] = $this->getAppId();
         $parameters['Format'] = 'xml';
 
-        return self::API_URL . '?' . http_build_query($parameters);
+        return http_build_query($parameters);
     }
 
     /**
      * Make the real call
      *
-     * @param  string     $method
-     * @param  array|null $parameters
+     * @param  string $method
+     * @param  array  $parameters
      * @return \SimpleXMLElement
      * @throws BpostCurlException
      * @throws BpostInvalidXmlResponseException
      * @throws BpostTaxipostLocatorException
      */
-    private function doCall($method, $parameters = null)
+    private function doCall($method, array $parameters = array())
     {
-        $options[CURLOPT_URL] = $this->buildUrl($method, $parameters);
-        $options[CURLOPT_USERAGENT] = $this->getUserAgent();
-        $options[CURLOPT_FOLLOWLOCATION] = true;
-        $options[CURLOPT_SSL_VERIFYPEER] = false;
-        $options[CURLOPT_SSL_VERIFYHOST] = false;
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
+        $options = array(
+            CURLOPT_URL => self::API_URL,
+            CURLOPT_USERAGENT => $this->getUserAgent(),
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => (int)$this->getTimeOut(),
+
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $this->buildParameters($method, $parameters),
+        );
 
         $curl = curl_init();
 
@@ -119,8 +145,8 @@ class Geo6
         }
 
         // catch generic errors
-        if (isset($xml['type']) && (string) $xml['type'] == 'TaxipostLocatorError') {
-            throw new BpostTaxipostLocatorException((string) $xml->txt, (int)$xml->status);
+        if (isset($xml['type']) && (string)$xml['type'] == 'TaxipostLocatorError') {
+            throw new BpostTaxipostLocatorException((string)$xml->txt, (int)$xml->status);
         }
 
         // return
@@ -167,7 +193,7 @@ class Geo6
      */
     public function setTimeOut($seconds)
     {
-        $this->timeOut = (int) $seconds;
+        $this->timeOut = (int)$seconds;
     }
 
     /**
@@ -177,7 +203,7 @@ class Geo6
      */
     public function getTimeOut()
     {
-        return (int) $this->timeOut;
+        return (int)$this->timeOut;
     }
 
     /**
@@ -189,7 +215,7 @@ class Geo6
      */
     public function getUserAgent()
     {
-        return (string) 'PHP Bpost Geo6/' . self::VERSION . ' ' . $this->userAgent;
+        return (string)'PHP Bpost Geo6/' . self::VERSION . ' ' . $this->userAgent;
     }
 
     /**
@@ -200,7 +226,7 @@ class Geo6
      */
     public function setUserAgent($userAgent)
     {
-        $this->userAgent = (string) $userAgent;
+        $this->userAgent = (string)$userAgent;
     }
 
     // webservice methods
@@ -225,13 +251,14 @@ class Geo6
      */
     public function getNearestServicePoint($street, $number, $zone, $language = 'nl', $type = 3, $limit = 10)
     {
-        $parameters = array();
-        $parameters['Street'] = (string) $street;
-        $parameters['Number'] = (string) $number;
-        $parameters['Zone'] = (string) $zone;
-        $parameters['Language'] = (string) $language;
-        $parameters['Type'] = (int) $type;
-        $parameters['Limit'] = (int) $limit;
+        $parameters = array(
+            'Street' => (string)$street,
+            'Number' => (string)$number,
+            'Zone' => (string)$zone,
+            'Language' => (string)$language,
+            'Type' => (int)$type,
+            'Limit' => (int)$limit
+        );
 
         $xml = $this->doCall('search', $parameters);
 
@@ -243,7 +270,7 @@ class Geo6
         foreach ($xml->PoiList->Poi as $poi) {
             $pois[] = array(
                 'poi' => Poi::createFromXML($poi->Record),
-                'distance' => (float) $poi->Distance,
+                'distance' => (float)$poi->Distance,
             );
         }
 
@@ -268,10 +295,11 @@ class Geo6
      */
     public function getServicePointDetails($id, $language = 'nl', $type = 3)
     {
-        $parameters = array();
-        $parameters['Id'] = (string) $id;
-        $parameters['Language'] = (string) $language;
-        $parameters['Type'] = (int) $type;
+        $parameters = array(
+            'Id' => (string)$id,
+            'Language' => (string)$language,
+            'Type' => (int)$type,
+        );
 
         $xml = $this->doCall('info', $parameters);
 
@@ -283,18 +311,55 @@ class Geo6
     }
 
     /**
-     * @param         $id
+     * @param  int    $id
      * @param  string $language
      * @param  int    $type
      * @return string
+     *
+     * @see getPointType to feed the param $type
+     */
+    public function getServicePointPageUrl($id, $language = 'nl', $type = 3)
+    {
+        $parameters = array(
+            'Id' => (string)$id,
+            'Language' => (string)$language,
+            'Type' => (int)$type,
+        );
+
+        return $this->buildUrl('page', $parameters);
+    }
+
+    /**
+     * @param int    $id
+     * @param string $language
+     * @param int    $type
+     * @return string
+     *
+     * @deprecated Renamed
+     * @see        getServicePointPageUrl
      */
     public function getServicePointPage($id, $language = 'nl', $type = 3)
     {
-        $parameters = array();
-        $parameters['Id'] = (string) $id;
-        $parameters['Language'] = (string) $language;
-        $parameters['Type'] = (int) $type;
+        return $this->getServicePointPageUrl($id, $language, $type);
+    }
 
-        return $this->buildUrl('page', $parameters);
+    /**
+     * @param bool $withPostOffice
+     * @param bool $withPostPoint
+     * @param bool $withBpack247
+     * @param bool $withClickAndCollectShop
+     * @return int
+     */
+    public function getPointType(
+        $withPostOffice = true,
+        $withPostPoint = true,
+        $withBpack247 = false,
+        $withClickAndCollectShop = false
+    ) {
+        return
+            ($withPostOffice ? self::POINT_TYPE_POST_OFFICE : 0)
+            + ($withPostPoint ? self::POINT_TYPE_POST_POINT : 0)
+            + ($withBpack247 ? self::POINT_TYPE_BPACK_247 : 0)
+            + ($withClickAndCollectShop ? self::POINT_TYPE_CLICK_COLLECT_SHOP : 0);
     }
 }

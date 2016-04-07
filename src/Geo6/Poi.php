@@ -2,6 +2,8 @@
 
 namespace Bpost\BpostApiClient\Geo6;
 
+use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
+
 /**
  * Geo6 class
  *
@@ -12,92 +14,63 @@ namespace Bpost\BpostApiClient\Geo6;
  */
 class Poi
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $type;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $office;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $street;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $nr;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $zip;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $city;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $x;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $y;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     private $latitude;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     private $longitude;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $services;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $hours;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $closedFrom;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $closedTo;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $note;
+
+    /** @var string */
+    private $page;
 
     /**
      * @param string $city
      */
     public function setCity($city)
     {
-        $this->city = $city;
+        $this->city = (string)$city;
     }
 
     /**
@@ -111,7 +84,7 @@ class Poi
     /**
      * @param array $closedFrom
      */
-    public function setClosedFrom($closedFrom)
+    public function setClosedFrom(array $closedFrom)
     {
         $this->closedFrom = $closedFrom;
     }
@@ -127,7 +100,7 @@ class Poi
     /**
      * @param array $closedTo
      */
-    public function setClosedTo($closedTo)
+    public function setClosedTo(array $closedTo)
     {
         $this->closedTo = $closedTo;
     }
@@ -146,19 +119,19 @@ class Poi
      */
     public function addHour($index, Day $day)
     {
-        $this->hours[$index] = $day;
+        $this->hours[(int)$index] = $day;
     }
 
     /**
-     * @param array $hours
+     * @param Day[] $hours
      */
-    public function setHours($hours)
+    public function setHours(array $hours)
     {
         $this->hours = $hours;
     }
 
     /**
-     * @return array
+     * @return Day[]
      */
     public function getHours()
     {
@@ -170,7 +143,7 @@ class Poi
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (string)$id;
     }
 
     /**
@@ -186,7 +159,7 @@ class Poi
      */
     public function setLatitude($latitude)
     {
-        $this->latitude = $latitude;
+        $this->latitude = (float)$latitude;
     }
 
     /**
@@ -202,7 +175,7 @@ class Poi
      */
     public function setLongitude($longitude)
     {
-        $this->longitude = $longitude;
+        $this->longitude = (float)$longitude;
     }
 
     /**
@@ -218,7 +191,7 @@ class Poi
      */
     public function setNote($note)
     {
-        $this->note = $note;
+        $this->note = (string)$note;
     }
 
     /**
@@ -234,7 +207,7 @@ class Poi
      */
     public function setNr($nr)
     {
-        $this->nr = $nr;
+        $this->nr = (string)$nr;
     }
 
     /**
@@ -250,7 +223,7 @@ class Poi
      */
     public function setOffice($office)
     {
-        $this->office = $office;
+        $this->office = (string)$office;
     }
 
     /**
@@ -270,15 +243,15 @@ class Poi
     }
 
     /**
-     * @param array $services
+     * @param Service[] $services
      */
-    public function setServices($services)
+    public function setServices(array $services)
     {
         $this->services = $services;
     }
 
     /**
-     * @return array
+     * @return Service[]
      */
     public function getServices()
     {
@@ -290,7 +263,7 @@ class Poi
      */
     public function setStreet($street)
     {
-        $this->street = $street;
+        $this->street = (string)$street;
     }
 
     /**
@@ -306,7 +279,7 @@ class Poi
      */
     public function setType($type)
     {
-        $this->type = $type;
+        $this->type = (string)$type;
     }
 
     /**
@@ -322,7 +295,7 @@ class Poi
      */
     public function setX($x)
     {
-        $this->x = $x;
+        $this->x = (int)$x;
     }
 
     /**
@@ -338,7 +311,7 @@ class Poi
      */
     public function setY($y)
     {
-        $this->y = $y;
+        $this->y = (int)$y;
     }
 
     /**
@@ -354,7 +327,7 @@ class Poi
      */
     public function setZip($zip)
     {
-        $this->zip = $zip;
+        $this->zip = (string)$zip;
     }
 
     /**
@@ -366,101 +339,134 @@ class Poi
     }
 
     /**
+     * @return string
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param string $page
+     */
+    public function setPage($page)
+    {
+        $this->page = (string)$page;
+    }
+
+
+    /**
      * Create a POI based on an XML-object
      *
      * @param  \SimpleXMLElement $xml
      * @return Poi
+     * @throws BpostInvalidXmlResponseException
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
+        if (!isset($xml->Record)) {
+            throw new BpostInvalidXmlResponseException('"Record" missing');
+        }
+
+        $recordXml = $xml->Record;
+
         $poi = new Poi();
 
-        if (isset($xml->Id) && $xml->Id != '') {
-            $poi->setId((string) $xml->Id);
+        if (isset($recordXml->Id) && $recordXml->Id != '') {
+            $poi->setId((string)$recordXml->Id);
         }
-        if (isset($xml->ID) && $xml->ID != '') {
-            $poi->setId((string) $xml->ID);
+        if (isset($recordXml->ID) && $recordXml->ID != '') {
+            $poi->setId((string)$recordXml->ID);
         }
-        if (isset($xml->Type) && $xml->Type != '') {
-            $poi->setType((string) $xml->Type);
+        if (isset($recordXml->Type) && $recordXml->Type != '') {
+            $poi->setType((string)$recordXml->Type);
         }
-        if (isset($xml->Name) && $xml->Name != '') {
-            $poi->setOffice((string) $xml->Name);
+        if (isset($recordXml->Name) && $recordXml->Name != '') {
+            $poi->setOffice((string)$recordXml->Name);
         }
-        if (isset($xml->OFFICE) && $xml->OFFICE != '') {
-            $poi->setOffice((string) $xml->OFFICE);
+        if (isset($recordXml->OFFICE) && $recordXml->OFFICE != '') {
+            $poi->setOffice((string)$recordXml->OFFICE);
         }
-        if (isset($xml->Street) && $xml->Street != '') {
-            $poi->setStreet((string) $xml->Street);
+        if (isset($recordXml->Street) && $recordXml->Street != '') {
+            $poi->setStreet((string)$recordXml->Street);
         }
-        if (isset($xml->STREET) && $xml->STREET != '') {
-            $poi->setStreet((string) $xml->STREET);
+        if (isset($recordXml->STREET) && $recordXml->STREET != '') {
+            $poi->setStreet((string)$recordXml->STREET);
         }
-        if (isset($xml->Number) && $xml->Number != '') {
-            $poi->setNr((string) $xml->Number);
+        if (isset($recordXml->Number) && $recordXml->Number != '') {
+            $poi->setNr((string)$recordXml->Number);
         }
-        if (isset($xml->NR) && $xml->NR != '') {
-            $poi->setNr((string) $xml->NR);
+        if (isset($recordXml->NR) && $recordXml->NR != '') {
+            $poi->setNr((string)$recordXml->NR);
         }
-        if (isset($xml->Zip) && $xml->Zip != '') {
-            $poi->setZip((string) $xml->Zip);
+        if (isset($recordXml->Zip) && $recordXml->Zip != '') {
+            $poi->setZip((string)$recordXml->Zip);
         }
-        if (isset($xml->ZIP) && $xml->ZIP != '') {
-            $poi->setZip((string) $xml->ZIP);
+        if (isset($recordXml->ZIP) && $recordXml->ZIP != '') {
+            $poi->setZip((string)$recordXml->ZIP);
         }
-        if (isset($xml->City) && $xml->City != '') {
-            $poi->setCity((string) $xml->City);
+        if (isset($recordXml->City) && $recordXml->City != '') {
+            $poi->setCity((string)$recordXml->City);
         }
-        if (isset($xml->CITY) && $xml->CITY != '') {
-            $poi->setCity((string) $xml->CITY);
+        if (isset($recordXml->CITY) && $recordXml->CITY != '') {
+            $poi->setCity((string)$recordXml->CITY);
         }
-        if (isset($xml->X) && $xml->X != '') {
-            $poi->setX((int) $xml->X);
+        if (isset($recordXml->X) && $recordXml->X != '') {
+            $poi->setX((int)$recordXml->X);
         }
-        if (isset($xml->Y) && $xml->Y != '') {
-            $poi->setY((int) $xml->Y);
+        if (isset($recordXml->Y) && $recordXml->Y != '') {
+            $poi->setY((int)$recordXml->Y);
         }
-        if (isset($xml->Longitude) && $xml->Longitude != '') {
-            $poi->setLongitude((float) $xml->Longitude);
+        if (isset($recordXml->Longitude) && $recordXml->Longitude != '') {
+            $poi->setLongitude((float)$recordXml->Longitude);
         }
-        if (isset($xml->Latitude) && $xml->Latitude != '') {
-            $poi->setLatitude((float) $xml->Latitude);
+        if (isset($recordXml->Latitude) && $recordXml->Latitude != '') {
+            $poi->setLatitude((float)$recordXml->Latitude);
         }
-        if (isset($xml->Services->Service)) {
-            foreach ($xml->Services->Service as $service) {
+        if (isset($recordXml->Services) && isset($recordXml->Services->Service)) {
+            foreach ($recordXml->Services->Service as $service) {
                 $poi->addService(Service::createFromXML($service));
             }
         }
 
-        if (isset($xml->Hours->Monday)) {
-            $poi->addHour(Day::DAY_INDEX_MONDAY, Day::createFromXML($xml->Hours->Monday));
+        if (isset($recordXml->Hours)) {
+            $recordHoursXml = $recordXml->Hours;
+
+            if (isset($recordHoursXml->Monday)) {
+                $poi->addHour(Day::DAY_INDEX_MONDAY, Day::createFromXML($recordHoursXml->Monday));
+            }
+            if (isset($recordHoursXml->Tuesday)) {
+                $poi->addHour(Day::DAY_INDEX_TUESDAY, Day::createFromXML($recordHoursXml->Tuesday));
+            }
+            if (isset($recordHoursXml->Wednesday)) {
+                $poi->addHour(Day::DAY_INDEX_WEDNESDAY, Day::createFromXML($recordHoursXml->Wednesday));
+            }
+            if (isset($recordHoursXml->Thursday)) {
+                $poi->addHour(Day::DAY_INDEX_THURSDAY, Day::createFromXML($recordHoursXml->Thursday));
+            }
+            if (isset($recordHoursXml->Friday)) {
+                $poi->addHour(Day::DAY_INDEX_FRIDAY, Day::createFromXML($recordHoursXml->Friday));
+            }
+            if (isset($recordHoursXml->Saturday)) {
+                $poi->addHour(Day::DAY_INDEX_SATURDAY, Day::createFromXML($recordHoursXml->Saturday));
+            }
+            if (isset($recordHoursXml->Sunday)) {
+                $poi->addHour(Day::DAY_INDEX_SUNDAY, Day::createFromXML($recordHoursXml->Sunday));
+            }
         }
-        if (isset($xml->Hours->Tuesday)) {
-            $poi->addHour(Day::DAY_INDEX_TUESDAY, Day::createFromXML($xml->Hours->Tuesday));
+
+        if (isset($recordXml->ClosedFrom) && $recordXml->ClosedFrom != '') {
+            $poi->setClosedFrom((string)$recordXml->ClosedFrom);
         }
-        if (isset($xml->Hours->Wednesday)) {
-            $poi->addHour(Day::DAY_INDEX_WEDNESDAY, Day::createFromXML($xml->Hours->Wednesday));
+        if (isset($recordXml->ClosedTo) && $recordXml->ClosedTo != '') {
+            $poi->setClosedTo((string)$recordXml->ClosedTo);
         }
-        if (isset($xml->Hours->Thursday)) {
-            $poi->addHour(Day::DAY_INDEX_THURSDAY, Day::createFromXML($xml->Hours->Thursday));
+        if (isset($recordXml->NOTE) && $recordXml->NOTE != '') {
+            $poi->setNote((string)$recordXml->NOTE);
         }
-        if (isset($xml->Hours->Friday)) {
-            $poi->addHour(Day::DAY_INDEX_FRIDAY, Day::createFromXML($xml->Hours->Friday));
-        }
-        if (isset($xml->Hours->Saturday)) {
-            $poi->addHour(Day::DAY_INDEX_SATURDAY, Day::createFromXML($xml->Hours->Saturday));
-        }
-        if (isset($xml->Hours->Sunday)) {
-            $poi->addHour(Day::DAY_INDEX_SUNDAY, Day::createFromXML($xml->Hours->Sunday));
-        }
-        if (isset($xml->ClosedFrom) && $xml->ClosedFrom != '') {
-            $poi->setClosedFrom((string) $xml->ClosedFrom);
-        }
-        if (isset($xml->ClosedTo) && $xml->ClosedTo != '') {
-            $poi->setClosedTo((string) $xml->ClosedTo);
-        }
-        if (isset($xml->NOTE) && $xml->NOTE != '') {
-            $poi->setNote((string) $xml->NOTE);
+
+        if (isset($xml->Page) && isset($xml->Page['ServiceRef']) && $xml->Page['ServiceRef'] != '') {
+            $poi->setPage($xml->Page['ServiceRef']);
         }
 
         return $poi;

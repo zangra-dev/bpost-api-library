@@ -27,4 +27,14 @@ class AutomaticSecondPresentation extends Option
 
         return $document->createElement($tagName);
     }
+
+    /**
+     * @param \SimpleXMLElement $xml
+     *
+     * @return static
+     */
+    public static function createFromXML(\SimpleXMLElement $xml)
+    {
+        return new static;
+    }
 }

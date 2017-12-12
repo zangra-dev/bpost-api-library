@@ -65,7 +65,7 @@ $receiverAddress->setCountryCode("BE"); // ISO2
 $receiver = new Receiver();
 $receiver->setAddress($receiverAddress);
 $receiver->setName("Alma van Appel");
-$receiver->setPhoneNumber("+32 2 641 13 90);
+$receiver->setPhoneNumber("+32 2 641 13 90");
 $receiver->setEmailAddress("alma@antidot.com");
 
 $orderReference = "ref_0123456789"; // An unique order reference

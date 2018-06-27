@@ -131,9 +131,11 @@ class AtHome extends National
      * @throws BpostXmlInvalidItemException
      * @throws \Bpost\BpostApiClient\BpostException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(\SimpleXMLElement $xml, $self = null)
     {
-        $self = new self();
+        if ($self === null) {
+            $self = new self();
+        }
 
         if (!isset($xml->atHome)) {
             throw new BpostXmlInvalidItemException();

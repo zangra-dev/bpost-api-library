@@ -555,6 +555,7 @@ class Customer
         $this->namingToXML($document, $customer);
         $this->addressToXML($document, $customer);
         $this->contactToXML($document, $customer);
+        $this->postalCodeToXML($document, $customer);
         $this->preferredLanguageToXML($document, $customer);
         $this->titleToXML($document, $customer);
 
@@ -735,14 +736,6 @@ class Customer
                 )
             );
         }
-        if ($this->getPostalCode() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'PostalCode',
-                    $this->getPostalCode()
-                )
-            );
-        }
     }
 
     /**
@@ -772,6 +765,22 @@ class Customer
                 $document->createElement(
                     'Title',
                     $this->getTitle()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function postalCodeToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getPostalCode() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'PostalCode',
+                    $this->getPostalCode()
                 )
             );
         }

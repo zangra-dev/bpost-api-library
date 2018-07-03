@@ -3,11 +3,9 @@
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\Common\ComplexAttribute;
-use Bpost\BpostApiClient\Exception\BpostLogicException;
 
 class ComplexAttributeTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testGetPrefixedTagName()
     {
         $fake = $this->getComplexAttributeMock();

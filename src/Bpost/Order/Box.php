@@ -264,7 +264,6 @@ class Box
             $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($internationalBoxData->getName());
 
             if (!method_exists($className, 'createFromXML')) {
-                var_dump($className);
                 throw new BpostNotImplementedException();
             }
 

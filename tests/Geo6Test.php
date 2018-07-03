@@ -102,8 +102,8 @@ class Geo6Test extends \PHPUnit_Framework_TestCase
      */
     public function testGetServicePointPage()
     {
-        $id = '220000';
-        $type = '1';
+        $id = 220000;
+        $type = 1;
         $response = $this->geo6->getServicePointPageUrl($id, 'nl', $type);
 
         $this->assertSame(

@@ -84,6 +84,7 @@ class Bpack247
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
+        $options = array();
         $options[CURLOPT_URL] = self::API_URL . $url;
         $options[CURLOPT_USERAGENT] = $this->getUserAgent();
         $options[CURLOPT_RETURNTRANSFER] = true;

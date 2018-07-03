@@ -218,9 +218,11 @@ class Bpost
     private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
     {
         // build Authorization header
+        $headers = array();
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
+        $options = array();
         $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $url;
         if ($this->getPort() != 0) {
             $options[CURLOPT_PORT] = $this->getPort();

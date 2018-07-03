@@ -12,7 +12,7 @@ class ParcelLockerReducedMobilityZone extends ComplexAttribute
      * @param string       $type
      * @return \DOMElement
      */
-    function toXml(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXml(\DOMDocument $document, $prefix = null, $type = null)
     {
         $tagName = $this->getPrefixedTagName('parcelLockerReducedMobilityZone', $prefix);
 
@@ -24,9 +24,9 @@ class ParcelLockerReducedMobilityZone extends ComplexAttribute
     /**
      * @todo Implement it, because today, nothing is specified
      * @param \SimpleXMLElement $xml
-     * @return ParcelLockerReducedMobilityZone|\Bpost\BpostApiClient\IComplexAttribute
+     * @return ParcelLockerReducedMobilityZone|ComplexAttribute
      */
-    static function createFromXml(\SimpleXMLElement $xml)
+    public static function createFromXml(\SimpleXMLElement $xml)
     {
         $self = new self();
         return $self;

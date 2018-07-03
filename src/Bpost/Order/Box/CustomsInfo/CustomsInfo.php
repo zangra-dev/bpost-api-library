@@ -197,71 +197,11 @@ class CustomsInfo
 
         $customsInfo = $document->createElement($tagName);
 
-        if ($this->getParcelValue() !== null) {
-            $tagName = 'parcelValue';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $customsInfo->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getParcelValue()
-                )
-            );
-        }
-        if ($this->getContentDescription() !== null) {
-            $tagName = 'contentDescription';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $customsInfo->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getContentDescription()
-                )
-            );
-        }
-        if ($this->getShipmentType() !== null) {
-            $tagName = 'shipmentType';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $customsInfo->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getShipmentType()
-                )
-            );
-        }
-        if ($this->getPossibleParcelReturnInstructionValues() !== null) {
-            $tagName = 'parcelReturnInstructions';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $customsInfo->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getParcelReturnInstructions()
-                )
-            );
-        }
-        if ($this->getPrivateAddress() !== null) {
-            $tagName = 'privateAddress';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            if ($this->getPrivateAddress()) {
-                $value = 'true';
-            } else {
-                $value = 'false';
-            }
-            $customsInfo->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $value
-                )
-            );
-        }
+        $this->parcelValueToXML($document, $prefix, $customsInfo);
+        $this->contentDescriptionToXML($document, $prefix, $customsInfo);
+        $this->shipmentTypeToXML($document, $prefix, $customsInfo);
+        $this->possibleParcelReturnInstructionValuesToXML($document, $prefix, $customsInfo);
+        $this->privateAddressToXML($document, $prefix, $customsInfo);
 
         return $customsInfo;
     }
@@ -304,5 +244,115 @@ class CustomsInfo
         }
 
         return $customsInfo;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $customsInfo
+     */
+    private function parcelValueToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    {
+        if ($this->getParcelValue() !== null) {
+            $tagName = 'parcelValue';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $customsInfo->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getParcelValue()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $customsInfo
+     */
+    private function contentDescriptionToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    {
+        if ($this->getContentDescription() !== null) {
+            $tagName = 'contentDescription';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $customsInfo->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getContentDescription()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $customsInfo
+     */
+    private function shipmentTypeToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    {
+        if ($this->getShipmentType() !== null) {
+            $tagName = 'shipmentType';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $customsInfo->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getShipmentType()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $customsInfo
+     */
+    private function possibleParcelReturnInstructionValuesToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    {
+        if ($this->getPossibleParcelReturnInstructionValues() !== null) {
+            $tagName = 'parcelReturnInstructions';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $customsInfo->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getParcelReturnInstructions()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $customsInfo
+     */
+    private function privateAddressToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    {
+        if ($this->getPrivateAddress() !== null) {
+            $tagName = 'privateAddress';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            if ($this->getPrivateAddress()) {
+                $value = 'true';
+            } else {
+                $value = 'false';
+            }
+            $customsInfo->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $value
+                )
+            );
+        }
     }
 }

@@ -186,22 +186,22 @@ class Address
         $locality = null,
         $countryCode = null
     ) {
-        if ($streetName != null) {
+        if ($streetName !== null) {
             $this->setStreetName($streetName);
         }
-        if ($number != null) {
+        if ($number !== null) {
             $this->setNumber($number);
         }
-        if ($box != null) {
+        if ($box !== null) {
             $this->setBox($box);
         }
-        if ($postalCode != null) {
+        if ($postalCode !== null) {
             $this->setPostalCode($postalCode);
         }
-        if ($locality != null) {
+        if ($locality !== null) {
             $this->setLocality($locality);
         }
-        if ($countryCode != null) {
+        if ($countryCode !== null) {
             $this->setCountryCode($countryCode);
         }
     }

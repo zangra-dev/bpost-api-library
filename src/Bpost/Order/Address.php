@@ -220,6 +220,7 @@ class Address
         $document->appendChild($address);
 
         $this->streetToXML($document, $prefix, $address);
+        $this->streetNumbersToXML($document, $prefix, $address);
         $this->localityToXML($document, $prefix, $address);
         $this->countryToXML($document, $prefix, $address);
 
@@ -229,6 +230,7 @@ class Address
     /**
      * @param  \SimpleXMLElement $xml
      * @return Address
+     * @throws BpostInvalidLengthException
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
@@ -272,30 +274,6 @@ class Address
                 $document->createElement(
                     $tagName,
                     $this->getStreetName()
-                )
-            );
-        }
-        if ($this->getNumber() !== null) {
-            $tagName = 'number';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getNumber()
-                )
-            );
-        }
-        if ($this->getBox() !== null) {
-            $tagName = 'box';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getBox()
                 )
             );
         }
@@ -350,6 +328,39 @@ class Address
                 $document->createElement(
                     $tagName,
                     $this->getCountryCode()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $address
+     */
+    private function streetNumbersToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    {
+        if ($this->getNumber() !== null) {
+            $tagName = 'number';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getNumber()
+                )
+            );
+        }
+        if ($this->getBox() !== null) {
+            $tagName = 'box';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getBox()
                 )
             );
         }

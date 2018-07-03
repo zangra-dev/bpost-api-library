@@ -207,57 +207,11 @@ class Box
 
         $box = $document->createElement($tagName);
 
-        if ($this->getSender() !== null) {
-            $box->appendChild(
-                $this->getSender()->toXML($document, $prefix)
-            );
-        }
-        if ($this->getNationalBox() !== null) {
-            $box->appendChild(
-                $this->getNationalBox()->toXML($document, $prefix)
-            );
-        }
-        if ($this->getInternationalBox() !== null) {
-            $box->appendChild(
-                $this->getInternationalBox()->toXML($document, $prefix)
-            );
-        }
-        if ($this->getRemark() !== null) {
-            $tagName = 'remark';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $box->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getRemark()
-                )
-            );
-        }
-        if ($this->getAdditionalCustomerReference() !== null) {
-            $tagName = 'additionalCustomerReference';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $box->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getAdditionalCustomerReference()
-                )
-            );
-        }
-        if ($this->getBarcode() !== null) {
-            $tagName = 'barcode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $box->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getBarcode()
-                )
-            );
-        }
+        $this->senderToXML($document, $prefix, $box);
+        $this->boxToXML($document, $prefix, $box);
+        $this->remarkToXML($document, $prefix, $box);
+        $this->additionalCustomerReferenceToXML($document, $prefix, $box);
+        $this->barcodeToXML($document, $prefix, $box);
 
         return $box;
     }
@@ -335,5 +289,101 @@ class Box
         }
 
         return $box;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $box
+     */
+    private function barcodeToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    {
+        if ($this->getBarcode() !== null) {
+            $tagName = 'barcode';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $box->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getBarcode()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $box
+     */
+    private function boxToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    {
+        if ($this->getNationalBox() !== null) {
+            $box->appendChild(
+                $this->getNationalBox()->toXML($document, $prefix)
+            );
+        }
+        if ($this->getInternationalBox() !== null) {
+            $box->appendChild(
+                $this->getInternationalBox()->toXML($document, $prefix)
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $box
+     */
+    private function senderToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    {
+        if ($this->getSender() !== null) {
+            $box->appendChild(
+                $this->getSender()->toXML($document, $prefix)
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $box
+     */
+    private function remarkToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    {
+        if ($this->getRemark() !== null) {
+            $tagName = 'remark';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $box->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getRemark()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $box
+     */
+    private function additionalCustomerReferenceToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    {
+        if ($this->getAdditionalCustomerReference() !== null) {
+            $tagName = 'additionalCustomerReference';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $box->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getAdditionalCustomerReference()
+                )
+            );
+        }
     }
 }

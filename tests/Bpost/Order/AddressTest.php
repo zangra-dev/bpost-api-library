@@ -59,69 +59,54 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
+
     /**
-     * Test validation in the setters
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
-    public function testFaultyProperties()
+    public function testFaultyBoxProperties()
     {
         $address = new Address();
-
-        try {
-            $address->setBox(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setCountryCode(str_repeat('a', 3));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setLocality(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setNumber(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setPostalCode(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setStreetName(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        // Exceptions were caught,
-        $this->assertTrue(true);
+        $address->setBox(str_repeat('a', 9));
+    }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyCountryCodeProperties()
+    {
+        $address = new Address();
+        $address->setCountryCode(str_repeat('a', 3));
+    }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyLocalityProperties()
+    {
+        $address = new Address();
+        $address->setLocality(str_repeat('a', 41));
+    }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyNumberProperties()
+    {
+        $address = new Address();
+        $address->setNumber(str_repeat('a', 9));
+    }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyPostalCodeProperties()
+    {
+        $address = new Address();
+        $address->setPostalCode(str_repeat('a', 41));
+    }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyStreetNameProperties()
+    {
+        $address = new Address();
+        $address->setStreetName(str_repeat('a', 41));
     }
 
     /**

@@ -22,6 +22,6 @@ class ComplexAttributeTest extends \PHPUnit_Framework_TestCase
      */
     private function getComplexAttributeMock()
     {
-        return self::getMockForAbstractClass('\Bpost\BpostApiClient\Common\ComplexAttribute');
+        return $this->getMockForAbstractClass('\Bpost\BpostApiClient\Common\ComplexAttribute');
     }
 }

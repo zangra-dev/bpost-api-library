@@ -23,6 +23,9 @@ class ValidatedValueFake extends ValidatedValue
 class ValidatedValueTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @expectedException Bpost\BpostApiClient\Exception\BpostLogicException
+     */
     public function testGetValue()
     {
         $fake = new ValidatedValueFake('qsd');
@@ -31,7 +34,6 @@ class ValidatedValueTest extends \PHPUnit_Framework_TestCase
         $fake = new ValidatedValueFake('qsd');
         $this->assertSame('qsd', (string)$fake);
 
-        $this->setExpectedException('Bpost\BpostApiClient\Exception\BpostLogicException');
         new ValidatedValueFake('aze');
     }
 

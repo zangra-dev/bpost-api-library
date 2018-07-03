@@ -102,9 +102,11 @@ class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Antidot', $self->getReceiver()->getCompany());
     }
 
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
+     */
     public function testCreateFromNotBpostOnAppointmentXml()
     {
-        $this->setExpectedException('Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException');
         BpostOnAppointment::createFromXml(new \SimpleXMLElement($this->getNotBpostOnAppointmentXml()));
     }
 

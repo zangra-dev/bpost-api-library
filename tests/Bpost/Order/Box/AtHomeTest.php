@@ -100,8 +100,10 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Antidot', $self->getReceiver()->getCompany());
     }
 
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
+     */
     public function testCreateFromBadXml() {
-        $this->setExpectedException('Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException');
         AtHome::createFromXML(new \SimpleXMLElement($this->getNotAtHomeXml()));
     }
 

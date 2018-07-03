@@ -2,8 +2,8 @@
 
 namespace Bpost\BpostApiClient\Bpost;
 
-use SimpleXMLElement;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\DeliveryMethod;
+use SimpleXMLElement;
 
 /**
  * Class ProductConfiguration

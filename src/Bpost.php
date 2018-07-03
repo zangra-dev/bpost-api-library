@@ -2,7 +2,6 @@
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
-use Psr\Log\LoggerInterface;
 use Bpost\BpostApiClient\Bpost\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
@@ -15,6 +14,7 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidRespons
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidSelectionException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bpost class

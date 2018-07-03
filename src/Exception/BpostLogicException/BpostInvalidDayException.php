@@ -2,8 +2,6 @@
 
 namespace Bpost\BpostApiClient\Exception\BpostLogicException;
 
-use Bpost\BpostApiClient\Exception\BpostLogicException;
-
 /**
  * Class BpostInvalidDayException
  * @package Bpost\BpostApiClient\Exception\LogicException

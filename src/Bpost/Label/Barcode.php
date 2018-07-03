@@ -2,8 +2,6 @@
 
 namespace Bpost\BpostApiClient\Bpost\Label;
 
-use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
-
 /**
  * Class Barcode
  * @package Bpost\BpostApiClient\Bpost\Label

@@ -4,7 +4,6 @@ namespace Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box\BpostOnAppointment;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
-use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 
 class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
 {

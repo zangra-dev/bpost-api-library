@@ -2,8 +2,8 @@
 
 namespace Bpost\BpostApiClient\Bpost\ProductConfiguration;
 
-use SimpleXMLElement;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidWeightException;
+use SimpleXMLElement;
 
 /**
  * Class Price

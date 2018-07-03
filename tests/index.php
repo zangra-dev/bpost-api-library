@@ -4,33 +4,21 @@
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/config.php';
 
-use \Bpost\BpostApiClient\Bpost;
-
-use \Bpost\BpostApiClient\Bpost\Order;
-use \Bpost\BpostApiClient\Bpost\Order\Address;
-use \Bpost\BpostApiClient\Bpost\Order\Box;
-use \Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
-use \Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
-use \Bpost\BpostApiClient\Bpost\Order\Box\At247;
-use \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
-use \Bpost\BpostApiClient\Bpost\Order\Box\International;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\AutomaticSecondPresentation;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\CashOnDelivery;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\Signature;
-use \Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day as OpeningHourDay;
-use \Bpost\BpostApiClient\Bpost\Order\Line as OrderLine;
-use \Bpost\BpostApiClient\Bpost\Order\Receiver;
-use \Bpost\BpostApiClient\Bpost\Order\Sender;
-use \Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
-use \Bpost\BpostApiClient\Bpost\Order\PugoAddress;
-
-use \Bpost\BpostApiClient\Geo6;
-
-use \Bpost\BpostApiClient\FormHandler;
-
-use \Bpost\BpostApiClient\Bpack247;
+use Bpost\BpostApiClient\Bpost;
+use Bpost\BpostApiClient\Bpost\Order;
+use Bpost\BpostApiClient\Bpost\Order\Address;
+use Bpost\BpostApiClient\Bpost\Order\Box;
+use Bpost\BpostApiClient\Bpost\Order\Box\At247;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
+use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
+use Bpost\BpostApiClient\Bpost\Order\Box\International;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
+use Bpost\BpostApiClient\Bpost\Order\Line as OrderLine;
+use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
+use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
+use Bpost\BpostApiClient\Bpost\Order\Receiver;
+use Bpost\BpostApiClient\Bpost\Order\Sender;
 
 // create instance
 $bpost = new Bpost(ACCOUNT_ID, PASSPHRASE);

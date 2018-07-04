@@ -60,67 +60,62 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test validation in the setters
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
      */
     public function testFaultyProperties()
     {
         $address = new ParcelsDepotAddress();
+        $address->setBox(str_repeat('a', 9));
+    }
 
-        try {
-            $address->setBox(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
+     */
+    public function testFaultyCountryCodeProperties()
+    {
+        $address = new ParcelsDepotAddress();
+        $address->setCountryCode(str_repeat('a', 3));
+    }
 
-        try {
-            $address->setCountryCode(str_repeat('a', 3));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
+     */
+    public function testFaultyLocalityProperties()
+    {
+        $address = new ParcelsDepotAddress();
+        $address->setLocality(str_repeat('a', 41));
+    }
 
-        try {
-            $address->setLocality(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
+     */
+    public function testFaultyNumberProperties()
+    {
+        $address = new ParcelsDepotAddress();
+        $address->setNumber(str_repeat('a', 9));
+    }
 
-        try {
-            $address->setNumber(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
+     */
+    public function testFaultyPostalCodeProperties()
+    {
+        $address = new ParcelsDepotAddress();
+        $address->setPostalCode(str_repeat('a', 41));
+    }
 
-        try {
-            $address->setPostalCode(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setStreetName(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        // Exceptions were caught,
-        $this->assertTrue(true);
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws BpostInvalidLengthException
+     */
+    public function testFaultyStreetNameProperties()
+    {
+        $address = new ParcelsDepotAddress();
+        $address->setStreetName(str_repeat('a', 41));
     }
 }

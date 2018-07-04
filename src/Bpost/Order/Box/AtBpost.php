@@ -283,7 +283,7 @@ class AtBpost extends National
                 } else {
                     $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
                     if (!method_exists($className, 'createFromXML')) {
-                        throw new BpostNotImplementedException();
+                        throw new BpostNotImplementedException('No createFromXML found into ' . $className);
                     }
                     $option = call_user_func(
                         array($className, 'createFromXML'),

@@ -246,7 +246,7 @@ class Box
             }
 
             if (!method_exists($className, 'createFromXML')) {
-                throw new BpostNotImplementedException();
+                throw new BpostNotImplementedException('No createFromXML found into ' . $className);
             }
 
             $nationalBox = call_user_func(
@@ -264,7 +264,7 @@ class Box
             $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($internationalBoxData->getName());
 
             if (!method_exists($className, 'createFromXML')) {
-                throw new BpostNotImplementedException();
+                throw new BpostNotImplementedException('No createFromXML found into ' . $className);
             }
 
             $internationalBox = call_user_func(

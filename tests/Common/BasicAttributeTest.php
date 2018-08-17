@@ -40,6 +40,9 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('myKey', $fake->getKey());
     }
 
+    /**
+     * @expectedException Bpost\BpostApiClient\Exception\BpostLogicException
+     */
     public function testGetValue()
     {
         $fake = new BasicAttributeFake('qsd');
@@ -48,7 +51,6 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         $fake = new BasicAttributeFake('qsd');
         $this->assertSame('qsd', (string)$fake);
 
-        $this->setExpectedException('Bpost\BpostApiClient\Exception\BpostLogicException');
         new BasicAttributeFake('aze');
     }
 

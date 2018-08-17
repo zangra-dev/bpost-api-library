@@ -116,6 +116,7 @@ class FormHandler
             // limited values
             case 'action':
             case 'lang':
+                $allowedValues = array();
                 $allowedValues['action'] = array('START', 'CONFIRM');
                 $allowedValues['lang'] = array('NL', 'FR', 'EN', 'DE', 'Default');
 

@@ -80,9 +80,11 @@ class Bpack247
     private function doCall($url, $body = null, $method = 'GET')
     {
         // build Authorization header
+        $headers = array();
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
+        $options = array();
         $options[CURLOPT_URL] = self::API_URL . $url;
         $options[CURLOPT_USERAGENT] = $this->getUserAgent();
         $options[CURLOPT_RETURNTRANSFER] = true;

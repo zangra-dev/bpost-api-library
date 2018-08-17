@@ -2,9 +2,9 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National\ShopHandlingInstruction;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
-use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 
@@ -283,7 +283,7 @@ class AtBpost extends National
                 } else {
                     $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
                     if (!method_exists($className, 'createFromXML')) {
-                        throw new BpostNotImplementedException();
+                        throw new BpostNotImplementedException('No createFromXML found into ' . $className);
                     }
                     $option = call_user_func(
                         array($className, 'createFromXML'),

@@ -186,22 +186,22 @@ class Address
         $locality = null,
         $countryCode = null
     ) {
-        if ($streetName != null) {
+        if ($streetName !== null) {
             $this->setStreetName($streetName);
         }
-        if ($number != null) {
+        if ($number !== null) {
             $this->setNumber($number);
         }
-        if ($box != null) {
+        if ($box !== null) {
             $this->setBox($box);
         }
-        if ($postalCode != null) {
+        if ($postalCode !== null) {
             $this->setPostalCode($postalCode);
         }
-        if ($locality != null) {
+        if ($locality !== null) {
             $this->setLocality($locality);
         }
-        if ($countryCode != null) {
+        if ($countryCode !== null) {
             $this->setCountryCode($countryCode);
         }
     }
@@ -219,78 +219,10 @@ class Address
         $address = $document->createElement($tagName);
         $document->appendChild($address);
 
-        if ($this->getStreetName() !== null) {
-            $tagName = 'streetName';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getStreetName()
-                )
-            );
-        }
-        if ($this->getNumber() !== null) {
-            $tagName = 'number';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getNumber()
-                )
-            );
-        }
-        if ($this->getBox() !== null) {
-            $tagName = 'box';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getBox()
-                )
-            );
-        }
-        if ($this->getPostalCode() !== null) {
-            $tagName = 'postalCode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getPostalCode()
-                )
-            );
-        }
-        if ($this->getLocality() !== null) {
-            $tagName = 'locality';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getLocality()
-                )
-            );
-        }
-        if ($this->getCountryCode() !== null) {
-            $tagName = 'countryCode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
-            $address->appendChild(
-                $document->createElement(
-                    $tagName,
-                    $this->getCountryCode()
-                )
-            );
-        }
+        $this->streetToXML($document, $prefix, $address);
+        $this->streetNumbersToXML($document, $prefix, $address);
+        $this->localityToXML($document, $prefix, $address);
+        $this->countryToXML($document, $prefix, $address);
 
         return $address;
     }
@@ -298,6 +230,7 @@ class Address
     /**
      * @param  \SimpleXMLElement $xml
      * @return Address
+     * @throws BpostInvalidLengthException
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
@@ -323,5 +256,113 @@ class Address
         }
 
         return $address;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $address
+     */
+    private function streetToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    {
+        if ($this->getStreetName() !== null) {
+            $tagName = 'streetName';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getStreetName()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $address
+     */
+    private function localityToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    {
+        if ($this->getPostalCode() !== null) {
+            $tagName = 'postalCode';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getPostalCode()
+                )
+            );
+        }
+        if ($this->getLocality() !== null) {
+            $tagName = 'locality';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getLocality()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $address
+     */
+    private function countryToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    {
+        if ($this->getCountryCode() !== null) {
+            $tagName = 'countryCode';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getCountryCode()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param $prefix
+     * @param \DOMElement $address
+     */
+    private function streetNumbersToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    {
+        if ($this->getNumber() !== null) {
+            $tagName = 'number';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getNumber()
+                )
+            );
+        }
+        if ($this->getBox() !== null) {
+            $tagName = 'box';
+            if ($prefix !== null) {
+                $tagName = $prefix . ':' . $tagName;
+            }
+            $address->appendChild(
+                $document->createElement(
+                    $tagName,
+                    $this->getBox()
+                )
+            );
+        }
     }
 }

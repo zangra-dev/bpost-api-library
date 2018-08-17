@@ -2,7 +2,6 @@
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
-use Psr\Log\LoggerInterface;
 use Bpost\BpostApiClient\Bpost\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
@@ -15,6 +14,7 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidRespons
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidSelectionException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bpost class
@@ -218,9 +218,11 @@ class Bpost
     private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
     {
         // build Authorization header
+        $headers = array();
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
+        $options = array();
         $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $url;
         if ($this->getPort() != 0) {
             $options[CURLOPT_PORT] = $this->getPort();

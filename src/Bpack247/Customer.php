@@ -552,86 +552,12 @@ class Customer
 
         $document->appendChild($customer);
 
-        if ($this->getFirstName() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'FirstName',
-                    $this->getFirstName()
-                )
-            );
-        }
-        if ($this->getLastName() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'LastName',
-                    $this->getLastName()
-                )
-            );
-        }
-        if ($this->getStreet() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'Street',
-                    $this->getStreet()
-                )
-            );
-        }
-        if ($this->getNumber() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'Number',
-                    $this->getNumber()
-                )
-            );
-        }
-        if ($this->getEmail() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'Email',
-                    $this->getEmail()
-                )
-            );
-        }
-        if ($this->getMobilePrefix() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'MobilePrefix',
-                    $this->getMobilePrefix()
-                )
-            );
-        }
-        if ($this->getMobileNumber() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'MobileNumber',
-                    $this->getMobileNumber()
-                )
-            );
-        }
-        if ($this->getPostalCode() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'PostalCode',
-                    $this->getPostalCode()
-                )
-            );
-        }
-        if ($this->getPreferredLanguage() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'PreferredLanguage',
-                    $this->getPreferredLanguage()
-                )
-            );
-        }
-        if ($this->getTitle() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'Title',
-                    $this->getTitle()
-                )
-            );
-        }
+        $this->namingToXML($document, $customer);
+        $this->addressToXML($document, $customer);
+        $this->contactToXML($document, $customer);
+        $this->postalCodeToXML($document, $customer);
+        $this->preferredLanguageToXML($document, $customer);
+        $this->titleToXML($document, $customer);
 
         return $customer;
     }
@@ -730,5 +656,133 @@ class Customer
         }
 
         return $customer;
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function namingToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getFirstName() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'FirstName',
+                    $this->getFirstName()
+                )
+            );
+        }
+        if ($this->getLastName() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'LastName',
+                    $this->getLastName()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function contactToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getEmail() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'Email',
+                    $this->getEmail()
+                )
+            );
+        }
+        if ($this->getMobilePrefix() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'MobilePrefix',
+                    $this->getMobilePrefix()
+                )
+            );
+        }
+        if ($this->getMobileNumber() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'MobileNumber',
+                    $this->getMobileNumber()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function addressToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getStreet() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'Street',
+                    $this->getStreet()
+                )
+            );
+        }
+        if ($this->getNumber() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'Number',
+                    $this->getNumber()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function preferredLanguageToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getPreferredLanguage() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'PreferredLanguage',
+                    $this->getPreferredLanguage()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function titleToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getTitle() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'Title',
+                    $this->getTitle()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param \DOMDocument $document
+     * @param \DOMElement $customer
+     */
+    private function postalCodeToXML(\DOMDocument $document, \DOMElement $customer)
+    {
+        if ($this->getPostalCode() !== null) {
+            $customer->appendChild(
+                $document->createElement(
+                    'PostalCode',
+                    $this->getPostalCode()
+                )
+            );
+        }
     }
 }

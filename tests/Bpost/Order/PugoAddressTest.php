@@ -60,67 +60,56 @@ class PugoAddressTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test validation in the setters
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
-    public function testFaultyProperties()
+    public function testFaultyBoxProperties()
     {
         $address = new PugoAddress();
+        $address->setBox(str_repeat('a', 9));
+    }
 
-        try {
-            $address->setBox(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyCountryCodeProperties()
+    {
+        $address = new PugoAddress();
+        $address->setCountryCode(str_repeat('a', 3));
+    }
 
-        try {
-            $address->setCountryCode(str_repeat('a', 3));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyLocalityProperties()
+    {
+        $address = new PugoAddress();
+        $address->setLocality(str_repeat('a', 41));
+    }
 
-        try {
-            $address->setLocality(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyNumberProperties()
+    {
+        $address = new PugoAddress();
+        $address->setNumber(str_repeat('a', 9));
+    }
 
-        try {
-            $address->setNumber(str_repeat('a', 9));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyPostalCodeProperties()
+    {
+        $address = new PugoAddress();
+        $address->setPostalCode(str_repeat('a', 41));
+    }
 
-        try {
-            $address->setPostalCode(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        try {
-            $address->setStreetName(str_repeat('a', 41));
-            $this->fail('BpostInvalidLengthException not launched');
-        } catch (BpostInvalidLengthException $e) {
-            // Nothing, the exception is good
-        } catch (\Exception $e) {
-            $this->fail('BpostInvalidLengthException not caught');
-        }
-
-        // Exceptions were caught,
-        $this->assertTrue(true);
+    /**
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     */
+    public function testFaultyStreetNameProperties()
+    {
+        $address = new PugoAddress();
+        $address->setStreetName(str_repeat('a', 41));
     }
 }

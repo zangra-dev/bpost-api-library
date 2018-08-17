@@ -456,10 +456,12 @@ class Poi
         }
 
         if (isset($recordXml->ClosedFrom) && $recordXml->ClosedFrom != '') {
-            $poi->setClosedFrom((string)$recordXml->ClosedFrom);
+            $closedFrom = (string)$recordXml->ClosedFrom;
+            $poi->setClosedFrom((array) $closedFrom);
         }
         if (isset($recordXml->ClosedTo) && $recordXml->ClosedTo != '') {
-            $poi->setClosedTo((string)$recordXml->ClosedTo);
+            $closedTo = (string)$recordXml->ClosedTo;
+            $poi->setClosedTo((array)$closedTo);
         }
         if (isset($recordXml->NOTE) && $recordXml->NOTE != '') {
             $poi->setNote((string)$recordXml->NOTE);

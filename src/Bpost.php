@@ -218,7 +218,6 @@ class Bpost
     private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
     {
         // build Authorization header
-        $headers = array();
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options

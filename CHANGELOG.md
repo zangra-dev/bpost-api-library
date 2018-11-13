@@ -1,5 +1,10 @@
 # Changelog
 
+### 3.4.1
+
+* Refactoring
+* Fix issues
+
 ### 3.4.0
 
 * Add retro-compatibility with tijsverkoyen library (namespace changes)

@@ -1,9 +1,9 @@
 <?php
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National\ParcelLockerReducedMobilityZone;
-use Bpost\BpostApiClient\Bpost\Order\Box\National\UnregisteredParcelLockerMember;
+use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
 
-class UnregisteredParcelLockerMemberTest extends \PHPUnit_Framework_TestCase
+class UnregisteredTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -25,7 +25,7 @@ class UnregisteredParcelLockerMemberTest extends \PHPUnit_Framework_TestCase
      */
     public function testToXML()
     {
-        $self = new UnregisteredParcelLockerMember();
+        $self = new Unregistered();
         $self->setLanguage('EN');
         $self->setEmailAddress('pomme@antidot.com');
         $self->setMobilePhone('0123456789');
@@ -48,7 +48,7 @@ class UnregisteredParcelLockerMemberTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXml()
     {
-        $self = UnregisteredParcelLockerMember::createFromXml(new \SimpleXMLElement($this->getXmlWithoutPrefix()));
+        $self = Unregistered::createFromXml(new \SimpleXMLElement($this->getXmlWithoutPrefix()));
 
         $this->assertTrue($self->hasLanguage());
         $this->assertSame('EN', $self->getLanguage());
@@ -66,12 +66,12 @@ class UnregisteredParcelLockerMemberTest extends \PHPUnit_Framework_TestCase
     {
         return <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<unregisteredParcelLockerMember>
+<unregistered>
   <language>EN</language>
   <mobilePhone>0123456789</mobilePhone>
   <emailAddress>pomme@antidot.com</emailAddress>
   <parcelLockerReducedMobilityZone/>
-</unregisteredParcelLockerMember>
+</unregistered>
 
 EOF;
     }
@@ -80,12 +80,12 @@ EOF;
     {
         return <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<test:unregisteredParcelLockerMember>
+<test:unregistered>
   <test:language>EN</test:language>
   <test:mobilePhone>0123456789</test:mobilePhone>
   <test:emailAddress>pomme@antidot.com</test:emailAddress>
   <test:parcelLockerReducedMobilityZone/>
-</test:unregisteredParcelLockerMember>
+</test:unregistered>
 
 EOF;
     }

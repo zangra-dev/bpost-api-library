@@ -6,7 +6,7 @@ use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Common\BasicAttribute\PhoneNumber;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 
-class UnregisteredParcelLockerMember extends ComplexAttribute
+class Unregistered extends ComplexAttribute
 {
 
     /** @var Language */
@@ -125,7 +125,7 @@ class UnregisteredParcelLockerMember extends ComplexAttribute
      */
     public function toXml(\DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = $this->getPrefixedTagName('unregisteredParcelLockerMember', $prefix);
+        $tagName = $this->getPrefixedTagName('unregistered', $prefix);
 
         $xml = $document->createElement($tagName);
 
@@ -155,7 +155,7 @@ class UnregisteredParcelLockerMember extends ComplexAttribute
 
     /**
      * @param \SimpleXMLElement $xml
-     * @return UnregisteredParcelLockerMember
+     * @return Unregistered
      */
     public static function createFromXml(\SimpleXMLElement $xml)
     {

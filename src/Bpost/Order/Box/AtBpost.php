@@ -256,6 +256,7 @@ class AtBpost extends National
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      * @throws \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     * @throws \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
      */
     public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
     {
@@ -283,14 +284,7 @@ class AtBpost extends National
                 ) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
-                    $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
-                    if (!method_exists($className, 'createFromXML')) {
-                        throw new BpostNotImplementedException('No createFromXML found into ' . $className);
-                    }
-                    $option = call_user_func(
-                        array($className, 'createFromXML'),
-                        $optionData
-                    );
+                    $option = self::getOptionFromOptionData($optionData);
                 }
 
                 $atBpost->addOption($option);

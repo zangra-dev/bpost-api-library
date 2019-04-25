@@ -125,13 +125,14 @@ class AtHome extends National
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param \SimpleXMLElement $xml
+     * @param National          $self
+     *
      * @return AtHome
-     * @throws BpostNotImplementedException
      * @throws BpostXmlInvalidItemException
      * @throws \Bpost\BpostApiClient\BpostException
      */
-    public static function createFromXML(\SimpleXMLElement $xml, $self = null)
+    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
     {
         if ($self === null) {
             $self = new self();

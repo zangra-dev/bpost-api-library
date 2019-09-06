@@ -236,7 +236,14 @@ class International implements IBox
                 if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
-                    $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
+                    switch ($optionData->getName()) {
+                        case 'insured':
+                            $class = 'Insurance';
+                            break;
+                        default:
+                            $class = ucfirst($optionData->getName());
+                    }
+                    $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
                     if (!method_exists($className, 'createFromXML')) {
                         throw new BpostNotImplementedException('No createFromXML found into ' . $className);
                     }

@@ -323,19 +323,7 @@ class At247 extends National
                 if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
-                    if ($optionData->getName() != "insured") {
-                        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
-                    }
-                    else {
-                        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\Insurance';
-                    }
-                    if (! method_exists($className, 'createFromXML')) {
-                        throw new BpostNotImplementedException();
-                    }
-                    $option = call_user_func(
-                        array($className, 'createFromXML'),
-                        $optionData
-                    );
+                    $option = self::getOptionFromOptionData($optionData);
                 }
 
                 $at247->addOption($option);

@@ -45,6 +45,13 @@ class International implements IBox
     private $customsInfo;
 
     /**
+     * Only for shipments outside Europe.Might include from 1 to 10 “parcelContent”.
+     *
+     * @var array
+     */
+    private $parcelContents;
+
+    /**
      * @param \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo $customsInfo
      */
     public function setCustomsInfo($customsInfo)
@@ -152,6 +159,26 @@ class International implements IBox
     }
 
     /**
+     * @return array
+     */
+    public function getParcelContents()
+    {
+        return $this->parcelContents;
+    }
+
+    /**
+     * @param array $parcelContents, content only ParcelContent
+     *
+     * @return self
+     */
+    public function setParcelContents(array $parcelContents)
+    {
+        $this->parcelContents = $parcelContents;
+
+        return $this;
+    }
+
+    /**
      * Return the object as an array for usage in the XML
      *
      * @param  \DomDocument $document
@@ -209,6 +236,14 @@ class International implements IBox
                 $this->getCustomsInfo()->toXML($document, 'international')
             );
         }
+
+        $parcelContents = $document->createElement('international:parcelContents');
+        foreach ($this->getParcelContents() as $parcelContent) {
+            $parcelContents->appendChild(
+                $parcelContent->toXML($document, 'international')
+            );
+        }
+        $international->appendChild($parcelContents);
 
         return $internationalBox;
     }

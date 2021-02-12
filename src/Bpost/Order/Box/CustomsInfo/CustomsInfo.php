@@ -52,6 +52,28 @@ class CustomsInfo
     private $privateAddress;
 
     /**
+     * this is the currency used for field parcelValue.In case of shipment to non-European country,
+     * this is also the currency used for all parcel contents value (field valueOfitem) in 3 letters format.
+     *
+     * Possible values are: EUR=Euro    GBP=Pound   Sterling    USD=US Dollar   CNY=Yuan Renminbi
+     *
+     * @var string
+     */
+    private $currency;
+
+    /**
+     * Amount paid by the sender for the sending of this shipment. See contract pricing with bpost.
+     * Decimal format field (3.2)
+     * Minimum value : 0
+     * Maximum value : 999.99
+     * Currency for field amtPostagePaidByAddresse is always EUR !
+     *
+     * @var float
+     */
+    private $amtPostagePaidByAddresse;
+
+
+    /**
      * @param string $contentDescription
      * @throws BpostInvalidLengthException
      */
@@ -181,6 +203,26 @@ class CustomsInfo
         );
     }
 
+    public function getAmtPostagePaidByAddresse(): float
+    {
+        return $this->amtPostagePaidByAddresse;
+    }
+
+    public function setAmtPostagePaidByAddresse(float $amtPostagePaidByAddresse)
+    {
+        $this->amtPostagePaidByAddresse = $amtPostagePaidByAddresse;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(string $currency)
+    {
+        $this->currency = $currency;
+    }
+
     /**
      * Return the object as an array for usage in the XML
      *
@@ -242,6 +284,20 @@ class CustomsInfo
                 ((string) $xml->privateAddress == 'true')
             );
         }
+
+        $customsInfo->appendChild(
+            $document->createElement(
+                'international:currency',
+                $this->getCurrency()
+            )
+        );
+
+        $customsInfo->appendChild(
+            $document->createElement(
+                'international:amtPostagePaidByAddresse',
+                $this->getAmtPostagePaidByAddresse()
+            )
+        );
 
         return $customsInfo;
     }

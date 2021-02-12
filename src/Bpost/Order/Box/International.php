@@ -303,6 +303,7 @@ class International implements IBox
                             $class = ucfirst($optionData->getName());
                     }
                     $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
+
                     if (!method_exists($className, 'createFromXML')) {
                         throw new BpostNotImplementedException('No createFromXML found into ' . $className);
                     }

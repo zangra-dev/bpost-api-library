@@ -12,6 +12,7 @@ use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidResponseException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidSelectionException;
+use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use Psr\Log\LoggerInterface;
@@ -214,6 +215,7 @@ class Bpost
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
     {
@@ -276,7 +278,10 @@ class Bpost
         }
 
         // convert into XML
-        $xml = simplexml_load_string($response);
+        $xml = @simplexml_load_string($response);
+        if ($xml === false) {
+            throw new BpostInvalidXmlResponseException();
+        }
 
         // return the response
         return $xml;

@@ -1,0 +1,23 @@
+on: [push]
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: 7.1
+
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
+        with:
+          version: 5
+          php_version: 7.1
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml.dist
+          args: --coverage-text
+

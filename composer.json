@@ -1,6 +1,6 @@
 {
   "name": "antidot-be/bpost-api-library",
-  "version": "3.4.7",
+  "version": "3.4.10",
   "type": "library",
   "description": "bpost API library is a PHP library to communicate with the bpost API.",
   "homepage": "https://github.com/Antidot-be/bpost-api-library",
@@ -28,7 +28,7 @@
     "ext-mbstring": "*",
     "psr/log": "^1.0",
     "ext-dom": "20031129",
-    "ext-SimpleXML": "^7.2"
+    "ext-SimpleXML": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^4.8 || ^5.3"

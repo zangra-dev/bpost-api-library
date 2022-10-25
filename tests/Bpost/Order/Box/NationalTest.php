@@ -29,9 +29,9 @@ class NationalFake extends National
 
     /**
      * @param  \SimpleXMLElement $xml
-     * @return self
+     * @return National
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
     {
         return parent::createFromXML($xml->nationalFake, new self());
     }

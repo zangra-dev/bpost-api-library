@@ -5,12 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: install composer dependencies
         uses: php-actions/composer@v6
         with:
-          php_version: 7.1
+          php_version: 7.4
+
+      - name: php-cs-fixer static analysis
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --diff --dry-run
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3

@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Common\BasicAttribute;
 
 use Bpost\BpostApiClient\Common\BasicAttribute;
@@ -7,7 +8,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidPatternExcept
 
 class EmailAddressCharacteristic extends BasicAttribute
 {
-
     /**
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidPatternException

@@ -26,12 +26,13 @@
     "php": ">=5.3.0",
     "ext-curl": "*",
     "ext-mbstring": "*",
-    "psr/log": "^1.0",
-    "ext-dom": "20031129",
+    "psr/log": "*",
+    "ext-dom": "*",
     "ext-SimpleXML": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^4.8 || ^5.3"
+    "phpunit/phpunit": "^5",
+    "friendsofphp/php-cs-fixer": "=3.9.5"
   },
   "autoload": {
     "psr-4": {

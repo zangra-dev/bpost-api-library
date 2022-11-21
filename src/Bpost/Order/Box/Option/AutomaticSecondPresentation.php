@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 /**
@@ -35,6 +36,6 @@ class AutomaticSecondPresentation extends Option
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
-        return new static;
+        return new static();
     }
 }

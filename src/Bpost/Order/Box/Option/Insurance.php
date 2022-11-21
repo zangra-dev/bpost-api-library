@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
@@ -13,7 +14,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
  */
 class Insurance extends Option
 {
-
     const INSURANCE_TYPE_BASIC_INSURANCE = 'basicInsurance';
     const INSURANCE_TYPE_ADDITIONAL_INSURANCE = 'additionalInsurance';
 
@@ -55,7 +55,6 @@ class Insurance extends Option
      */
     public function setType($type)
     {
-
         if (!in_array($type, self::getPossibleTypeValues())) {
             throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
         }
@@ -168,14 +167,12 @@ class Insurance extends Option
         if (isset($data->{static::INSURANCE_TYPE_BASIC_INSURANCE})) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;
             $value = (int)$data->{static::INSURANCE_TYPE_BASIC_INSURANCE}->attributes()->value;
-        }
-        elseif (isset($data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE})) {
+        } elseif (isset($data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE})) {
             $value = (int)$data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE}->attributes()->value;
             if ($value == 1) {
                 $type = static::INSURANCE_TYPE_BASIC_INSURANCE;
                 $value = null;
-            }
-            else {
+            } else {
                 $type = static::INSURANCE_TYPE_ADDITIONAL_INSURANCE;
             }
         }

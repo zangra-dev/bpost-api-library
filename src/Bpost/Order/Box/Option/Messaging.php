@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
@@ -14,7 +15,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
  */
 class Messaging extends Option
 {
-
     const MESSAGING_LANGUAGE_EN = 'EN';
     const MESSAGING_LANGUAGE_NL = 'NL';
     const MESSAGING_LANGUAGE_FR = 'FR';
@@ -144,7 +144,6 @@ class Messaging extends Option
      */
     public function setType($type)
     {
-
         if (!in_array($type, self::getPossibleTypeValues())) {
             throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
         }
@@ -235,9 +234,7 @@ class Messaging extends Option
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
-        $messaging = new Messaging(
-            $xml->getName(), (string) $xml->attributes()->language
-        );
+        $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
 
         $data = $xml->{$xml->getName()};
         if (isset($data->emailAddress) && $data->emailAddress != '') {

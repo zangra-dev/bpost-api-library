@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Common\BasicAttribute\EmailAddressCharacteristic;
@@ -8,7 +9,6 @@ use Bpost\BpostApiClient\Common\ComplexAttribute;
 
 class Unregistered extends ComplexAttribute
 {
-
     /** @var Language */
     private $language;
 

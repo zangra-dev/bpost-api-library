@@ -11,7 +11,6 @@ use SimpleXMLElement;
  */
 class ProductConfiguration
 {
-
     /** @var array DeliveryMethod[] */
     private $deliveryMethods = array();
 

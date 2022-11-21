@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day;
@@ -264,7 +265,6 @@ abstract class National extends ComplexAttribute implements IBox
         }
 
         return $self;
-
     }
 
     /**

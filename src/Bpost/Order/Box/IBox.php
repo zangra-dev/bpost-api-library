@@ -8,7 +8,6 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box;
  */
 interface IBox
 {
-
     /**
      * @param array $options
      */

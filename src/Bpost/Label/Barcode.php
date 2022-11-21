@@ -8,7 +8,6 @@ namespace Bpost\BpostApiClient\Bpost\Label;
  */
 class Barcode
 {
-
     /**
      * @var string
      */

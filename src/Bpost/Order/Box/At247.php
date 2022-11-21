@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
@@ -132,7 +133,7 @@ class At247 extends National
      */
     public function setProduct($product)
     {
-        if ( ! in_array($product, self::getPossibleProductValues())) {
+        if (! in_array($product, self::getPossibleProductValues())) {
             throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
 

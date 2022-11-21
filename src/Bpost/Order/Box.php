@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
@@ -11,7 +12,6 @@ use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
  */
 class Box
 {
-
     const BOX_STATUS_OPEN = 'OPEN';
     const BOX_STATUS_PENDING = 'PENDING';
     const BOX_STATUS_PRINTED = 'PRINTED';

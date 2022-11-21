@@ -115,5 +115,4 @@ abstract class BasicAttribute
      * @throws BpostLogicException
      */
     public abstract function validate();
-
 }

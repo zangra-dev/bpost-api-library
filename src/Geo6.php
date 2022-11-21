@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;

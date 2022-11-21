@@ -1,11 +1,11 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 
 class ParcelLockerReducedMobilityZone extends ComplexAttribute
 {
-
     /**
      * @param \DOMDocument $document
      * @param string       $prefix

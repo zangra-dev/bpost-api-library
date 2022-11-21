@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpack247;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
@@ -11,7 +12,6 @@ use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoUserIdFoundException;
  */
 class Customer
 {
-
     const CUSTOMER_PREFERRED_LANGUAGE_NL = 'nl-BE';
     const CUSTOMER_PREFERRED_LANGUAGE_FR = 'fr-BE';
     const CUSTOMER_PREFERRED_LANGUAGE_EN = 'en-US';

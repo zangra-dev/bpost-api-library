@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\Bpack247\Customer;

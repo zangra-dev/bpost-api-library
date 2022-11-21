@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;

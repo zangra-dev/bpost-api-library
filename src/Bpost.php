@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
@@ -27,7 +28,6 @@ use Psr\Log\LoggerInterface;
  */
 class Bpost
 {
-
     const LABEL_FORMAT_A4 = 'A4';
     const LABEL_FORMAT_A6 = 'A6';
 
@@ -372,7 +372,7 @@ class Bpost
     }
 
     // webservice methods
-// orders
+    // orders
     /**
      * Creates a new order. If an order with the same orderReference already exists
      *
@@ -513,7 +513,7 @@ class Bpost
         );
     }
 
-// labels
+    // labels
     /**
      * Get the possible label formats
      *

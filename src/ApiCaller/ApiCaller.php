@@ -17,7 +17,6 @@ use Bpost\BpostApiClient\Logger;
  */
 class ApiCaller
 {
-
     /** @var Logger */
     private $logger;
 

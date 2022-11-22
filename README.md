@@ -47,7 +47,7 @@ use Bpost\BpostApiClient\BpostException;
 use Psr\Log\LoggerInterface;
 
 
-$apiUrl = "https://api.bpost.be/services/shm/";
+$apiUrl = "https://api-parcel.bpost.be/services/shm/";
 $apiUsername = "107423";
 $apiPassword = "MyGreatApiPassword";
 

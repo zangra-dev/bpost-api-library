@@ -4,6 +4,8 @@ namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
 use Bpost\BpostApiClient\Bpost\CreateLabelInBulkForOrders;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -97,7 +99,6 @@ class Bpost
     /** @var Logger */
     private $logger;
 
-    // class methods
     /**
      * Create Bpost instance
      *
@@ -419,8 +420,7 @@ class Bpost
                 $headers,
                 'POST',
                 false
-            ) == ''
-        ;
+            ) == '';
     }
 
     /**
@@ -522,11 +522,11 @@ class Bpost
                 $headers,
                 'POST',
                 false
-            ) == ''
-        ;
+            ) == '';
     }
 
     // labels
+
     /**
      * Get the possible label formats
      *
@@ -541,52 +541,6 @@ class Bpost
     }
 
     /**
-     * Generic method to centralize handling of labels
-     *
-     * @param string $url
-     * @param string $format
-     * @param bool   $withReturnLabels
-     * @param bool   $asPdf
-     *
-     * @return Bpost\Label[]
-     *
-     * @throws BpostCurlException
-     * @throws BpostInvalidResponseException
-     * @throws BpostInvalidSelectionException
-     * @throws BpostInvalidValueException
-     */
-    protected function getLabel($url, $format = self::LABEL_FORMAT_A6, $withReturnLabels = false, $asPdf = false)
-    {
-        $format = strtoupper($format);
-        if (!in_array($format, self::getPossibleLabelFormatValues())) {
-            throw new BpostInvalidValueException('format', $format, self::getPossibleLabelFormatValues());
-        }
-
-        $url .= '/labels/' . $format;
-        if ($withReturnLabels) {
-            $url .= '/withReturnLabels';
-        }
-
-        if ($asPdf) {
-            $headers = array(
-                'Accept: application/vnd.bpost.shm-label-pdf-v3.4+XML',
-            );
-        } else {
-            $headers = array(
-                'Accept: application/vnd.bpost.shm-label-image-v3.4+XML',
-            );
-        }
-
-        $xml = $this->doCall(
-            $url,
-            null,
-            $headers
-        );
-
-        return Labels::createFromXML($xml);
-    }
-
-    /**
      * Create the labels for all unprinted boxes in an order.
      * The service will return labels for all unprinted boxes for that order.
      * Boxes that were unprinted will get the status PRINTED, the boxes that
@@ -598,8 +552,6 @@ class Bpost
      * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
-     *
-     * @throws BpostInvalidValueException
      */
     public function createLabelForOrder(
         $reference,
@@ -607,9 +559,17 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $url = '/orders/' . (string) $reference;
+        $createLabel = new CreateLabelForOrder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        return $this->getLabel($url, $format, $withReturnLabels, $asPdf);
+        $xml = $this->doCall(
+            $createLabel->getUrl(),
+            $createLabel->getXml(),
+            $createLabel->getHeaders(),
+            $createLabel->getMethod(),
+            $createLabel->isExpectXml()
+        );
+
+        return Labels::createFromXML($xml);
     }
 
     /**
@@ -621,8 +581,6 @@ class Bpost
      * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
-     *
-     * @throws BpostInvalidValueException
      */
     public function createLabelForBox(
         $barcode,
@@ -630,9 +588,17 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $url = '/boxes/' . (string) $barcode;
+        $createLabel = new CreateLabelForBox($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        return $this->getLabel($url, $format, $withReturnLabels, $asPdf);
+        $xml = $this->doCall(
+            $createLabel->getUrl(),
+            $createLabel->getXml(),
+            $createLabel->getHeaders(),
+            $createLabel->getMethod(),
+            $createLabel->isExpectXml()
+        );
+
+        return Labels::createFromXML($xml);
     }
 
     /**

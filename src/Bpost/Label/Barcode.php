@@ -2,9 +2,10 @@
 
 namespace Bpost\BpostApiClient\Bpost\Label;
 
+use SimpleXMLElement;
+
 /**
  * Class Barcode
- * @package Bpost\BpostApiClient\Bpost\Label
  */
 class Barcode
 {
@@ -23,7 +24,7 @@ class Barcode
      */
     public function setBarcode($barcode)
     {
-        $this->barcode = (string)$barcode;
+        $this->barcode = (string) $barcode;
     }
 
     /**
@@ -51,18 +52,18 @@ class Barcode
     }
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return self
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $self = new self();
         if (isset($xml->barcode) && $xml->barcode != '') {
-            $self->setBarcode((string)$xml->barcode);
+            $self->setBarcode((string) $xml->barcode);
         }
         if (isset($xml->reference) && $xml->reference != '') {
-            $self->setReference((string)$xml->reference);
+            $self->setReference((string) $xml->reference);
         }
 
         return $self;

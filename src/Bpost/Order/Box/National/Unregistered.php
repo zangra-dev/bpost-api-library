@@ -6,6 +6,9 @@ use Bpost\BpostApiClient\Common\BasicAttribute\EmailAddressCharacteristic;
 use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Common\BasicAttribute\PhoneNumber;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 class Unregistered extends ComplexAttribute
 {
@@ -118,12 +121,13 @@ class Unregistered extends ComplexAttribute
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param string       $prefix
-     * @param string       $type
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DOMElement
      */
-    public function toXml(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXml(DOMDocument $document, $prefix = null, $type = null)
     {
         $tagName = $this->getPrefixedTagName('unregistered', $prefix);
 
@@ -154,23 +158,24 @@ class Unregistered extends ComplexAttribute
     }
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Unregistered
      */
-    public static function createFromXml(\SimpleXMLElement $xml)
+    public static function createFromXml(SimpleXMLElement $xml)
     {
         $self = new self();
 
         if (isset($xml->language) && $xml->language != '') {
-            $self->setLanguage((string)$xml->language);
+            $self->setLanguage((string) $xml->language);
         }
 
         if (isset($xml->mobilePhone) && $xml->mobilePhone != '') {
-            $self->setMobilePhone((string)$xml->mobilePhone);
+            $self->setMobilePhone((string) $xml->mobilePhone);
         }
 
         if (isset($xml->emailAddress) && $xml->emailAddress != '') {
-            $self->setEmailAddress((string)$xml->emailAddress);
+            $self->setEmailAddress((string) $xml->emailAddress);
         }
 
         if (isset($xml->parcelLockerReducedMobilityZone)) {

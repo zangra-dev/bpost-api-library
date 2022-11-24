@@ -6,11 +6,10 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Class Logger
- * @package Bpost\BpostApiClient
  */
 class Logger
 {
-    /** @var  LoggerInterface */
+    /** @var LoggerInterface */
     private $logger;
 
     /**

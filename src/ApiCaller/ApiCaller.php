@@ -12,7 +12,7 @@ use Bpost\BpostApiClient\Logger;
 
 /**
  * Class ApiCaller
- * @package Bpost\BpostApiClient\ApiCaller
+ *
  * @codeCoverageIgnore That makes a HTTP request with the bpost API
  */
 class ApiCaller
@@ -31,6 +31,7 @@ class ApiCaller
 
     /**
      * ApiCaller constructor.
+     *
      * @param Logger $logger
      */
     public function __construct(Logger $logger = null)
@@ -62,10 +63,11 @@ class ApiCaller
         return $this->responseContentType;
     }
 
-
     /**
      * @param array $options
+     *
      * @return bool
+     *
      * @throws BpostApiBusinessException
      * @throws BpostApiResponseException
      * @throws BpostApiSystemException
@@ -92,7 +94,7 @@ class ApiCaller
         $this->logger->debug('curl response', array(
             'status' => $errorNumber . ' (' . $errorMessage . ')',
             'headers' => $headers,
-            'response' => $this->responseBody
+            'response' => $this->responseBody,
         ));
 
         // error?
@@ -121,6 +123,6 @@ class ApiCaller
      */
     public function getHttpCodeType()
     {
-        return 100 * (int)($this->responseHttpCode / 100);
+        return 100 * (int) ($this->responseHttpCode / 100);
     }
 }

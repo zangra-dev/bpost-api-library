@@ -3,6 +3,7 @@
 namespace Bpost\BpostApiClient\Bpost;
 
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
+use DOMDocument;
 
 /**
  * Class CreateLabelInBulkForOrders
@@ -11,11 +12,12 @@ class CreateLabelInBulkForOrders
 {
     /**
      * @param string[] $references
+     *
      * @return string
      */
     public function getXml(array $references)
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -33,6 +35,7 @@ class CreateLabelInBulkForOrders
 
     /**
      * @param bool $asPdf
+     *
      * @return string[]
      */
     public function getHeaders($asPdf)
@@ -46,6 +49,7 @@ class CreateLabelInBulkForOrders
     /**
      * @param LabelFormat $format
      * @param bool        $withReturnLabels
+     *
      * @return string
      */
     public function getUrl(LabelFormat $format, $withReturnLabels, $forcePrinting = false)

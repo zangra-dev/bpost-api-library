@@ -6,7 +6,6 @@ use SimpleXMLElement;
 
 /**
  * Class DeliveryMethod
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class DeliveryMethod
 {
@@ -19,9 +18,9 @@ class DeliveryMethod
     const DELIVERY_METHOD_VISIBILITY_GREYED_OUT = 'GREYED_OUT';
     const DELIVERY_METHOD_VISIBILITY_INVISIBLE = 'INVISIBLE';
 
-    /** @var  string */
+    /** @var string */
     private $name;
-    /** @var  string */
+    /** @var string */
     private $visibility;
     /** @var Product[] */
     private $products = array();
@@ -65,11 +64,12 @@ class DeliveryMethod
      */
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
     }
 
     /**
      * @return string
+     *
      * @see Constants self::VISIBLITY_*
      */
     public function getVisibility()
@@ -92,7 +92,7 @@ class DeliveryMethod
      */
     public function setVisibility($visibility)
     {
-        $this->visibility = (string)$visibility;
+        $this->visibility = (string) $visibility;
     }
 
     /**

@@ -9,12 +9,17 @@ use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost International class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -103,6 +108,7 @@ class International implements IBox
 
     /**
      * @param string $product
+     *
      * @throws BpostInvalidValueException
      */
     public function setProduct($product)
@@ -154,11 +160,12 @@ class International implements IBox
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
         $tagName = 'internationalBox';
         if ($prefix !== null) {
@@ -214,13 +221,14 @@ class International implements IBox
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return International
+     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $international = new International();
 
@@ -230,7 +238,7 @@ class International implements IBox
             );
         }
         if (isset($xml->international->options)) {
-            /** @var \SimpleXMLElement $optionData */
+            /** @var SimpleXMLElement $optionData */
             foreach ($xml->international->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 

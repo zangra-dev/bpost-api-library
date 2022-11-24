@@ -3,6 +3,9 @@
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost Customer class
@@ -72,6 +75,7 @@ class Customer
 
     /**
      * @param string $emailAddress
+     *
      * @throws BpostInvalidLengthException
      */
     public function setEmailAddress($emailAddress)
@@ -109,6 +113,7 @@ class Customer
 
     /**
      * @param string $phoneNumber
+     *
      * @throws BpostInvalidLengthException
      */
     public function setPhoneNumber($phoneNumber)
@@ -131,11 +136,12 @@ class Customer
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param \DomDocument $document
-     * @param  string      $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DomDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
         $tagName = static::TAG_NAME;
         if ($prefix !== null) {
@@ -186,13 +192,14 @@ class Customer
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
-     * @param  Customer          $instance
+     * @param SimpleXMLElement $xml
+     * @param Customer         $instance
      *
      * @return Customer
+     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXMLHelper(\SimpleXMLElement $xml, Customer $instance)
+    public static function createFromXMLHelper(SimpleXMLElement $xml, Customer $instance)
     {
         if (isset($xml->name) && $xml->name != '') {
             $instance->setName((string) $xml->name);

@@ -17,6 +17,7 @@ abstract class BasicAttribute
 
     /**
      * BasicAttribute constructor.
+     *
      * @param mixed  $value
      * @param string $key
      */
@@ -40,7 +41,7 @@ abstract class BasicAttribute
      */
     private function setKey($key)
     {
-        $this->key = (string)($key ?: $this->getDefaultKey());
+        $this->key = (string) ($key ?: $this->getDefaultKey());
     }
 
     /**
@@ -56,13 +57,15 @@ abstract class BasicAttribute
      */
     public function __toString()
     {
-        return (string)$this->getValue();
+        return (string) $this->getValue();
     }
 
     /**
      * Prefix $tagName with the $prefix, if needed
+     *
      * @param string $prefix
      * @param string $tagName
+     *
      * @return string
      */
     public function getPrefixedTagName($tagName, $prefix = null)
@@ -70,11 +73,13 @@ abstract class BasicAttribute
         if (empty($prefix)) {
             return $tagName;
         }
+
         return $prefix . ':' . $tagName;
     }
 
     /**
      * @param int $length
+     *
      * @throws BpostInvalidLengthException
      */
     public function validateLength($length)
@@ -86,6 +91,7 @@ abstract class BasicAttribute
 
     /**
      * @param array $allowedValues
+     *
      * @throws BpostInvalidValueException
      */
     public function validateChoice(array $allowedValues)
@@ -97,6 +103,7 @@ abstract class BasicAttribute
 
     /**
      * @param string $regexPattern
+     *
      * @throws BpostInvalidPatternException
      */
     public function validatePattern($regexPattern)

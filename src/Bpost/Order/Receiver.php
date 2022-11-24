@@ -2,6 +2,8 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use SimpleXMLElement;
+
 /**
  * bPost Receiver class
  *
@@ -12,10 +14,11 @@ class Receiver extends Customer
     const TAG_NAME = 'receiver';
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Receiver
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $receiver = new Receiver();
         $receiver = parent::createFromXMLHelper($xml, $receiver);

@@ -4,6 +4,10 @@ namespace Bpost\BpostApiClient\Bpack247;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoUserIdFoundException;
+use DateTime;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Customer class
@@ -100,7 +104,7 @@ class Customer
     private $isComfortZoneUser;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     private $dateOfBirth;
 
@@ -130,7 +134,7 @@ class Customer
     private $userName;
 
     /**
-     * @param boolean $activated
+     * @param bool $activated
      */
     public function setActivated($activated)
     {
@@ -138,7 +142,7 @@ class Customer
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActivated()
     {
@@ -162,7 +166,7 @@ class Customer
     }
 
     /**
-     * @param \DateTime $dateOfBirth
+     * @param DateTime $dateOfBirth
      */
     public function setDateOfBirth($dateOfBirth)
     {
@@ -170,7 +174,7 @@ class Customer
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDateOfBirth()
     {
@@ -226,7 +230,7 @@ class Customer
     }
 
     /**
-     * @param boolean $isComfortZoneUser
+     * @param bool $isComfortZoneUser
      */
     public function setIsComfortZoneUser($isComfortZoneUser)
     {
@@ -234,7 +238,7 @@ class Customer
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsComfortZoneUser()
     {
@@ -306,7 +310,7 @@ class Customer
     }
 
     /**
-     * @param boolean $optIn
+     * @param bool $optIn
      */
     public function setOptIn($optIn)
     {
@@ -314,7 +318,7 @@ class Customer
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getOptIn()
     {
@@ -363,6 +367,7 @@ class Customer
 
     /**
      * @param string $preferredLanguage
+     *
      * @throws BpostInvalidValueException
      */
     public function setPreferredLanguage($preferredLanguage)
@@ -399,7 +404,7 @@ class Customer
     }
 
     /**
-     * @param boolean $receivePromotions
+     * @param bool $receivePromotions
      */
     public function setReceivePromotions($receivePromotions)
     {
@@ -407,7 +412,7 @@ class Customer
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getReceivePromotions()
     {
@@ -432,6 +437,7 @@ class Customer
 
     /**
      * @param string $title
+     *
      * @throws BpostInvalidValueException
      */
     public function setTitle($title)
@@ -479,7 +485,7 @@ class Customer
     }
 
     /**
-     * @param boolean $useInformationForThirdParty
+     * @param bool $useInformationForThirdParty
      */
     public function setUseInformationForThirdParty($useInformationForThirdParty)
     {
@@ -487,7 +493,7 @@ class Customer
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUseInformationForThirdParty()
     {
@@ -529,10 +535,11 @@ class Customer
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DOMDocument $document
-     * @return \DOMElement
+     * @param DOMDocument $document
+     *
+     * @return DOMElement
      */
-    public function toXML(\DOMDocument $document)
+    public function toXML(DOMDocument $document)
     {
         $customer = $document->createElement(
             'Customer'
@@ -563,13 +570,14 @@ class Customer
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Customer
+     *
      * @throws BpostInvalidValueException
      * @throws BpostXmlNoUserIdFoundException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         // @todo work with classmaps ...
         if (!isset($xml->UserID)) {
@@ -597,7 +605,7 @@ class Customer
             $customer->setCompanyName((string) $xml->CompanyName);
         }
         if (isset($xml->DateOfBirth) && $xml->DateOfBirth != '') {
-            $dateTime = new \DateTime((string) $xml->DateOfBirth);
+            $dateTime = new DateTime((string) $xml->DateOfBirth);
             $customer->setDateOfBirth($dateTime);
         }
         if (isset($xml->DeliveryCode) && $xml->DeliveryCode != '') {
@@ -659,10 +667,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function namingToXML(\DOMDocument $document, \DOMElement $customer)
+    private function namingToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getFirstName() !== null) {
             $customer->appendChild(
@@ -683,10 +691,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function contactToXML(\DOMDocument $document, \DOMElement $customer)
+    private function contactToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getEmail() !== null) {
             $customer->appendChild(
@@ -715,10 +723,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function addressToXML(\DOMDocument $document, \DOMElement $customer)
+    private function addressToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getStreet() !== null) {
             $customer->appendChild(
@@ -739,10 +747,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function preferredLanguageToXML(\DOMDocument $document, \DOMElement $customer)
+    private function preferredLanguageToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getPreferredLanguage() !== null) {
             $customer->appendChild(
@@ -755,10 +763,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function titleToXML(\DOMDocument $document, \DOMElement $customer)
+    private function titleToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getTitle() !== null) {
             $customer->appendChild(
@@ -771,10 +779,10 @@ class Customer
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement $customer
+     * @param DOMDocument $document
+     * @param DOMElement  $customer
      */
-    private function postalCodeToXML(\DOMDocument $document, \DOMElement $customer)
+    private function postalCodeToXML(DOMDocument $document, DOMElement $customer)
     {
         if ($this->getPostalCode() !== null) {
             $customer->appendChild(

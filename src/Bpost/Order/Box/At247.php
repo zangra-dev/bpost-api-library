@@ -8,18 +8,23 @@ use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost At247 class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
 class At247 extends National
 {
-    /**@var string */
+    /** @var string */
     private $parcelsDepotId;
 
     /** @var string */
@@ -133,7 +138,7 @@ class At247 extends National
      */
     public function setProduct($product)
     {
-        if (! in_array($product, self::getPossibleProductValues())) {
+        if (!in_array($product, self::getPossibleProductValues())) {
             throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
 
@@ -196,19 +201,19 @@ class At247 extends National
      */
     public function setRequestedDeliveryDate($requestedDeliveryDate)
     {
-        $this->requestedDeliveryDate = (string)$requestedDeliveryDate;
+        $this->requestedDeliveryDate = (string) $requestedDeliveryDate;
     }
 
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @param  string       $type
+     * @param DomDocument $document
+     * @param string      $prefix
+     * @param string      $type
      *
-     * @return \DomElement
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
         $tagName = 'nationalBox';
         if ($prefix !== null) {
@@ -267,11 +272,11 @@ class At247 extends National
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $typeElement
-     * @param string       $prefix
+     * @param DOMDocument $document
+     * @param DOMElement  $typeElement
+     * @param string      $prefix
      */
-    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, $prefix)
     {
         if ($this->getRequestedDeliveryDate() !== null) {
             $typeElement->appendChild(
@@ -284,11 +289,11 @@ class At247 extends National
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $typeElement
-     * @param string       $prefix
+     * @param DOMDocument $document
+     * @param DOMElement  $typeElement
+     * @param string      $prefix
      */
-    protected function addToXmlUnregistered(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    protected function addToXmlUnregistered(DOMDocument $document, DOMElement $typeElement, $prefix)
     {
         if ($this->getUnregistered() !== null) {
             $typeElement->appendChild(
@@ -298,26 +303,27 @@ class At247 extends National
     }
 
     /**
-     * @param \SimpleXMLElement $xml
-     * @param National|null     $self
+     * @param SimpleXMLElement $xml
+     * @param National|null    $self
      *
      * @return At247
+     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      * @throws \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      * @throws \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
      */
-    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
         $at247 = new At247();
 
         if (isset($xml->{'at24-7'}->product) && $xml->{'at24-7'}->product != '') {
             $at247->setProduct(
-                (string)$xml->{'at24-7'}->product
+                (string) $xml->{'at24-7'}->product
             );
         }
         if (isset($xml->{'at24-7'}->options)) {
-            /** @var \SimpleXMLElement $optionData */
+            /** @var SimpleXMLElement $optionData */
             foreach ($xml->{'at24-7'}->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
@@ -332,36 +338,36 @@ class At247 extends National
         }
         if (isset($xml->{'at24-7'}->weight) && $xml->{'at24-7'}->weight != '') {
             $at247->setWeight(
-                (int)$xml->{'at24-7'}->weight
+                (int) $xml->{'at24-7'}->weight
             );
         }
         if (isset($xml->{'at24-7'}->memberId) && $xml->{'at24-7'}->memberId != '') {
             $at247->setMemberId(
-                (string)$xml->{'at24-7'}->memberId
+                (string) $xml->{'at24-7'}->memberId
             );
         }
         if (isset($xml->{'at24-7'}->receiverName) && $xml->{'at24-7'}->receiverName != '') {
             $at247->setReceiverName(
-                (string)$xml->{'at24-7'}->receiverName
+                (string) $xml->{'at24-7'}->receiverName
             );
         }
         if (isset($xml->{'at24-7'}->receiverCompany) && $xml->{'at24-7'}->receiverCompany != '') {
             $at247->setReceiverCompany(
-                (string)$xml->{'at24-7'}->receiverCompany
+                (string) $xml->{'at24-7'}->receiverCompany
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotId) && $xml->{'at24-7'}->parcelsDepotId != '') {
             $at247->setParcelsDepotId(
-                (string)$xml->{'at24-7'}->parcelsDepotId
+                (string) $xml->{'at24-7'}->parcelsDepotId
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotName) && $xml->{'at24-7'}->parcelsDepotName != '') {
             $at247->setParcelsDepotName(
-                (string)$xml->{'at24-7'}->parcelsDepotName
+                (string) $xml->{'at24-7'}->parcelsDepotName
             );
         }
         if (isset($xml->{'at24-7'}->parcelsDepotAddress)) {
-            /** @var \SimpleXMLElement $parcelsDepotAddressData */
+            /** @var SimpleXMLElement $parcelsDepotAddressData */
             $parcelsDepotAddressData = $xml->{'at24-7'}->parcelsDepotAddress->children(
                 'http://schema.post.be/shm/deepintegration/v3/common'
             );
@@ -371,7 +377,7 @@ class At247 extends National
         }
         if (isset($xml->{'at24-7'}->requestedDeliveryDate) && $xml->{'at24-7'}->requestedDeliveryDate != '') {
             $at247->setRequestedDeliveryDate(
-                (string)$xml->{'at24-7'}->requestedDeliveryDate
+                (string) $xml->{'at24-7'}->requestedDeliveryDate
             );
         }
 

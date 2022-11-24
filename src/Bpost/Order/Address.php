@@ -3,6 +3,9 @@
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Address class
@@ -45,6 +48,7 @@ class Address
 
     /**
      * @param string $box
+     *
      * @throws BpostInvalidLengthException
      */
     public function setBox($box)
@@ -66,6 +70,7 @@ class Address
 
     /**
      * @param string $countryCode
+     *
      * @throws BpostInvalidLengthException
      */
     public function setCountryCode($countryCode)
@@ -87,6 +92,7 @@ class Address
 
     /**
      * @param string $locality
+     *
      * @throws BpostInvalidLengthException
      */
     public function setLocality($locality)
@@ -108,6 +114,7 @@ class Address
 
     /**
      * @param string $number
+     *
      * @throws BpostInvalidLengthException
      */
     public function setNumber($number)
@@ -129,6 +136,7 @@ class Address
 
     /**
      * @param string $postalCode
+     *
      * @throws BpostInvalidLengthException
      */
     public function setPostalCode($postalCode)
@@ -150,6 +158,7 @@ class Address
 
     /**
      * @param string $streetName
+     *
      * @throws BpostInvalidLengthException
      */
     public function setStreetName($streetName)
@@ -210,11 +219,12 @@ class Address
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DOMDocument $document
-     * @param  string       $prefix
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $prefix
+     *
+     * @return DOMElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
         $tagName = static::TAG_NAME;
         $address = $document->createElement($tagName);
@@ -229,11 +239,13 @@ class Address
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Address
+     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $address = new Address();
 
@@ -260,11 +272,11 @@ class Address
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $address
+     * @param DOMElement $address
      */
-    private function streetToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    private function streetToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getStreetName() !== null) {
             $tagName = 'streetName';
@@ -281,11 +293,11 @@ class Address
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $address
+     * @param DOMElement $address
      */
-    private function localityToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    private function localityToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getPostalCode() !== null) {
             $tagName = 'postalCode';
@@ -314,11 +326,11 @@ class Address
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $address
+     * @param DOMElement $address
      */
-    private function countryToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    private function countryToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getCountryCode() !== null) {
             $tagName = 'countryCode';
@@ -335,11 +347,11 @@ class Address
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $address
+     * @param DOMElement $address
      */
-    private function streetNumbersToXML(\DOMDocument $document, $prefix, \DOMElement $address)
+    private function streetNumbersToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getNumber() !== null) {
             $tagName = 'number';

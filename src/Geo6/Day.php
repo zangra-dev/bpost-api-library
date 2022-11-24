@@ -3,12 +3,15 @@
 namespace Bpost\BpostApiClient\Geo6;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidDayException;
+use SimpleXMLElement;
 
 /**
  * Geo6 class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -115,7 +118,9 @@ class Day
 
     /**
      * Get the index for a day
+     *
      * @return int
+     *
      * @throws BpostInvalidDayException
      */
     public function getDayIndex()
@@ -162,10 +167,11 @@ class Day
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Day
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $day = new Day();
         $day->setDay($xml->getName());

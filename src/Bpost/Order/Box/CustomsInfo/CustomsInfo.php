@@ -4,12 +4,17 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost CustomsInfo class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -52,6 +57,7 @@ class CustomsInfo
 
     /**
      * @param string $contentDescription
+     *
      * @throws BpostInvalidLengthException
      */
     public function setContentDescription($contentDescription)
@@ -74,6 +80,7 @@ class CustomsInfo
 
     /**
      * @param string $parcelReturnInstructions
+     *
      * @throws BpostInvalidValueException
      */
     public function setParcelReturnInstructions($parcelReturnInstructions)
@@ -128,7 +135,7 @@ class CustomsInfo
     }
 
     /**
-     * @param boolean $privateAddress
+     * @param bool $privateAddress
      */
     public function setPrivateAddress($privateAddress)
     {
@@ -136,7 +143,7 @@ class CustomsInfo
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getPrivateAddress()
     {
@@ -145,6 +152,7 @@ class CustomsInfo
 
     /**
      * @param string $shipmentType
+     *
      * @throws BpostInvalidValueException
      */
     public function setShipmentType($shipmentType)
@@ -183,11 +191,12 @@ class CustomsInfo
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
         $tagName = 'customsInfo';
         if ($prefix !== null) {
@@ -206,13 +215,14 @@ class CustomsInfo
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return CustomsInfo
+     *
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $customsInfo = new CustomsInfo();
 
@@ -238,7 +248,7 @@ class CustomsInfo
         }
         if (isset($xml->privateAddress) && $xml->privateAddress != '') {
             $customsInfo->setPrivateAddress(
-                ((string) $xml->privateAddress == 'true')
+                (string) $xml->privateAddress == 'true'
             );
         }
 
@@ -246,11 +256,11 @@ class CustomsInfo
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $customsInfo
+     * @param DOMElement $customsInfo
      */
-    private function parcelValueToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    private function parcelValueToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getParcelValue() !== null) {
             $tagName = 'parcelValue';
@@ -267,11 +277,11 @@ class CustomsInfo
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $customsInfo
+     * @param DOMElement $customsInfo
      */
-    private function contentDescriptionToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    private function contentDescriptionToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getContentDescription() !== null) {
             $tagName = 'contentDescription';
@@ -288,11 +298,11 @@ class CustomsInfo
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $customsInfo
+     * @param DOMElement $customsInfo
      */
-    private function shipmentTypeToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    private function shipmentTypeToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getShipmentType() !== null) {
             $tagName = 'shipmentType';
@@ -309,11 +319,11 @@ class CustomsInfo
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $customsInfo
+     * @param DOMElement $customsInfo
      */
-    private function possibleParcelReturnInstructionValuesToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    private function possibleParcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getPossibleParcelReturnInstructionValues() !== null) {
             $tagName = 'parcelReturnInstructions';
@@ -330,11 +340,11 @@ class CustomsInfo
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $customsInfo
+     * @param DOMElement $customsInfo
      */
-    private function privateAddressToXML(\DOMDocument $document, $prefix, \DOMElement $customsInfo)
+    private function privateAddressToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getPrivateAddress() !== null) {
             $tagName = 'privateAddress';

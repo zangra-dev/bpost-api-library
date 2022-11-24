@@ -2,11 +2,16 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use DomDocument;
+use DomElement;
+
 /**
  * bPost CashOnDelivery class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -90,11 +95,12 @@ class CashOnDelivery extends Option
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
         $tagName = 'cod';
         if ($prefix !== null) {

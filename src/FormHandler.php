@@ -59,11 +59,11 @@ class FormHandler
 
         foreach ($keysToHash as $key) {
             if (isset($this->parameters[$key])) {
-                if (! is_array($this->parameters[$key])) {
-                    $base .= $key.'='.$this->parameters[$key].'&';
+                if (!is_array($this->parameters[$key])) {
+                    $base .= $key . '=' . $this->parameters[$key] . '&';
                 } else {
                     foreach ($this->parameters[$key] as $entry) {
-                        $base .= $key.'='.$entry.'&';
+                        $base .= $key . '=' . $entry . '&';
                     }
                 }
             }
@@ -79,8 +79,9 @@ class FormHandler
     /**
      * Get the parameters
      *
-     * @param  bool  $form
-     * @param  bool  $includeChecksum
+     * @param bool $form
+     * @param bool $includeChecksum
+     *
      * @return array
      */
     public function getParameters($form = false, $includeChecksum = true)
@@ -108,6 +109,7 @@ class FormHandler
      *
      * @param string $key
      * @param mixed  $value
+     *
      * @throws BpostInvalidValueException
      * @throws BpostInvalidLengthException
      */

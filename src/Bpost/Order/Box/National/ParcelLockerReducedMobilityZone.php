@@ -3,16 +3,20 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 class ParcelLockerReducedMobilityZone extends ComplexAttribute
 {
     /**
-     * @param \DOMDocument $document
-     * @param string       $prefix
-     * @param string       $type
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DOMElement
      */
-    public function toXml(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXml(DOMDocument $document, $prefix = null, $type = null)
     {
         $tagName = $this->getPrefixedTagName('parcelLockerReducedMobilityZone', $prefix);
 
@@ -23,12 +27,15 @@ class ParcelLockerReducedMobilityZone extends ComplexAttribute
 
     /**
      * @todo Implement it, because today, nothing is specified
-     * @param \SimpleXMLElement $xml
+     *
+     * @param SimpleXMLElement $xml
+     *
      * @return ParcelLockerReducedMobilityZone|ComplexAttribute
      */
-    public static function createFromXml(\SimpleXMLElement $xml)
+    public static function createFromXml(SimpleXMLElement $xml)
     {
         $self = new self();
+
         return $self;
     }
 }

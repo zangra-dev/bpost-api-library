@@ -2,19 +2,25 @@
 
 namespace Bpost\BpostApiClient\Common;
 
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
+
 interface IAttribute
 {
     /**
-     * @param \DOMDocument $document
-     * @param string       $prefix
-     * @param string       $type
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DOMElement
      */
-    public function toXml(\DOMDocument $document, $prefix = null, $type = null);
+    public function toXml(DOMDocument $document, $prefix = null, $type = null);
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return IAttribute
      */
-    public static function createFromXml(\SimpleXMLElement $xml);
+    public static function createFromXml(SimpleXMLElement $xml);
 }

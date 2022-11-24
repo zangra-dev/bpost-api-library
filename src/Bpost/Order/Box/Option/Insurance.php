@@ -3,12 +3,17 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost Insurance class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -51,6 +56,7 @@ class Insurance extends Option
 
     /**
      * @param string $type
+     *
      * @throws BpostInvalidValueException
      */
     public function setType($type)
@@ -72,6 +78,7 @@ class Insurance extends Option
 
     /**
      * @param string $value
+     *
      * @throws BpostInvalidValueException
      */
     public function setValue($value)
@@ -127,11 +134,12 @@ class Insurance extends Option
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
         $tagName = 'insured';
         if ($prefix !== null) {
@@ -154,11 +162,11 @@ class Insurance extends Option
     }
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return static
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $data = $xml->{$xml->getName()}[0];
 
@@ -166,9 +174,9 @@ class Insurance extends Option
         $value = 0;
         if (isset($data->{static::INSURANCE_TYPE_BASIC_INSURANCE})) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;
-            $value = (int)$data->{static::INSURANCE_TYPE_BASIC_INSURANCE}->attributes()->value;
+            $value = (int) $data->{static::INSURANCE_TYPE_BASIC_INSURANCE}->attributes()->value;
         } elseif (isset($data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE})) {
-            $value = (int)$data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE}->attributes()->value;
+            $value = (int) $data->{static::INSURANCE_TYPE_ADDITIONAL_INSURANCE}->attributes()->value;
             if ($value == 1) {
                 $type = static::INSURANCE_TYPE_BASIC_INSURANCE;
                 $value = null;

@@ -8,12 +8,17 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost National class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -76,6 +81,7 @@ abstract class National extends ComplexAttribute implements IBox
 
     /**
      * @remark should be implemented by the child class
+     *
      * @return array
      */
     public static function getPossibleProductValues()
@@ -142,12 +148,13 @@ abstract class National extends ComplexAttribute implements IBox
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @param  string       $type
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
         $typeElement = $document->createElement($type);
 
@@ -205,15 +212,16 @@ abstract class National extends ComplexAttribute implements IBox
         return $typeElement;
     }
 
-
     /**
-     * @param \SimpleXMLElement $nationalXml
-     * @param National          $self
+     * @param SimpleXMLElement $nationalXml
+     * @param National         $self
+     *
      * @return AtHome
+     *
      * @throws BpostException
      * @throws BpostXmlInvalidItemException
      */
-    public static function createFromXML(\SimpleXMLElement $nationalXml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $nationalXml, National $self = null)
     {
         if ($self === null) {
             throw new BpostException('Set an instance of National');
@@ -221,12 +229,12 @@ abstract class National extends ComplexAttribute implements IBox
 
         if (isset($nationalXml->product) && $nationalXml->product != '') {
             $self->setProduct(
-                (string)$nationalXml->product
+                (string) $nationalXml->product
             );
         }
 
         if (isset($nationalXml->options) && !empty($nationalXml->options)) {
-            /** @var \SimpleXMLElement $optionData */
+            /** @var SimpleXMLElement $optionData */
             foreach ($nationalXml->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
@@ -248,19 +256,19 @@ abstract class National extends ComplexAttribute implements IBox
 
         if (isset($nationalXml->weight) && $nationalXml->weight != '') {
             $self->setWeight(
-                (int)$nationalXml->weight
+                (int) $nationalXml->weight
             );
         }
 
         if (isset($nationalXml->openingHours) && $nationalXml->openingHours != '') {
             foreach ($nationalXml->openingHours->children() as $day => $value) {
-                $self->addOpeningHour(new Day($day, (string)$value));
+                $self->addOpeningHour(new Day($day, (string) $value));
             }
         }
 
         if (isset($nationalXml->desiredDeliveryPlace) && $nationalXml->desiredDeliveryPlace != '') {
             $self->setDesiredDeliveryPlace(
-                (string)$nationalXml->desiredDeliveryPlace
+                (string) $nationalXml->desiredDeliveryPlace
             );
         }
 
@@ -268,12 +276,13 @@ abstract class National extends ComplexAttribute implements IBox
     }
 
     /**
-     * @param \SimpleXMLElement $optionData
+     * @param SimpleXMLElement $optionData
      *
      * @return Option
+     *
      * @throws BpostXmlInvalidItemException
      */
-    protected static function getOptionFromOptionData(\SimpleXMLElement $optionData)
+    protected static function getOptionFromOptionData(SimpleXMLElement $optionData)
     {
         switch ($optionData->getName()) {
             case 'insured':
@@ -282,7 +291,7 @@ abstract class National extends ComplexAttribute implements IBox
             default:
                 $class = ucfirst($optionData->getName());
         }
-        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\'.$class;
+        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
         if (!method_exists($className, 'createFromXML')) {
             throw new BpostXmlInvalidItemException();
         }

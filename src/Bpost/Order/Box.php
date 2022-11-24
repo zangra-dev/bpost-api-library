@@ -4,6 +4,9 @@ namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Box class
@@ -120,6 +123,7 @@ class Box
 
     /**
      * @param string $status
+     *
      * @throws BpostInvalidValueException
      */
     public function setStatus($status)
@@ -161,7 +165,7 @@ class Box
      */
     public function setAdditionalCustomerReference($additionalCustomerReference)
     {
-        $this->additionalCustomerReference = (string)$additionalCustomerReference;
+        $this->additionalCustomerReference = (string) $additionalCustomerReference;
     }
 
     /**
@@ -194,11 +198,12 @@ class Box
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
         $tagName = 'box';
         if ($prefix !== null) {
@@ -217,13 +222,14 @@ class Box
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Box
+     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $box = new Box();
         if (isset($xml->sender)) {
@@ -236,7 +242,7 @@ class Box
             );
         }
         if (isset($xml->nationalBox)) {
-            /** @var \SimpleXMLElement $nationalBoxData */
+            /** @var SimpleXMLElement $nationalBoxData */
             $nationalBoxData = $xml->nationalBox->children('http://schema.post.be/shm/deepintegration/v3/national');
 
             // build classname based on the tag name
@@ -257,7 +263,7 @@ class Box
             $box->setNationalBox($nationalBox);
         }
         if (isset($xml->internationalBox)) {
-            /** @var \SimpleXMLElement $internationalBoxData */
+            /** @var SimpleXMLElement $internationalBoxData */
             $internationalBoxData = $xml->internationalBox->children('http://schema.post.be/shm/deepintegration/v3/international');
 
             // build classname based on the tag name
@@ -278,7 +284,7 @@ class Box
             $box->setRemark((string) $xml->remark);
         }
         if (isset($xml->additionalCustomerReference) && $xml->additionalCustomerReference != '') {
-            $box->setAdditionalCustomerReference((string)$xml->additionalCustomerReference);
+            $box->setAdditionalCustomerReference((string) $xml->additionalCustomerReference);
         }
         if (!empty($xml->barcode)) {
             $box->setBarcode((string) $xml->barcode);
@@ -291,11 +297,11 @@ class Box
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $box
+     * @param DOMElement $box
      */
-    private function barcodeToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    private function barcodeToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getBarcode() !== null) {
             $tagName = 'barcode';
@@ -312,11 +318,11 @@ class Box
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $box
+     * @param DOMElement $box
      */
-    private function boxToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    private function boxToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getNationalBox() !== null) {
             $box->appendChild(
@@ -331,11 +337,11 @@ class Box
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $box
+     * @param DOMElement $box
      */
-    private function senderToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    private function senderToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getSender() !== null) {
             $box->appendChild(
@@ -345,11 +351,11 @@ class Box
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $box
+     * @param DOMElement $box
      */
-    private function remarkToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    private function remarkToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getRemark() !== null) {
             $tagName = 'remark';
@@ -366,11 +372,11 @@ class Box
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param $prefix
-     * @param \DOMElement $box
+     * @param DOMElement $box
      */
-    private function additionalCustomerReferenceToXML(\DOMDocument $document, $prefix, \DOMElement $box)
+    private function additionalCustomerReferenceToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getAdditionalCustomerReference() !== null) {
             $tagName = 'additionalCustomerReference';

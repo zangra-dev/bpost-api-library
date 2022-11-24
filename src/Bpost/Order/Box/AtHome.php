@@ -5,14 +5,18 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
-use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost AtHome class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -26,7 +30,9 @@ class AtHome extends National
 
     /**
      * @param string $product
+     *
      * @see getPossibleProductValues
+     *
      * @throws BpostInvalidValueException
      */
     public function setProduct($product)
@@ -81,18 +87,19 @@ class AtHome extends National
      */
     public function setRequestedDeliveryDate($requestedDeliveryDate)
     {
-        $this->requestedDeliveryDate = (string)$requestedDeliveryDate;
+        $this->requestedDeliveryDate = (string) $requestedDeliveryDate;
     }
 
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @param  string       $type
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
         $nationalElement = $document->createElement($this->getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'atHome');
@@ -110,10 +117,10 @@ class AtHome extends National
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $typeElement
+     * @param DOMDocument $document
+     * @param DOMElement  $typeElement
      */
-    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement)
     {
         if ($this->getRequestedDeliveryDate() !== null) {
             $typeElement->appendChild(
@@ -126,14 +133,15 @@ class AtHome extends National
     }
 
     /**
-     * @param \SimpleXMLElement $xml
-     * @param National          $self
+     * @param SimpleXMLElement $xml
+     * @param National         $self
      *
      * @return AtHome
+     *
      * @throws BpostXmlInvalidItemException
      * @throws \Bpost\BpostApiClient\BpostException
      */
-    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
         if ($self === null) {
             $self = new self();

@@ -2,6 +2,10 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use DomDocument;
+use DOMElement;
+use SimpleXMLElement;
+
 /**
  * bPost Line class
  *
@@ -68,11 +72,12 @@ class Line
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DOMElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DOMElement
      */
-    public function toXML(\DomDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
         $tagName = 'orderLine';
         if ($prefix !== null) {
@@ -110,10 +115,11 @@ class Line
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Line
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $line = new Line();
         if (isset($xml->text) && $xml->text !== '') {

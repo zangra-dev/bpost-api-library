@@ -4,12 +4,17 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost Messaging class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -47,6 +52,7 @@ class Messaging extends Option
 
     /**
      * @param string $emailAddress
+     *
      * @throws BpostInvalidLengthException
      */
     public function setEmailAddress($emailAddress)
@@ -69,6 +75,7 @@ class Messaging extends Option
 
     /**
      * @param string $language
+     *
      * @throws BpostInvalidValueException
      */
     public function setLanguage($language)
@@ -105,6 +112,7 @@ class Messaging extends Option
 
     /**
      * @param string $mobilePhone
+     *
      * @throws BpostInvalidLengthException
      */
     public function setMobilePhone($mobilePhone)
@@ -140,6 +148,7 @@ class Messaging extends Option
 
     /**
      * @param string $type
+     *
      * @throws BpostInvalidValueException
      */
     public function setType($type)
@@ -160,8 +169,8 @@ class Messaging extends Option
     }
 
     /**
-     * @param string $type
-     * @param string $language
+     * @param string      $type
+     * @param string      $language
      * @param string|null $emailAddress
      * @param string|null $mobilePhone
      *
@@ -184,11 +193,12 @@ class Messaging extends Option
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
         $tagName = $this->getType();
         if ($prefix !== null) {
@@ -227,12 +237,13 @@ class Messaging extends Option
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Messaging
+     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
 

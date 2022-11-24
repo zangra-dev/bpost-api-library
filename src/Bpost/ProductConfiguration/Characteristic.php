@@ -6,15 +6,14 @@ use SimpleXMLElement;
 
 /**
  * Class Characteristic
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class Characteristic
 {
-    /** @var  string */
+    /** @var string */
     private $displayValue;
-    /** @var  int */
+    /** @var int */
     private $value;
-    /** @var  string */
+    /** @var string */
     private $name;
 
     /**

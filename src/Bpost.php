@@ -3,9 +3,9 @@
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
-use Bpost\BpostApiClient\Bpost\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -627,13 +627,20 @@ class Bpost
         $asPdf = false,
         $forcePrinting = false
     ) {
-        $createLabelInBulkForOrders = new CreateLabelInBulkForOrders();
+        $builder = new CreateLabelInBulkForOrders(
+            $references,
+            new LabelFormat($format),
+            $asPdf,
+            $withReturnLabels,
+            $forcePrinting
+        );
 
         $xml = $this->doCall(
-            $createLabelInBulkForOrders->getUrl(new LabelFormat($format), $withReturnLabels, $forcePrinting),
-            $createLabelInBulkForOrders->getXml($references),
-            $createLabelInBulkForOrders->getHeaders($asPdf),
-            'POST'
+            $builder->getUrl(),
+            $builder->getXml(),
+            $builder->getHeaders(),
+            $builder->getMethod(),
+            $builder->isExpectXml()
         );
 
         return Labels::createFromXML($xml);

@@ -6,6 +6,7 @@ use Bpost\BpostApiClient\ApiCaller\ApiCaller;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -393,33 +394,19 @@ class Bpost
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createOrReplaceOrder(Order $order)
     {
-        $url = '/orders';
-
-        $document = new DOMDocument('1.0', 'utf-8');
-        $document->preserveWhiteSpace = false;
-        $document->formatOutput = true;
-
-        $document->appendChild(
-            $order->toXML(
-                $document,
-                $this->accountId
-            )
-        );
-
-        $headers = array(
-            'Content-type: application/vnd.bpost.shm-order-v3.3+XML',
-        );
+        $builder = new CreateOrReplaceOrder($order, $this->accountId);
 
         return
             $this->doCall(
-                $url,
-                $document->saveXML(),
-                $headers,
-                'POST',
-                false
+                $builder->getUrl(),
+                $builder->getXml(),
+                $builder->getHeaders(),
+                $builder->getMethod(),
+                $builder->isExpectXml()
             ) == '';
     }
 

@@ -204,7 +204,7 @@ class CustomsInfo
         $this->parcelValueToXML($document, $prefix, $customsInfo);
         $this->contentDescriptionToXML($document, $prefix, $customsInfo);
         $this->shipmentTypeToXML($document, $prefix, $customsInfo);
-        $this->possibleParcelReturnInstructionValuesToXML($document, $prefix, $customsInfo);
+        $this->parcelReturnInstructionValuesToXML($document, $prefix, $customsInfo);
         $this->privateAddressToXML($document, $prefix, $customsInfo);
 
         return $customsInfo;
@@ -307,9 +307,9 @@ class CustomsInfo
      * @param $prefix
      * @param DOMElement $customsInfo
      */
-    private function possibleParcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    private function parcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
-        if ($this->getPossibleParcelReturnInstructionValues() !== null) {
+        if ($this->getParcelReturnInstructions() !== null) {
             $customsInfo->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('parcelReturnInstructions', $prefix),

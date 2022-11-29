@@ -6,6 +6,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DOMDocument;
@@ -215,11 +216,7 @@ class At247 extends National
      */
     public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = 'nationalBox';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-        $nationalElement = $document->createElement($tagName);
+        $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'at24-7');
         $nationalElement->appendChild($boxElement);
 
@@ -281,7 +278,7 @@ class At247 extends National
         if ($this->getRequestedDeliveryDate() !== null) {
             $typeElement->appendChild(
                 $document->createElement(
-                    $this->getPrefixedTagName('requestedDeliveryDate', $prefix),
+                    XmlHelper::getPrefixedTagName('requestedDeliveryDate', $prefix),
                     $this->getRequestedDeliveryDate()
                 )
             );

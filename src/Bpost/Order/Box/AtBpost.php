@@ -6,6 +6,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\National\ShopHandlingInstruction;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DOMDocument;
@@ -199,7 +200,7 @@ class AtBpost extends National
      */
     public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
-        $nationalElement = $document->createElement($this->getPrefixedTagName('nationalBox', $prefix));
+        $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'atBpost');
         $nationalElement->appendChild($boxElement);
 

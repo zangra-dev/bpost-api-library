@@ -3,6 +3,7 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DOMDocument;
 use DOMElement;
@@ -62,7 +63,7 @@ class BpostOnAppointment extends National
      */
     public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
-        $nationalElement = $document->createElement($this->getPrefixedTagName('nationalBox', $prefix));
+        $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'bpostOnAppointment');
         $nationalElement->appendChild($boxElement);
 
@@ -96,7 +97,7 @@ class BpostOnAppointment extends National
         if ($this->getInNetworkCutOff() !== null) {
             $typeElement->appendChild(
                 $document->createElement(
-                    $this->getPrefixedTagName('inNetworkCutOff', $prefix),
+                    XmlHelper::getPrefixedTagName('inNetworkCutOff', $prefix),
                     $this->getInNetworkCutOff()
                 )
             );

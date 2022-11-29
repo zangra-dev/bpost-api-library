@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DomDocument;
@@ -200,34 +201,21 @@ class Messaging extends Option
      */
     public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = $this->getType();
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $messaging = $document->createElement($tagName);
+        $messaging = $document->createElement(XmlHelper::getPrefixedTagName($this->getType(), $prefix));
         $messaging->setAttribute('language', $this->getLanguage());
 
         if ($this->getEmailAddress() !== null) {
-            $tagName = 'emailAddress';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $messaging->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('emailAddress', $prefix),
                     $this->getEmailAddress()
                 )
             );
         }
         if ($this->getMobilePhone() !== null) {
-            $tagName = 'mobilePhone';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $messaging->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('mobilePhone', $prefix),
                     $this->getMobilePhone()
                 )
             );

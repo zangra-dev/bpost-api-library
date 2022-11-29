@@ -3,6 +3,7 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use DOMDocument;
 use DOMElement;
 use SimpleXMLElement;
@@ -18,7 +19,7 @@ class ParcelLockerReducedMobilityZone extends ComplexAttribute
      */
     public function toXml(DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = $this->getPrefixedTagName('parcelLockerReducedMobilityZone', $prefix);
+        $tagName = XmlHelper::getPrefixedTagName('parcelLockerReducedMobilityZone', $prefix);
 
         $xml = $document->createElement($tagName);
 

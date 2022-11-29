@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DOMDocument;
@@ -205,12 +206,7 @@ class Box
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'box';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $box = $document->createElement($tagName);
+        $box = $document->createElement(XmlHelper::getPrefixedTagName('box', $prefix));
 
         $this->senderToXML($document, $prefix, $box);
         $this->boxToXML($document, $prefix, $box);
@@ -304,13 +300,9 @@ class Box
     private function barcodeToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getBarcode() !== null) {
-            $tagName = 'barcode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $box->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('barcode', $prefix),
                     $this->getBarcode()
                 )
             );
@@ -358,13 +350,9 @@ class Box
     private function remarkToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getRemark() !== null) {
-            $tagName = 'remark';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $box->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('remark', $prefix),
                     $this->getRemark()
                 )
             );
@@ -379,13 +367,9 @@ class Box
     private function additionalCustomerReferenceToXML(DOMDocument $document, $prefix, DOMElement $box)
     {
         if ($this->getAdditionalCustomerReference() !== null) {
-            $tagName = 'additionalCustomerReference';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $box->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('additionalCustomerReference', $prefix),
                     $this->getAdditionalCustomerReference()
                 )
             );

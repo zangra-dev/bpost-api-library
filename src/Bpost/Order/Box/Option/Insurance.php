@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DomDocument;
 use DomElement;
@@ -141,17 +142,9 @@ class Insurance extends Option
      */
     public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = 'insured';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-        $insured = $document->createElement($tagName);
+        $insured = $document->createElement(XmlHelper::getPrefixedTagName('insured', $prefix));
 
-        $tagName = $this->getType();
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-        $insurance = $document->createElement($tagName);
+        $insurance = $document->createElement(XmlHelper::getPrefixedTagName($this->getType(), $prefix));
         $insured->appendChild($insurance);
 
         if ($this->getValue() !== null) {

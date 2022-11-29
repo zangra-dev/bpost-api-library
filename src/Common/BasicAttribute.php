@@ -61,23 +61,6 @@ abstract class BasicAttribute
     }
 
     /**
-     * Prefix $tagName with the $prefix, if needed
-     *
-     * @param string $prefix
-     * @param string $tagName
-     *
-     * @return string
-     */
-    public function getPrefixedTagName($tagName, $prefix = null)
-    {
-        if (empty($prefix)) {
-            return $tagName;
-        }
-
-        return $prefix . ':' . $tagName;
-    }
-
-    /**
      * @param int $length
      *
      * @throws BpostInvalidLengthException

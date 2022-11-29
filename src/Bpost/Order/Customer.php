@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use DomDocument;
 use DomElement;
@@ -143,12 +144,7 @@ class Customer
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = static::TAG_NAME;
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $customer = $document->createElement($tagName);
+        $customer = $document->createElement(XmlHelper::getPrefixedTagName(static::TAG_NAME, $prefix));
 
         if ($this->getName() !== null) {
             $customer->appendChild(

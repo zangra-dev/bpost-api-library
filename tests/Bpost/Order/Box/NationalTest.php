@@ -6,6 +6,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Option;
+use Bpost\BpostApiClient\Common\XmlHelper;
 
 class NationalFake extends National
 {
@@ -21,7 +22,7 @@ class NationalFake extends National
      */
     public function toXML(\DOMDocument $document, $prefix = null, $type = null)
     {
-        $nationalElement = $document->createElement($this->getPrefixedTagName('nationalBox', $prefix));
+        $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'nationalFake');
         $nationalElement->appendChild($boxElement);
         return $nationalElement;

@@ -6,6 +6,7 @@ use Bpost\BpostApiClient\Common\BasicAttribute\EmailAddressCharacteristic;
 use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Common\BasicAttribute\PhoneNumber;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use DOMDocument;
 use DOMElement;
 use SimpleXMLElement;
@@ -129,22 +130,22 @@ class Unregistered extends ComplexAttribute
      */
     public function toXml(DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = $this->getPrefixedTagName('unregistered', $prefix);
+        $tagName = XmlHelper::getPrefixedTagName('unregistered', $prefix);
 
         $xml = $document->createElement($tagName);
 
         if ($this->hasLanguage()) {
-            $tagName = $this->getPrefixedTagName('language', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('language', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getLanguage()));
         }
 
         if ($this->getMobilePhone() !== null) {
-            $tagName = $this->getPrefixedTagName('mobilePhone', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('mobilePhone', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getMobilePhone()));
         }
 
         if ($this->getEmailAddress() !== null) {
-            $tagName = $this->getPrefixedTagName('emailAddress', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('emailAddress', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getEmailAddress()));
         }
 

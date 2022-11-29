@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use DOMDocument;
 use DOMElement;
@@ -279,13 +280,9 @@ class Address
     private function streetToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getStreetName() !== null) {
-            $tagName = 'streetName';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('streetName', $prefix),
                     $this->getStreetName()
                 )
             );
@@ -300,25 +297,17 @@ class Address
     private function localityToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getPostalCode() !== null) {
-            $tagName = 'postalCode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('postalCode', $prefix),
                     $this->getPostalCode()
                 )
             );
         }
         if ($this->getLocality() !== null) {
-            $tagName = 'locality';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('locality', $prefix),
                     $this->getLocality()
                 )
             );
@@ -333,13 +322,9 @@ class Address
     private function countryToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getCountryCode() !== null) {
-            $tagName = 'countryCode';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('countryCode', $prefix),
                     $this->getCountryCode()
                 )
             );
@@ -354,25 +339,17 @@ class Address
     private function streetNumbersToXML(DOMDocument $document, $prefix, DOMElement $address)
     {
         if ($this->getNumber() !== null) {
-            $tagName = 'number';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('number', $prefix),
                     $this->getNumber()
                 )
             );
         }
         if ($this->getBox() !== null) {
-            $tagName = 'box';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $address->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('box', $prefix),
                     $this->getBox()
                 )
             );

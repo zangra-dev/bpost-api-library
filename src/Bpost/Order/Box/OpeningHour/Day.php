@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DomDocument;
 use DomElement;
@@ -112,11 +113,9 @@ class Day
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = $this->getDay();
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        return $document->createElement($tagName, $this->getValue());
+        return $document->createElement(
+            XmlHelper::getPrefixedTagName($this->getDay(), $prefix),
+            $this->getValue()
+        );
     }
 }

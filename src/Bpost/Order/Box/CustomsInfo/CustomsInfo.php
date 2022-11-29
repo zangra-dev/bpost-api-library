@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DOMDocument;
@@ -198,12 +199,7 @@ class CustomsInfo
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'customsInfo';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $customsInfo = $document->createElement($tagName);
+        $customsInfo = $document->createElement(XmlHelper::getPrefixedTagName('customsInfo', $prefix));
 
         $this->parcelValueToXML($document, $prefix, $customsInfo);
         $this->contentDescriptionToXML($document, $prefix, $customsInfo);
@@ -263,13 +259,9 @@ class CustomsInfo
     private function parcelValueToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getParcelValue() !== null) {
-            $tagName = 'parcelValue';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $customsInfo->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('parcelValue', $prefix),
                     $this->getParcelValue()
                 )
             );
@@ -284,13 +276,9 @@ class CustomsInfo
     private function contentDescriptionToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getContentDescription() !== null) {
-            $tagName = 'contentDescription';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $customsInfo->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('contentDescription', $prefix),
                     $this->getContentDescription()
                 )
             );
@@ -305,13 +293,9 @@ class CustomsInfo
     private function shipmentTypeToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getShipmentType() !== null) {
-            $tagName = 'shipmentType';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $customsInfo->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('shipmentType', $prefix),
                     $this->getShipmentType()
                 )
             );
@@ -326,13 +310,9 @@ class CustomsInfo
     private function possibleParcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getPossibleParcelReturnInstructionValues() !== null) {
-            $tagName = 'parcelReturnInstructions';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $customsInfo->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('parcelReturnInstructions', $prefix),
                     $this->getParcelReturnInstructions()
                 )
             );
@@ -347,10 +327,6 @@ class CustomsInfo
     private function privateAddressToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
         if ($this->getPrivateAddress() !== null) {
-            $tagName = 'privateAddress';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             if ($this->getPrivateAddress()) {
                 $value = 'true';
             } else {
@@ -358,7 +334,7 @@ class CustomsInfo
             }
             $customsInfo->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('privateAddress', $prefix),
                     $value
                 )
             );

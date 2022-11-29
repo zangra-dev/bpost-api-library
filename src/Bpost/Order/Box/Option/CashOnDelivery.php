@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use DomDocument;
 use DomElement;
 
@@ -102,45 +103,28 @@ class CashOnDelivery extends Option
      */
     public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = 'cod';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $cod = $document->createElement($tagName);
+        $cod = $document->createElement(XmlHelper::getPrefixedTagName('cod', $prefix));
 
         if ($this->getAmount() !== null) {
-            $tagName = 'codAmount';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('codAmount', $prefix),
                     $this->getAmount()
                 )
             );
         }
         if ($this->getIban() !== null) {
-            $tagName = 'iban';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('iban', $prefix),
                     $this->getIban()
                 )
             );
         }
         if ($this->getBic() !== null) {
-            $tagName = 'bic';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('bic', $prefix),
                     $this->getBic()
                 )
             );

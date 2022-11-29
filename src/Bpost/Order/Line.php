@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use DomDocument;
 use DOMElement;
 use SimpleXMLElement;
@@ -79,33 +80,20 @@ class Line
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'orderLine';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $line = $document->createElement($tagName);
+        $line = $document->createElement(XmlHelper::getPrefixedTagName('orderLine', $prefix));
 
         if ($this->getText() !== null) {
-            $tagName = 'text';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $line->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('text', $prefix),
                     $this->getText()
                 )
             );
         }
         if ($this->getNumberOfItems() !== null) {
-            $tagName = 'nbOfItems';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $line->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('nbOfItems', $prefix),
                     $this->getNumberOfItems()
                 )
             );

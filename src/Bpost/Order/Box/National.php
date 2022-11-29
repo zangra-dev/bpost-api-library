@@ -7,6 +7,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DomDocument;
 use DomElement;
@@ -159,13 +160,9 @@ abstract class National extends ComplexAttribute implements IBox
         $typeElement = $document->createElement($type);
 
         if ($this->getProduct() !== null) {
-            $tagName = 'product';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $typeElement->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('product', $prefix),
                     $this->getProduct()
                 )
             );
@@ -184,7 +181,7 @@ abstract class National extends ComplexAttribute implements IBox
 
         if ($this->getWeight() !== null) {
             $typeElement->appendChild(
-                $document->createElement($this->getPrefixedTagName('weight', $prefix), $this->getWeight())
+                $document->createElement(XmlHelper::getPrefixedTagName('weight', $prefix), $this->getWeight())
             );
         }
 
@@ -203,7 +200,7 @@ abstract class National extends ComplexAttribute implements IBox
         if ($this->getDesiredDeliveryPlace() !== null) {
             $typeElement->appendChild(
                 $document->createElement(
-                    $this->getPrefixedTagName('desiredDeliveryPlace', $prefix),
+                    XmlHelper::getPrefixedTagName('desiredDeliveryPlace', $prefix),
                     $this->getDesiredDeliveryPlace()
                 )
             );

@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use DOMDocument;
 use DomElement;
 
@@ -27,11 +28,6 @@ class SaturdayDelivery extends Option
      */
     public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = 'saturdayDelivery';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        return $document->createElement($tagName);
+        return $document->createElement(XmlHelper::getPrefixedTagName('saturdayDelivery', $prefix));
     }
 }

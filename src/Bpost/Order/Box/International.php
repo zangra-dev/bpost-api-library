@@ -7,6 +7,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DomDocument;
@@ -167,27 +168,20 @@ class International implements IBox
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'internationalBox';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $internationalBox = $document->createElement($tagName);
-        $international = $document->createElement('international:international');
+        $internationalBox = $document->createElement(XmlHelper::getPrefixedTagName('internationalBox', $prefix));
+        $prefix = 'international';
+        $international = $document->createElement(XmlHelper::getPrefixedTagName('international', $prefix));
         $internationalBox->appendChild($international);
 
         if ($this->getProduct() !== null) {
             $international->appendChild(
-                $document->createElement(
-                    'international:product',
-                    $this->getProduct()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('product', $prefix), $this->getProduct())
             );
         }
 
         $options = $this->getOptions();
         if (!empty($options)) {
-            $optionsElement = $document->createElement('international:options');
+            $optionsElement = $document->createElement(XmlHelper::getPrefixedTagName('options', $prefix));
             foreach ($options as $option) {
                 $optionsElement->appendChild(
                     $option->toXML($document)
@@ -198,14 +192,14 @@ class International implements IBox
 
         if ($this->getReceiver() !== null) {
             $international->appendChild(
-                $this->getReceiver()->toXML($document, 'international')
+                $this->getReceiver()->toXML($document, $prefix)
             );
         }
 
         if ($this->getParcelWeight() !== null) {
             $international->appendChild(
                 $document->createElement(
-                    'international:parcelWeight',
+                    XmlHelper::getPrefixedTagName('parcelWeight', $prefix),
                     $this->getParcelWeight()
                 )
             );
@@ -213,7 +207,7 @@ class International implements IBox
 
         if ($this->getCustomsInfo() !== null) {
             $international->appendChild(
-                $this->getCustomsInfo()->toXML($document, 'international')
+                $this->getCustomsInfo()->toXML($document, $prefix)
             );
         }
 

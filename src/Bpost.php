@@ -7,6 +7,7 @@ use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -18,7 +19,9 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidRespons
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidSelectionException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
 use DOMDocument;
 use Psr\Log\LoggerInterface;
 use SimpleXMLElement;
@@ -413,26 +416,27 @@ class Bpost
     /**
      * Fetch an order
      *
-     * @param $reference
+     * @param string $reference
      *
      * @return Order
      *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
-     * @throws Exception\XmlException\BpostXmlNoReferenceFoundException
+     * @throws BpostInvalidXmlResponseException
+     * @throws BpostNotImplementedException
+     * @throws BpostXmlNoReferenceFoundException
      */
     public function fetchOrder($reference)
     {
-        $url = '/orders/' . (string) $reference;
+        $builder = new FetchOrder($reference);
 
-        $headers = array(
-            'Accept: application/vnd.bpost.shm-order-v3.3+XML',
-        );
         $xml = $this->doCall(
-            $url,
-            null,
-            $headers
+            $builder->getUrl(),
+            $builder->getXml(),
+            $builder->getHeaders(),
+            $builder->getMethod(),
+            $builder->isExpectXml()
         );
 
         return Order::createFromXML($xml);

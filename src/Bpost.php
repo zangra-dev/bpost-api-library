@@ -9,6 +9,7 @@ use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\HttpRequestBuilderInterface;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
@@ -232,14 +233,16 @@ class Bpost
      * @throws BpostInvalidSelectionException
      * @throws BpostInvalidXmlResponseException
      */
-    private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
+    private function doCall(HttpRequestBuilderInterface $builder)
     {
+        $headers = $builder->getHeaders();
+
         // build Authorization header
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
         $options = array();
-        $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $url;
+        $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $builder->getUrl();
         if ($this->getPort() != 0) {
             $options[CURLOPT_PORT] = $this->getPort();
         }
@@ -249,9 +252,9 @@ class Bpost
         $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
         $options[CURLOPT_HTTPHEADER] = $headers;
 
-        if ($method == 'POST') {
+        if ($builder->getMethod() == 'POST') {
             $options[CURLOPT_POST] = true;
-            $options[CURLOPT_POSTFIELDS] = $body;
+            $options[CURLOPT_POSTFIELDS] = $builder->getXml();
         }
 
         $this->getApiCaller()->doCall($options);
@@ -288,7 +291,7 @@ class Bpost
         }
 
         // if we don't expect XML we can return the content here
-        if (!$expectXML) {
+        if (!$builder->isExpectXml()) {
             return $response;
         }
 
@@ -404,14 +407,7 @@ class Bpost
     {
         $builder = new CreateOrReplaceOrder($order, $this->accountId);
 
-        return
-            $this->doCall(
-                $builder->getUrl(),
-                $builder->getXml(),
-                $builder->getHeaders(),
-                $builder->getMethod(),
-                $builder->isExpectXml()
-            ) == '';
+        return $this->doCall($builder) == '';
     }
 
     /**
@@ -432,13 +428,7 @@ class Bpost
     {
         $builder = new FetchOrder($reference);
 
-        $xml = $this->doCall(
-            $builder->getUrl(),
-            $builder->getXml(),
-            $builder->getHeaders(),
-            $builder->getMethod(),
-            $builder->isExpectXml()
-        );
+        $xml = $this->doCall($builder);
 
         return Order::createFromXML($xml);
     }
@@ -457,13 +447,7 @@ class Bpost
     {
         $builder = new FetchProductConfig();
 
-        $xml = $this->doCall(
-            $builder->getUrl(),
-            $builder->getXml(),
-            $builder->getHeaders(),
-            $builder->getMethod(),
-            $builder->isExpectXml()
-        );
+        $xml = $this->doCall($builder);
 
         return ProductConfiguration::createFromXML($xml);
     }
@@ -480,19 +464,13 @@ class Bpost
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
      * @throws BpostInvalidValueException
+     * @throws BpostInvalidXmlResponseException
      */
     public function modifyOrderStatus($reference, $status)
     {
-        $createLabel = new ModifyOrder($reference, $status);
+        $builder = new ModifyOrder($reference, $status);
 
-        return
-            $this->doCall(
-                $createLabel->getUrl(),
-                $createLabel->getXml(),
-                $createLabel->getHeaders(),
-                $createLabel->getMethod(),
-                $createLabel->isExpectXml()
-            ) == '';
+        return $this->doCall($builder) == '';
     }
 
     // labels
@@ -522,6 +500,11 @@ class Bpost
      * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
+     *
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
+     * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelForOrder(
         $reference,
@@ -529,15 +512,9 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $createLabel = new CreateLabelForOrder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
+        $builder = new CreateLabelForOrder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        $xml = $this->doCall(
-            $createLabel->getUrl(),
-            $createLabel->getXml(),
-            $createLabel->getHeaders(),
-            $createLabel->getMethod(),
-            $createLabel->isExpectXml()
-        );
+        $xml = $this->doCall($builder);
 
         return Labels::createFromXML($xml);
     }
@@ -551,6 +528,11 @@ class Bpost
      * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
+     *
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
+     * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelForBox(
         $barcode,
@@ -558,15 +540,9 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $createLabel = new CreateLabelForBox($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
+        $builder = new CreateLabelForBox($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        $xml = $this->doCall(
-            $createLabel->getUrl(),
-            $createLabel->getXml(),
-            $createLabel->getHeaders(),
-            $createLabel->getMethod(),
-            $createLabel->isExpectXml()
-        );
+        $xml = $this->doCall($builder);
 
         return Labels::createFromXML($xml);
     }
@@ -588,7 +564,7 @@ class Bpost
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
-     * @throws BpostInvalidValueException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelInBulkForOrders(
         array $references,
@@ -605,13 +581,7 @@ class Bpost
             $forcePrinting
         );
 
-        $xml = $this->doCall(
-            $builder->getUrl(),
-            $builder->getXml(),
-            $builder->getHeaders(),
-            $builder->getMethod(),
-            $builder->isExpectXml()
-        );
+        $xml = $this->doCall($builder);
 
         return Labels::createFromXML($xml);
     }

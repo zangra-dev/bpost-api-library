@@ -9,6 +9,7 @@ use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -23,7 +24,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
-use DOMDocument;
 use Psr\Log\LoggerInterface;
 use SimpleXMLElement;
 
@@ -483,36 +483,15 @@ class Bpost
      */
     public function modifyOrderStatus($reference, $status)
     {
-        $status = strtoupper($status);
-        if (!in_array($status, Box::getPossibleStatusValues())) {
-            throw new BpostInvalidValueException('status', $status, Box::getPossibleStatusValues());
-        }
-
-        $url = '/orders/' . $reference;
-
-        $document = new DOMDocument('1.0', 'utf-8');
-        $document->preserveWhiteSpace = false;
-        $document->formatOutput = true;
-
-        $orderUpdate = $document->createElement('orderUpdate');
-        $orderUpdate->setAttribute('xmlns', 'http://schema.post.be/shm/deepintegration/v3/');
-        $orderUpdate->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $orderUpdate->appendChild(
-            $document->createElement('status', $status)
-        );
-        $document->appendChild($orderUpdate);
-
-        $headers = array(
-            'Content-type: application/vnd.bpost.shm-orderUpdate-v3+XML',
-        );
+        $createLabel = new ModifyOrder($reference, $status);
 
         return
             $this->doCall(
-                $url,
-                $document->saveXML(),
-                $headers,
-                'POST',
-                false
+                $createLabel->getUrl(),
+                $createLabel->getXml(),
+                $createLabel->getHeaders(),
+                $createLabel->getMethod(),
+                $createLabel->isExpectXml()
             ) == '';
     }
 

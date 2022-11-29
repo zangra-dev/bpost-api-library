@@ -8,6 +8,7 @@ use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -450,19 +451,18 @@ class Bpost
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function fetchProductConfig()
     {
-        $url = '/productconfig';
+        $builder = new FetchProductConfig();
 
-        $headers = array(
-            'Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML',
-        );
-        /** @var SimpleXMLElement $xml */
         $xml = $this->doCall(
-            $url,
-            null,
-            $headers
+            $builder->getUrl(),
+            $builder->getXml(),
+            $builder->getHeaders(),
+            $builder->getMethod(),
+            $builder->isExpectXml()
         );
 
         return ProductConfiguration::createFromXML($xml);

@@ -2,8 +2,6 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabel;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use PHPUnit_Framework_TestCase;
@@ -120,5 +118,4 @@ class CreateLabelForOrderTest extends PHPUnit_Framework_TestCase
             'Content-Type: application/vnd.bpost.shm-labelRequest-v3.3+XML',
         );
     }
-
 }

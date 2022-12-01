@@ -1,21 +1,24 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
-use Bpost\BpostApiClient\Bpost\Order\Box\National\ShopHandlingInstruction;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class AtBpostTest extends \PHPUnit_Framework_TestCase
+class AtBpostTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -108,7 +111,7 @@ class AtBpostTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 

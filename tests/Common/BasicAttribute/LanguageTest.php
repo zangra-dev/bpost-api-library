@@ -5,10 +5,10 @@ namespace Tests\Common\BasicAttribute;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use PHPUnit_Framework_TestCase;
 
-class LanguageTest extends \PHPUnit_Framework_TestCase
+class LanguageTest extends PHPUnit_Framework_TestCase
 {
-
     public function testValidate()
     {
         $value = 'FR';
@@ -27,5 +27,4 @@ class LanguageTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(true);
         }
     }
-
 }

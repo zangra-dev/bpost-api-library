@@ -17,6 +17,7 @@ class ModifyOrderTest extends PHPUnit_Framework_TestCase
      * @param bool   $isExpectXml
      *
      * @throws BpostInvalidValueException
+     *
      * @dataProvider dataResults
      */
     public function testResults(array $input, $url, $xml, $headers, $method, $isExpectXml)
@@ -47,7 +48,7 @@ class ModifyOrderTest extends PHPUnit_Framework_TestCase
   <status>PENDING</status>
 </orderUpdate>
 ',
-                'headers' => array('Content-type: application/vnd.bpost.shm-orderUpdate-v3+XML',),
+                'headers' => array('Content-type: application/vnd.bpost.shm-orderUpdate-v3+XML'),
                 'method' => 'POST',
                 'isExpectXml' => false,
             ),

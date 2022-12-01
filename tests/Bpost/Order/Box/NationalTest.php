@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National;
@@ -7,38 +8,43 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Option;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use DOMDocument;
+use DOMElement;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
 class NationalFake extends National
 {
-
-
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @param  string       $type
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
         $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'nationalFake');
         $nationalElement->appendChild($boxElement);
+
         return $nationalElement;
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return National
      */
-    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
         return parent::createFromXML($xml->nationalFake, new self());
     }
 }
 
-class NationalTest extends \PHPUnit_Framework_TestCase
+class NationalTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Tests the methods that are implemented by the children
@@ -58,7 +64,7 @@ class NationalTest extends \PHPUnit_Framework_TestCase
 
         $self->setOptions(array(
             new Messaging('infoDistributed', 'EN', null, '0476123456'),
-            new Messaging('infoNextDay', 'EN', 'receiver@mail.be')
+            new Messaging('infoNextDay', 'EN', 'receiver@mail.be'),
         ));
         $self->addOption(new Messaging('infoReminder', 'EN', null, '0032475123456'));
         $self->addOption(new SaturdayDelivery());
@@ -84,7 +90,7 @@ class NationalTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXml()
     {
-        $self = NationalFake::createFromXML(new \SimpleXMLElement($this->getXml()));
+        $self = NationalFake::createFromXML(new SimpleXMLElement($this->getXml()));
 
         $this->assertSame('bpack 24h Pro', $self->getProduct());
 
@@ -140,11 +146,11 @@ EOF;
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -152,11 +158,12 @@ EOF;
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $element
-     * @return \DOMDocument
+     * @param DOMDocument $document
+     * @param DOMElement  $element
+     *
+     * @return DOMDocument
      */
-    private function generateDomDocument(\DOMDocument $document, \DOMElement $element)
+    private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
         $element->setAttribute(
             'xmlns:common',
@@ -187,5 +194,4 @@ EOF;
 
         return $document;
     }
-
 }

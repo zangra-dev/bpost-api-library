@@ -18,6 +18,7 @@ class CreateLabelInBulkForOrdersTest extends PHPUnit_Framework_TestCase
      * @param array  $headers
      *
      * @throws DOMException
+     *
      * @dataProvider dataResults
      */
     public function testResults(array $input, $url, $xml, $method, $isExpectXml, $headers)
@@ -198,6 +199,5 @@ class CreateLabelInBulkForOrdersTest extends PHPUnit_Framework_TestCase
 </batchLabels>
 
 XML;
-
     }
 }

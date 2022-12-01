@@ -1,23 +1,27 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
 use Bpost\BpostApiClient\Bpost\Order\Box\International;
-use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
+use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class InternationalTest extends \PHPUnit_Framework_TestCase
+class InternationalTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -39,8 +43,8 @@ class InternationalTest extends \PHPUnit_Framework_TestCase
                                 'language' => 'NL',
                             ),
                             'common:emailAddress' => 'bpost@verkoyen.eu',
-                        )
-                    )
+                        ),
+                    ),
                 ),
                 'receiver' => array(
                     'name' => 'Tijs Verkoyen',
@@ -63,7 +67,7 @@ class InternationalTest extends \PHPUnit_Framework_TestCase
                     'shipmentType' => 'DOCUMENTS',
                     'parcelReturnInstructions' => 'RTS',
                     'privateAddress' => false,
-                )
+                ),
             ),
         );
 
@@ -188,7 +192,7 @@ class InternationalTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 

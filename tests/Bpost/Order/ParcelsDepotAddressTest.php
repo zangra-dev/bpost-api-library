@@ -1,19 +1,22 @@
 <?php
+
 namespace Tests\Bpost\Order;
 
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
 
-class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
+class ParcelsDepotAddressTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -61,6 +64,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyProperties()
@@ -71,6 +75,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyCountryCodeProperties()
@@ -81,6 +86,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyLocalityProperties()
@@ -91,6 +97,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyNumberProperties()
@@ -101,6 +108,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyPostalCodeProperties()
@@ -111,6 +119,7 @@ class ParcelsDepotAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
+     *
      * @throws BpostInvalidLengthException
      */
     public function testFaultyStreetNameProperties()

@@ -4,8 +4,10 @@ namespace Tests\Geo6;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidDayException;
 use Bpost\BpostApiClient\Geo6\Day;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class DayTest extends \PHPUnit_Framework_TestCase
+class DayTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Tests Day::createFromXml()
@@ -63,9 +65,8 @@ class DayTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidDayException not launched');
         } catch (BpostInvalidDayException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidDayException not caught');
         }
-
     }
 }

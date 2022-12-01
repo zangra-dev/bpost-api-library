@@ -1,20 +1,25 @@
 <?php
+
 namespace Tests\Bpack247;
 
 use Bpost\BpostApiClient\Bpack247\Customer;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoUserIdFoundException;
+use DateTime;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class CustomerTest extends \PHPUnit_Framework_TestCase
+class CustomerTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -135,7 +140,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
                     'OrderNumber' => '1',
                     'PackStationId' => '14472',
                 ),
-            )
+            ),
         );
 
         $document = self::createDomDocument();
@@ -173,7 +178,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['Street'], $customer->getStreet());
         $this->assertSame($data['Number'], $customer->getNumber());
         $this->assertSame($data['CompanyName'], $customer->getCompanyName());
-        $this->assertEquals(new \DateTime($data['DateOfBirth']), $customer->getDateOfBirth());
+        $this->assertEquals(new DateTime($data['DateOfBirth']), $customer->getDateOfBirth());
         $this->assertSame($data['DeliveryCode'], $customer->getDeliveryCode());
         $this->assertSame($data['Email'], $customer->getEmail());
         $this->assertSame($data['MobilePrefix'], $customer->getMobilePrefix());
@@ -188,7 +193,6 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['PackStations'][0]['OrderNumber'], $packStations[0]->getOrderNumber());
         $this->assertSame($data['PackStations'][0]['PackStationId'], $packStations[0]->getPackStationId());
 
-
         try {
             $xml = simplexml_load_string('<Customer></Customer>');
             Customer::createFromXML($xml);
@@ -196,7 +200,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
         } catch (BpostXmlNoUserIdFoundException $e) {
             // Nothing, the exception is good
             $this->assertTrue(true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostXmlNoUserIdFoundException not caught');
         }
     }
@@ -213,7 +217,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 
@@ -222,7 +226,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 
@@ -242,8 +246,8 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
             'UserName' => 'UserName',
             'PackStations' => array(
                 'Foo',
-                'Bar'
-            )
+                'Bar',
+            ),
         );
 
         $customer = new Customer();

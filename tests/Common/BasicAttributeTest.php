@@ -7,10 +7,10 @@ use Bpost\BpostApiClient\Exception\BpostLogicException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidPatternException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use PHPUnit_Framework_TestCase;
 
 class BasicAttributeFake extends BasicAttribute
 {
-
     /**
      * @return string
      */
@@ -30,9 +30,8 @@ class BasicAttributeFake extends BasicAttribute
     }
 }
 
-class BasicAttributeTest extends \PHPUnit_Framework_TestCase
+class BasicAttributeTest extends PHPUnit_Framework_TestCase
 {
-
     public function testSetKey()
     {
         $fake = new BasicAttributeFake('qsd');
@@ -43,7 +42,7 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Bpost\BpostApiClient\Exception\BpostLogicException
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException
      */
     public function testGetValue()
     {
@@ -51,7 +50,7 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('qsd', $fake->getValue());
 
         $fake = new BasicAttributeFake('qsd');
-        $this->assertSame('qsd', (string)$fake);
+        $this->assertSame('qsd', (string) $fake);
 
         new BasicAttributeFake('aze');
     }
@@ -72,7 +71,6 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidLengthException $e) {
             $this->assertTrue(true);
         }
-
     }
 
     public function testValidateChoice()
@@ -91,7 +89,6 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidValueException $e) {
             $this->assertTrue(true);
         }
-
     }
 
     public function testValidatePattern()
@@ -110,7 +107,5 @@ class BasicAttributeTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidPatternException $e) {
             $this->assertTrue(true);
         }
-
     }
-
 }

@@ -3,8 +3,10 @@
 namespace Tests\Bpost\Label;
 
 use Bpost\BpostApiClient\Bpost\Label\Barcode;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
-class BarcodeTest extends \PHPUnit_Framework_TestCase
+class BarcodeTest extends PHPUnit_Framework_TestCase
 {
     private function getBarcodeXml()
     {
@@ -19,7 +21,7 @@ XML;
 
     public function testCreateFromXML()
     {
-        $self = Barcode::createFromXML(new \SimpleXMLElement($this->getBarcodeXml()));
+        $self = Barcode::createFromXML(new SimpleXMLElement($this->getBarcodeXml()));
 
         $this->assertSame('323299901059912015292030', $self->getBarcode());
         $this->assertSame('test_barcode_with_reference', $self->getReference());

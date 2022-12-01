@@ -3,8 +3,9 @@
 namespace Tests\Exception\LogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use PHPUnit_Framework_TestCase;
 
-class BpostInvalidLengthExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostInvalidLengthExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

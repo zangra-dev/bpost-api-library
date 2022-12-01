@@ -1,21 +1,27 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use DOMElement;
+use Exception;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
-class AtHomeTest extends \PHPUnit_Framework_TestCase
+class AtHomeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -23,11 +29,12 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $element
-     * @return \DOMDocument
+     * @param DOMDocument $document
+     * @param DOMElement  $element
+     *
+     * @return DOMDocument
      */
-    private function generateDomDocument(\DOMDocument $document, \DOMElement $element)
+    private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
         $element->setAttribute(
             'xmlns:common',
@@ -90,9 +97,9 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->getXml(), $document->saveXML());
     }
 
-    public function testCreateFromNormalXml() {
-
-        $self = AtHome::createFromXML(new \SimpleXMLElement($this->getXml()));
+    public function testCreateFromNormalXml()
+    {
+        $self = AtHome::createFromXML(new SimpleXMLElement($this->getXml()));
 
         $this->assertSame('2016-03-16', $self->getRequestedDeliveryDate());
 
@@ -103,8 +110,9 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
      */
-    public function testCreateFromBadXml() {
-        AtHome::createFromXML(new \SimpleXMLElement($this->getNotAtHomeXml()));
+    public function testCreateFromBadXml()
+    {
+        AtHome::createFromXML(new SimpleXMLElement($this->getNotAtHomeXml()));
     }
 
     /**
@@ -119,7 +127,7 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 
@@ -127,7 +135,8 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
-    private function getXml() {
+    private function getXml()
+    {
         return <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:nationalBox xmlns="http://schema.post.be/shm/deepintegration/v3/national" xmlns:common="http://schema.post.be/shm/deepintegration/v3/common" xmlns:tns="http://schema.post.be/shm/deepintegration/v3/" xmlns:international="http://schema.post.be/shm/deepintegration/v3/international" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schema.post.be/shm/deepintegration/v3/">
@@ -153,7 +162,8 @@ class AtHomeTest extends \PHPUnit_Framework_TestCase
 EOF;
     }
 
-    private function getNotAtHomeXml() {
+    private function getNotAtHomeXml()
+    {
         return <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:nationalBox xmlns="http://schema.post.be/shm/deepintegration/v3/national" xmlns:common="http://schema.post.be/shm/deepintegration/v3/common" xmlns:tns="http://schema.post.be/shm/deepintegration/v3/" xmlns:international="http://schema.post.be/shm/deepintegration/v3/international" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schema.post.be/shm/deepintegration/v3/">

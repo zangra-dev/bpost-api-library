@@ -3,8 +3,9 @@
 namespace Tests\Geo6;
 
 use Bpost\BpostApiClient\Geo6\Service;
+use PHPUnit_Framework_TestCase;
 
-class ServiceTest extends \PHPUnit_Framework_TestCase
+class ServiceTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Tests Service::createFromXml()

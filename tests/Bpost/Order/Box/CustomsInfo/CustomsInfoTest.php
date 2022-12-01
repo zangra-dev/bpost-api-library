@@ -1,20 +1,24 @@
 <?php
+
 namespace Tests\Bpost\Order\Box\CustomsInfo;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class CustomsInfoTest extends \PHPUnit_Framework_TestCase
+class CustomsInfoTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -150,7 +154,7 @@ class CustomsInfoTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['parcelReturnInstructions'], $customsInfo->getParcelReturnInstructions());
         $this->assertSame($data['contentDescription'], $customsInfo->getContentDescription());
         $this->assertSame($data['shipmentType'], $customsInfo->getShipmentType());
-        $this->assertSame(($data['privateAddress'] == 'true'), $customsInfo->getPrivateAddress());
+        $this->assertSame($data['privateAddress'] == 'true', $customsInfo->getPrivateAddress());
     }
 
     /**
@@ -165,7 +169,7 @@ class CustomsInfoTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidLengthException not launched');
         } catch (BpostInvalidLengthException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidLengthException not caught');
         }
 
@@ -174,7 +178,7 @@ class CustomsInfoTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidLengthException not launched');
         } catch (BpostInvalidLengthException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidLengthException not caught');
         }
 
@@ -183,7 +187,7 @@ class CustomsInfoTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 

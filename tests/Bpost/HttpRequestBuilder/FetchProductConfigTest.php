@@ -37,7 +37,7 @@ class FetchProductConfigTest extends PHPUnit_Framework_TestCase
                 'input' => array(),
                 'url' => '/productconfig',
                 'xml' => null,
-                'headers' => array('Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML',),
+                'headers' => array('Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML'),
                 'method' => 'GET',
                 'isExpectXml' => true,
             ),

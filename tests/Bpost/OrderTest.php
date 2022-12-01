@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Bpost;
 
 use Bpost\BpostApiClient\Bpost\Order;
@@ -11,10 +12,13 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery;
 use Bpost\BpostApiClient\Bpost\Order\Line;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\Order\Sender;
+use DOMDocument;
+use DOMElement;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
-class OrderTest extends \PHPUnit_Framework_TestCase
+class OrderTest extends PHPUnit_Framework_TestCase
 {
-
     public function testToXml()
     {
         $self = new Order('bpack@bpost VAS 038 - COD+SAT+iD');
@@ -87,12 +91,12 @@ class OrderTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromXmlWithException()
     {
-        Order::createFromXML(new \SimpleXMLElement($this->getFetchOrderWithReferenceXml()));
+        Order::createFromXML(new SimpleXMLElement($this->getFetchOrderWithReferenceXml()));
     }
 
     public function testCreateFromXml()
     {
-        $self = Order::createFromXML(new \SimpleXMLElement($this->getFetchOrderXml()));
+        $self = Order::createFromXML(new SimpleXMLElement($this->getFetchOrderXml()));
 
         $this->assertSame('bpost_ref_56e02a5047119', $self->getReference());
         $this->assertNotNull($self->getLines());
@@ -131,7 +135,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Rue de l\'Autonomie', $nationalBox->getPugoAddress()->getStreetName());
 
         $this->assertNotNull($nationalBox->getOptions());
-        //$this->assertCount(6, $nationalBox->getOptions());
+        // $this->assertCount(6, $nationalBox->getOptions());
     }
 
     private function getFetchOrderWithReferenceXml()
@@ -298,11 +302,11 @@ XML;
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -311,11 +315,13 @@ XML;
 
     /**
      * Generate the document, by adding the namespace declarations
-     * @param \DOMDocument $document
-     * @param \DOMElement  $element
-     * @return \DOMDocument
+     *
+     * @param DOMDocument $document
+     * @param DOMElement  $element
+     *
+     * @return DOMDocument
      */
-    private function generateDomDocument(\DOMDocument $document, \DOMElement $element)
+    private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
         $element->setAttribute(
             'xmlns:common',
@@ -346,5 +352,4 @@ XML;
 
         return $document;
     }
-
 }

@@ -4,18 +4,20 @@ namespace Tests\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National\ParcelLockerReducedMobilityZone;
 use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
-class UnregisteredTest extends \PHPUnit_Framework_TestCase
+class UnregisteredTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -50,7 +52,7 @@ class UnregisteredTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXml()
     {
-        $self = Unregistered::createFromXml(new \SimpleXMLElement($this->getXmlWithoutPrefix()));
+        $self = Unregistered::createFromXml(new SimpleXMLElement($this->getXmlWithoutPrefix()));
 
         $this->assertTrue($self->hasLanguage());
         $this->assertSame('EN', $self->getLanguage());

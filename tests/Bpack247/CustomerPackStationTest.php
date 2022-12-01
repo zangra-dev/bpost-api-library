@@ -1,18 +1,21 @@
 <?php
+
 namespace Tests\Bpack247;
 
 use Bpost\BpostApiClient\Bpack247\CustomerPackStation;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
 
-class CustomerPackStationTest extends \PHPUnit_Framework_TestCase
+class CustomerPackStationTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 

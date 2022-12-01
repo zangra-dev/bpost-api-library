@@ -25,6 +25,7 @@ $finder = $config
 
 $finder
     ->in(__DIR__ . '/src')
+    ->in(__DIR__ . '/tests')
     ->notName('tijsverkoyen_classes.php')
     ->sortByName();
 

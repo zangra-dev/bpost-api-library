@@ -5,10 +5,10 @@ namespace Tests\Common\ValidatedValue;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use PHPUnit_Framework_TestCase;
 
-class LabelFormatTest extends \PHPUnit_Framework_TestCase
+class LabelFormatTest extends PHPUnit_Framework_TestCase
 {
-
     public function testValidate()
     {
         $value = 'a4';

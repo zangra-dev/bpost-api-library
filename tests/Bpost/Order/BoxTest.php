@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Bpost\Order;
 
 use Bpost\BpostApiClient\Bpost\Order\Address;
@@ -8,17 +9,20 @@ use Bpost\BpostApiClient\Bpost\Order\Box\International;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\Order\Sender;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class BoxTest extends \PHPUnit_Framework_TestCase
+class BoxTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -174,7 +178,6 @@ class BoxTest extends \PHPUnit_Framework_TestCase
      */
     public function testInternationalToXML()
     {
-
         $data = array(
             'sender' => array(
                 'name' => 'Tijs Verkoyen',
@@ -327,7 +330,7 @@ class BoxTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 

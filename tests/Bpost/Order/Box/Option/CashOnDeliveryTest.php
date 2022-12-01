@@ -1,18 +1,21 @@
 <?php
+
 namespace Tests\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\CashOnDelivery;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
 
-class CashOnDeliveryTest extends \PHPUnit_Framework_TestCase
+class CashOnDeliveryTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -36,7 +39,7 @@ class CashOnDeliveryTest extends \PHPUnit_Framework_TestCase
         $cod = $expectedDocument->createElement('common:cod');
         foreach ($data['cod'] as $key => $value) {
             $cod->appendChild(
-                $expectedDocument->createElement('common:'.$key, $value)
+                $expectedDocument->createElement('common:' . $key, $value)
             );
         }
         $expectedDocument->appendChild($cod);
@@ -65,7 +68,7 @@ class CashOnDeliveryTest extends \PHPUnit_Framework_TestCase
         $cod = $expectedDocument->createElement('foo:cod');
         foreach ($data['cod'] as $key => $value) {
             $cod->appendChild(
-                $expectedDocument->createElement('foo:'. $key, $value)
+                $expectedDocument->createElement('foo:' . $key, $value)
             );
         }
         $expectedDocument->appendChild($cod);

@@ -1,8 +1,9 @@
 <?php
-include_once __DIR__ . "/../vendor/autoload.php";
+
+include_once __DIR__ . '/../vendor/autoload.php';
 
 // To define ACCOUNT_ID and PASSPHRASE constants for the API connection (connection-test folder):
-$credentialFile = __DIR__ . "/phpunit-credentials.php";
+$credentialFile = __DIR__ . '/phpunit-credentials.php';
 if (file_exists($credentialFile)) {
     include_once $credentialFile;
 } else {

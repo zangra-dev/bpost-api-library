@@ -1,19 +1,24 @@
 <?php
+
 namespace Tests\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use DOMElement;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class InsuranceTest extends \PHPUnit_Framework_TestCase
+class InsuranceTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -21,11 +26,12 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $element
-     * @return \DOMDocument
+     * @param DOMDocument $document
+     * @param DOMElement  $element
+     *
+     * @return DOMDocument
      */
-    private function generateDomDocument(\DOMDocument $document, \DOMElement $element)
+    private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
         $element->setAttribute(
             'xmlns:common',
@@ -90,7 +96,7 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 
@@ -99,7 +105,7 @@ class InsuranceTest extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 
@@ -128,5 +134,4 @@ XML;
 
 XML;
     }
-
 }

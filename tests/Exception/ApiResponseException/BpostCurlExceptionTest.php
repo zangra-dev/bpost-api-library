@@ -3,8 +3,9 @@
 namespace Tests\Exception\BpostApiResponseException;
 
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
+use PHPUnit_Framework_TestCase;
 
-class BpostCurlExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostCurlExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

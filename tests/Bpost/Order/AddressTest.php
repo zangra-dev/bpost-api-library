@@ -1,19 +1,21 @@
 <?php
+
 namespace Tests\Bpost\Order;
 
 use Bpost\BpostApiClient\Bpost\Order\Address;
-use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
 
-class AddressTest extends \PHPUnit_Framework_TestCase
+class AddressTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -59,7 +61,6 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedDocument->saveXML(), $actualDocument->saveXML());
     }
 
-
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
@@ -68,6 +69,7 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $address = new Address();
         $address->setBox(str_repeat('a', 9));
     }
+
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
@@ -76,6 +78,7 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $address = new Address();
         $address->setCountryCode(str_repeat('a', 3));
     }
+
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
@@ -84,6 +87,7 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $address = new Address();
         $address->setLocality(str_repeat('a', 41));
     }
+
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
@@ -92,6 +96,7 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $address = new Address();
         $address->setNumber(str_repeat('a', 9));
     }
+
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */
@@ -100,6 +105,7 @@ class AddressTest extends \PHPUnit_Framework_TestCase
         $address = new Address();
         $address->setPostalCode(str_repeat('a', 41));
     }
+
     /**
      * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
      */

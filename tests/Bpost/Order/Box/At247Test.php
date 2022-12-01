@@ -1,22 +1,25 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\At247;
 use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
-use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DOMDocument;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class At247Test extends \PHPUnit_Framework_TestCase
+class At247Test extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -50,7 +53,7 @@ class At247Test extends \PHPUnit_Framework_TestCase
                 'unregistered' => array(
                     'language' => 'EN',
                     'mobilePhone' => '0471000000',
-                    'emailAddress' => 'pomme@antidot.com'
+                    'emailAddress' => 'pomme@antidot.com',
                 ), // Bad test: We cannot have a memberId AND an unregistered
                 'receiverName' => 'Tijs Verkoyen',
                 'receiverCompany' => 'Sumo Coders',
@@ -132,7 +135,7 @@ class At247Test extends \PHPUnit_Framework_TestCase
             $this->fail('BpostInvalidValueException not launched');
         } catch (BpostInvalidValueException $e) {
             // Nothing, the exception is good
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostInvalidValueException not caught');
         }
 

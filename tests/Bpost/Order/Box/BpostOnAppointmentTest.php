@@ -1,20 +1,25 @@
 <?php
+
 namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box\BpostOnAppointment;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
+use DOMDocument;
+use DOMElement;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
 
-class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
+class BpostOnAppointmentTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -22,11 +27,12 @@ class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $element
-     * @return \DOMDocument
+     * @param DOMDocument $document
+     * @param DOMElement  $element
+     *
+     * @return DOMDocument
      */
-    private function generateDomDocument(\DOMDocument $document, \DOMElement $element)
+    private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
         $element->setAttribute(
             'xmlns:common',
@@ -93,7 +99,7 @@ class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXml()
     {
-        $self = BpostOnAppointment::createFromXml(new \SimpleXMLElement($this->getNormalXml()));
+        $self = BpostOnAppointment::createFromXml(new SimpleXMLElement($this->getNormalXml()));
 
         $this->assertSame('2016-03-16', $self->getInNetworkCutOff());
 
@@ -106,7 +112,7 @@ class BpostOnAppointmentTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromNotBpostOnAppointmentXml()
     {
-        BpostOnAppointment::createFromXml(new \SimpleXMLElement($this->getNotBpostOnAppointmentXml()));
+        BpostOnAppointment::createFromXml(new SimpleXMLElement($this->getNotBpostOnAppointmentXml()));
     }
 
     private function getNormalXml()

@@ -1,5 +1,5 @@
 <?php
-namespace Bpost;
+namespace Tests\Bpost\Order;
 
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;

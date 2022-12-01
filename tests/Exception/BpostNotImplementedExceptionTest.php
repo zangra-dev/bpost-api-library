@@ -1,6 +1,6 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception;
+namespace Tests\Exception;
 
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 

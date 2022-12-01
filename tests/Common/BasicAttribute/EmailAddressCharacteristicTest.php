@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Common\BasicAttribute;
+
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\BasicAttribute\EmailAddressCharacteristic;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;

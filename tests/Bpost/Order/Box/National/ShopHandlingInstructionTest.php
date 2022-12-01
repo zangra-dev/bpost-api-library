@@ -1,6 +1,7 @@
 <?php
-namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
+namespace Tests\Bpost\Order\Box\National;
 
+use Bpost\BpostApiClient\Bpost\Order\Box\National\ShopHandlingInstruction;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 

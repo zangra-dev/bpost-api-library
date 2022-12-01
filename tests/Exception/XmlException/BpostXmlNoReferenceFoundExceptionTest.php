@@ -1,6 +1,6 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\XmlException;
+namespace Tests\Exception\XmlException;
 
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
 

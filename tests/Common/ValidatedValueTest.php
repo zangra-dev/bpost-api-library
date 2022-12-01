@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Common;
+
 use Bpost\BpostApiClient\Common\ValidatedValue;
 use Bpost\BpostApiClient\Exception\BpostLogicException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;

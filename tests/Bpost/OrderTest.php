@@ -1,5 +1,5 @@
 <?php
-namespace Bpost;
+namespace Tests\Bpost;
 
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Address;

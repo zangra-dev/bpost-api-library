@@ -1,5 +1,5 @@
 <?php
-namespace Bpost;
+namespace Tests\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\National;
 use Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day;

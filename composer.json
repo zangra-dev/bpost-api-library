@@ -36,7 +36,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Bpost\\BpostApiClient\\": "src/"
+      "Bpost\\BpostApiClient\\": "src/",
+      "Tests\\": "tests/"
     },
     "classmap": [
       "src/tijsverkoyen_classes.php"

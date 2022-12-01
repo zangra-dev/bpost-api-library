@@ -1,6 +1,6 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\LogicException;
+namespace Tests\Exception\LogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidWeightException;
 

@@ -1,11 +1,10 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\LogicException;
+namespace Tests\Exception\LogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidDayException;
 
 class BpostInvalidDayExceptionTest extends \PHPUnit_Framework_TestCase
-
 {
     public function testGetMessage()
     {

@@ -1,5 +1,8 @@
 <?php
-namespace Bpost\BpostApiClient\Bpost\Label;
+
+namespace Tests\Bpost\Label;
+
+use Bpost\BpostApiClient\Bpost\Label\Barcode;
 
 class BarcodeTest extends \PHPUnit_Framework_TestCase
 {

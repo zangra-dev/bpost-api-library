@@ -1,5 +1,6 @@
 <?php
-namespace Bpost;
+
+namespace Tests\Common\ValidatedValue;
 
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;

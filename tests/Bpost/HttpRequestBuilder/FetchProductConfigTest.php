@@ -1,6 +1,6 @@
 <?php
 
-namespace Bpost\HttpRequestBuilder;
+namespace Tests\Bpost\HttpRequestBuilder;
 
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
 use PHPUnit_Framework_TestCase;

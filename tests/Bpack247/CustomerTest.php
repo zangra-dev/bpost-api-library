@@ -1,5 +1,5 @@
 <?php
-namespace Bpost\Bpack;
+namespace Tests\Bpack247;
 
 use Bpost\BpostApiClient\Bpack247\Customer;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;

@@ -1,5 +1,5 @@
 <?php
-namespace Bpost;
+namespace Tests\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;

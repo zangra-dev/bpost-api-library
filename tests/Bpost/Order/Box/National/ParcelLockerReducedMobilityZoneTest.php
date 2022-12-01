@@ -1,5 +1,7 @@
 <?php
-namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
+namespace Tests\Bpost\Order\Box\National;
+
+use Bpost\BpostApiClient\Bpost\Order\Box\National\ParcelLockerReducedMobilityZone;
 
 class ParcelLockerReducedMobilityZoneTest extends \PHPUnit_Framework_TestCase
 {

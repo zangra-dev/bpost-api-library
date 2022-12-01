@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Common\BasicAttribute;
+
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\BpostApiResponseException;
+namespace Tests\Exception\BpostApiResponseException;
 
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostTaxipostLocatorException;
 

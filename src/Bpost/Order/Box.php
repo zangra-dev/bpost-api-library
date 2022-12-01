@@ -247,14 +247,9 @@ class Box
                 $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\At247';
             }
 
-            if (!method_exists($className, 'createFromXML')) {
-                throw new BpostNotImplementedException('No createFromXML found into ' . $className);
-            }
+            XmlHelper::assertMethodCreateFromXmlExists($className);
 
-            $nationalBox = call_user_func(
-                array($className, 'createFromXML'),
-                $nationalBoxData
-            );
+            $nationalBox = call_user_func(array($className, 'createFromXML'), $nationalBoxData);
 
             $box->setNationalBox($nationalBox);
         }
@@ -265,9 +260,7 @@ class Box
             // build classname based on the tag name
             $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($internationalBoxData->getName());
 
-            if (!method_exists($className, 'createFromXML')) {
-                throw new BpostNotImplementedException('No createFromXML found into ' . $className);
-            }
+            XmlHelper::assertMethodCreateFromXmlExists($className);
 
             $internationalBox = call_user_func(
                 array($className, 'createFromXML'),

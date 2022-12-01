@@ -289,9 +289,7 @@ abstract class National extends ComplexAttribute implements IBox
                 $class = ucfirst($optionData->getName());
         }
         $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
-        if (!method_exists($className, 'createFromXML')) {
-            throw new BpostXmlInvalidItemException();
-        }
+        XmlHelper::assertMethodCreateFromXmlExists($className);
 
         return call_user_func(
             array($className, 'createFromXML'),

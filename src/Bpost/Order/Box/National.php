@@ -8,6 +8,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DomDocument;
 use DomElement;
@@ -277,18 +278,11 @@ abstract class National extends ComplexAttribute implements IBox
      *
      * @return Option
      *
-     * @throws BpostXmlInvalidItemException
+     * @throws BpostNotImplementedException
      */
     protected static function getOptionFromOptionData(SimpleXMLElement $optionData)
     {
-        switch ($optionData->getName()) {
-            case 'insured':
-                $class = 'Insurance';
-                break;
-            default:
-                $class = ucfirst($optionData->getName());
-        }
-        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
+        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
         XmlHelper::assertMethodCreateFromXmlExists($className);
 
         return call_user_func(

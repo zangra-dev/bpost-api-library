@@ -37,7 +37,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
 use Bpost\BpostApiClient\Bpost\Order\Box\International;
-use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insured;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Line;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
@@ -102,9 +102,9 @@ $atHome->setReceiver($receiver);
 
 /* Add options */
 $atHome->addOption(
-    new Insurance(
-        Insurance::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
-        Insurance::INSURANCE_AMOUNT_UP_TO_2500_EUROS
+    new Insured(
+        Insured::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
+        Insured::INSURANCE_AMOUNT_UP_TO_2500_EUROS
     )
 );
 

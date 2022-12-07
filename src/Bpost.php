@@ -14,7 +14,7 @@ use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
-use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insured;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
@@ -171,7 +171,7 @@ class Bpost
         $arrayKeys = array(
             'barcode',
             'orderLine',
-            Insurance::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
+            Insured::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
             Box\Option\Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
             'infoPugo',
         );

@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use SimpleXMLElement;
 
 /**
@@ -17,11 +18,13 @@ class Receiver extends Customer
      * @param SimpleXMLElement $xml
      *
      * @return Receiver
+     *
+     * @throws BpostInvalidLengthException
      */
     public static function createFromXML(SimpleXMLElement $xml)
     {
-        $receiver = new Receiver();
-        $receiver = parent::createFromXMLHelper($xml, $receiver);
+        /** @var Receiver $receiver */
+        $receiver = parent::createFromXMLHelper($xml, new Receiver());
 
         return $receiver;
     }

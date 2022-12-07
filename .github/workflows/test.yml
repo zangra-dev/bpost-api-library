@@ -15,7 +15,7 @@ jobs:
       - name: php-cs-fixer static analysis
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --diff --dry-run -v
+          args: --using-cache=no --diff --dry-run -v
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3

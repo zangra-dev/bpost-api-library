@@ -8,10 +8,12 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DomDocument;
 use DomElement;
+use DOMException;
 use SimpleXMLElement;
 
 /**
@@ -34,10 +36,10 @@ class International implements IBox
     /**
      * @var array
      */
-    private $options;
+    private $options = array();
 
     /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Receiver
+     * @var Receiver
      */
     private $receiver;
 
@@ -47,12 +49,12 @@ class International implements IBox
     private $parcelWeight;
 
     /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo
+     * @var CustomsInfo
      */
     private $customsInfo;
 
     /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo $customsInfo
+     * @param CustomsInfo $customsInfo
      */
     public function setCustomsInfo($customsInfo)
     {
@@ -60,7 +62,7 @@ class International implements IBox
     }
 
     /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo
+     * @return CustomsInfo
      */
     public function getCustomsInfo()
     {
@@ -143,7 +145,7 @@ class International implements IBox
     }
 
     /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Receiver $receiver
+     * @param Receiver $receiver
      */
     public function setReceiver($receiver)
     {
@@ -151,7 +153,7 @@ class International implements IBox
     }
 
     /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Receiver
+     * @return Receiver
      */
     public function getReceiver()
     {
@@ -164,7 +166,9 @@ class International implements IBox
      * @param DomDocument $document
      * @param string      $prefix
      *
-     * @return DomElement
+     * @return DOMElement
+     *
+     * @throws DOMException
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
@@ -184,7 +188,7 @@ class International implements IBox
             $optionsElement = $document->createElement(XmlHelper::getPrefixedTagName('options', $prefix));
             foreach ($options as $option) {
                 $optionsElement->appendChild(
-                    $option->toXML($document)
+                    $option->toXML($document, 'common')
                 );
             }
             $international->appendChild($optionsElement);
@@ -219,6 +223,7 @@ class International implements IBox
      *
      * @return International
      *
+     * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
@@ -233,18 +238,19 @@ class International implements IBox
         }
         if (isset($xml->international->options)) {
             /** @var SimpleXMLElement $optionData */
-            foreach ($xml->international->options as $optionData) {
-                $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
-
-                if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
-                    $option = Messaging::createFromXML($optionData);
-                } else {
-                    $className = '\Bpost\BpostApiClient\Bpost\Order\Box\Option\\' . ucfirst($optionData->getName());
-                    XmlHelper::assertMethodCreateFromXmlExists($className);
-                    $option = call_user_func(
-                        array($className, 'createFromXML'),
-                        $optionData
-                    );
+            $options = $xml->international->options->children('http://schema.post.be/shm/deepintegration/v3/common');
+            foreach ($options as $optionData) {
+                switch ($optionData->getName()) {
+                    case Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED:
+                        $option = Messaging::createFromXML($optionData);
+                        break;
+                    default:
+                        $className = '\Bpost\BpostApiClient\Bpost\Order\Box\Option\\' . ucfirst($optionData->getName());
+                        XmlHelper::assertMethodCreateFromXmlExists($className);
+                        $option = call_user_func(
+                            array($className, 'createFromXML'),
+                            $optionData
+                        );
                 }
 
                 $international->addOption($option);

@@ -26,8 +26,8 @@
     "php": ">=5.3.0",
     "ext-curl": "*",
     "ext-mbstring": "*",
-    "psr/log": "^1.0",
-    "ext-dom": "20031129",
+    "psr/log": "*",
+    "ext-dom": "*",
     "ext-SimpleXML": "*"
   },
   "require-dev": {

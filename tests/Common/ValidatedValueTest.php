@@ -1,14 +1,16 @@
 <?php
 
+namespace Tests\Common;
+
 use Bpost\BpostApiClient\Common\ValidatedValue;
 use Bpost\BpostApiClient\Exception\BpostLogicException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidPatternException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use PHPUnit_Framework_TestCase;
 
 class ValidatedValueFake extends ValidatedValue
 {
-
     /**
      * @throws BpostLogicException
      */
@@ -20,11 +22,10 @@ class ValidatedValueFake extends ValidatedValue
     }
 }
 
-class ValidatedValueTest extends \PHPUnit_Framework_TestCase
+class ValidatedValueTest extends PHPUnit_Framework_TestCase
 {
-
     /**
-     * @expectedException Bpost\BpostApiClient\Exception\BpostLogicException
+     * @expectedException \Bpost\BpostApiClient\Exception\BpostLogicException
      */
     public function testGetValue()
     {
@@ -32,7 +33,7 @@ class ValidatedValueTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('qsd', $fake->getValue());
 
         $fake = new ValidatedValueFake('qsd');
-        $this->assertSame('qsd', (string)$fake);
+        $this->assertSame('qsd', (string) $fake);
 
         new ValidatedValueFake('aze');
     }
@@ -53,7 +54,6 @@ class ValidatedValueTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidLengthException $e) {
             $this->assertTrue(true);
         }
-
     }
 
     public function testValidateChoice()
@@ -72,7 +72,6 @@ class ValidatedValueTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidValueException $e) {
             $this->assertTrue(true);
         }
-
     }
 
     public function testValidatePattern()
@@ -91,7 +90,5 @@ class ValidatedValueTest extends \PHPUnit_Framework_TestCase
         } catch (BpostInvalidPatternException $e) {
             $this->assertTrue(true);
         }
-
     }
-
 }

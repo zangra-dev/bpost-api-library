@@ -17,6 +17,7 @@ abstract class ValidatedValue
 
     /**
      * ValidatedValue constructor.
+     *
      * @param mixed $value
      */
     public function __construct($value)
@@ -46,11 +47,12 @@ abstract class ValidatedValue
      */
     public function __toString()
     {
-        return (string)$this->getValue();
+        return (string) $this->getValue();
     }
 
     /**
      * @param int $length
+     *
      * @throws BpostInvalidLengthException
      */
     public function validateLength($length)
@@ -62,6 +64,7 @@ abstract class ValidatedValue
 
     /**
      * @param array $allowedValues
+     *
      * @throws BpostInvalidValueException
      */
     public function validateChoice(array $allowedValues)
@@ -73,6 +76,7 @@ abstract class ValidatedValue
 
     /**
      * @param string $regexPattern
+     *
      * @throws BpostInvalidPatternException
      */
     public function validatePattern($regexPattern)
@@ -86,5 +90,4 @@ abstract class ValidatedValue
      * @throws BpostLogicException
      */
     public abstract function validate();
-
 }

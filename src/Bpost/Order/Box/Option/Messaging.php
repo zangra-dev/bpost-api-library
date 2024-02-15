@@ -1,20 +1,26 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost Messaging class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
 class Messaging extends Option
 {
-
     const MESSAGING_LANGUAGE_EN = 'EN';
     const MESSAGING_LANGUAGE_NL = 'NL';
     const MESSAGING_LANGUAGE_FR = 'FR';
@@ -47,6 +53,7 @@ class Messaging extends Option
 
     /**
      * @param string $emailAddress
+     *
      * @throws BpostInvalidLengthException
      */
     public function setEmailAddress($emailAddress)
@@ -69,6 +76,7 @@ class Messaging extends Option
 
     /**
      * @param string $language
+     *
      * @throws BpostInvalidValueException
      */
     public function setLanguage($language)
@@ -105,6 +113,7 @@ class Messaging extends Option
 
     /**
      * @param string $mobilePhone
+     *
      * @throws BpostInvalidLengthException
      */
     public function setMobilePhone($mobilePhone)
@@ -140,11 +149,11 @@ class Messaging extends Option
 
     /**
      * @param string $type
+     *
      * @throws BpostInvalidValueException
      */
     public function setType($type)
     {
-
         if (!in_array($type, self::getPossibleTypeValues())) {
             throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
         }
@@ -161,8 +170,8 @@ class Messaging extends Option
     }
 
     /**
-     * @param string $type
-     * @param string $language
+     * @param string      $type
+     * @param string      $language
      * @param string|null $emailAddress
      * @param string|null $mobilePhone
      *
@@ -185,40 +194,28 @@ class Messaging extends Option
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = $this->getType();
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $messaging = $document->createElement($tagName);
+        $messaging = $document->createElement(XmlHelper::getPrefixedTagName($this->getType(), $prefix));
         $messaging->setAttribute('language', $this->getLanguage());
 
         if ($this->getEmailAddress() !== null) {
-            $tagName = 'emailAddress';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $messaging->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('emailAddress', $prefix),
                     $this->getEmailAddress()
                 )
             );
         }
         if ($this->getMobilePhone() !== null) {
-            $tagName = 'mobilePhone';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $messaging->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('mobilePhone', $prefix),
                     $this->getMobilePhone()
                 )
             );
@@ -228,16 +225,15 @@ class Messaging extends Option
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Messaging
+     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
-        $messaging = new Messaging(
-            $xml->getName(), (string) $xml->attributes()->language
-        );
+        $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
 
         $data = $xml->{$xml->getName()};
         if (isset($data->emailAddress) && $data->emailAddress != '') {

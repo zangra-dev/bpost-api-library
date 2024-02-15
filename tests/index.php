@@ -1,8 +1,8 @@
 <?php
 
-//require
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/config.php';
+// require
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/config.php';
 
 use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order;
@@ -70,17 +70,17 @@ $receiver->setEmailAddress('bpost.receiver@verkoyen.eu');
 
 // options
 $option = new Messaging('infoDistributed', 'NL', 'bpost@verkoyen.eu');
-//$option = new Messaging('infoNextDay', 'NL', 'bpost@verkoyen.eu');
-//$option = new Messaging('infoReminder', 'NL', 'bpost@verkoyen.eu');
-//$option = new Messaging('keepMeInformed', 'NL', 'bpost@verkoyen.eu');
-//$option = new CashOnDelivery(
+// $option = new Messaging('infoNextDay', 'NL', 'bpost@verkoyen.eu');
+// $option = new Messaging('infoReminder', 'NL', 'bpost@verkoyen.eu');
+// $option = new Messaging('keepMeInformed', 'NL', 'bpost@verkoyen.eu');
+// $option = new CashOnDelivery(
 //    1251,
 //    'BE19210023508812',
 //    'GEBABEBB'
-//);
-//$option = new Signature();
-//$option = new Insurance('additionalInsurance', 3);
-//$option = new AutomaticSecondPresentation();
+// );
+// $option = new Signature();
+// $option = new Insurance('additionalInsurance', 3);
+// $option = new AutomaticSecondPresentation();
 
 // @Home
 $atHome = new AtHome();
@@ -107,7 +107,7 @@ $atBpost->setPugoName('WIJNEGEM');
 $atBpost->setPugoAddress($pugoAddress);
 $atBpost->setReceiverName('Tijs Verkoyen');
 $atBpost->setReceiverCompany('Sumo Coders');
-//$box->setNationalBox($atBpost);
+// $box->setNationalBox($atBpost);
 
 // @24/7
 $parcelsDepotAddress = new ParcelsDepotAddress(
@@ -127,7 +127,7 @@ $at247->setParcelsDepotAddress($parcelsDepotAddress);
 $at247->setMemberId('188565346');
 $at247->setReceiverName('Tijs Verkoyen');
 $at247->setReceiverCompany('Sumo Coders');
-//$box->setNationalBox($at247);
+// $box->setNationalBox($at247);
 
 // international
 $customsInfo = new CustomsInfo();
@@ -142,7 +142,7 @@ $international->setProduct('bpack World Express Pro');
 $international->setReceiver($receiver);
 $international->setParcelWeight(2000);
 $international->setCustomsInfo($customsInfo);
-//$box->setInternationalBox($international);
+// $box->setInternationalBox($international);
 
 $order->addBox($box);
 

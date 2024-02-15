@@ -1,5 +1,11 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order;
+
+use Bpost\BpostApiClient\Common\XmlHelper;
+use DomDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Line class
@@ -67,39 +73,27 @@ class Line
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DOMElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DOMElement
      */
-    public function toXML(\DomDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'orderLine';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $line = $document->createElement($tagName);
+        $line = $document->createElement(XmlHelper::getPrefixedTagName('orderLine', $prefix));
 
         if ($this->getText() !== null) {
-            $tagName = 'text';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $line->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('text', $prefix),
                     $this->getText()
                 )
             );
         }
         if ($this->getNumberOfItems() !== null) {
-            $tagName = 'nbOfItems';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $line->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('nbOfItems', $prefix),
                     $this->getNumberOfItems()
                 )
             );
@@ -109,10 +103,11 @@ class Line
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Line
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $line = new Line();
         if (isset($xml->text) && $xml->text !== '') {

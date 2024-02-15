@@ -1,5 +1,38 @@
 # Changelog
 
+### 3.4.11
+
+* Fix previously broken unit tests
+* Add github-actions
+* Format code by following PSR-12
+
+### 3.4.10
+
+* throw BpostInvalidXmlResponseException if XML response if not a valid XML
+
+### 3.4.9
+
+* Geo6.php supports Country
+* Fix string/int comparison in ApiCaller
+Add PHP7.1 -> 8.0 to travis CI job
+
+### 3.4.8
+
+* Update version of some composer packages
+
+### 3.4.7
+
+* Endpoint change for Geo6/Pudo
+
+### 3.4.6
+
+* For National, option Insured must call class Insurance
+* Fixed the parcel locker 'unregistered', UnregisteredParceLockerMember is deprecated #16
+
+### 3.4.5
+
+* Fix PHP signatures
+
 ### 3.4.1
 
 * Refactoring

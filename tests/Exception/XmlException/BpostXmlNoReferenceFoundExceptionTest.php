@@ -1,10 +1,11 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\XmlException;
+namespace Tests\Exception\XmlException;
 
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
+use PHPUnit_Framework_TestCase;
 
-class BpostXmlNoReferenceFoundExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostXmlNoReferenceFoundExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

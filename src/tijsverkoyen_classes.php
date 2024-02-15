@@ -17,7 +17,7 @@ namespace TijsVerkoyen\Bpost\Bpost\Order\Box { abstract class National extends \
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Openinghour { /** @deprecated */ class Day extends \Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day {} } // src/Bpost/Order/Box/OpeningHour/Day.php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class AutomaticSecondPresentation extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\AutomaticSecondPresentation {} } // src/Bpost/Order/Box/Option/AutomaticSecondPresentation.php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class CashOnDelivery extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\CashOnDelivery {} } // src/Bpost/Order/Box/Option/CashOnDelivery.php
-namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class Insurance extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance {} } // src/Bpost/Order/Box/Option/Insurance.php
+namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class Insurance extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\Insured {} } // src/Bpost/Order/Box/Option/Insured.php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class Messaging extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging {} } // src/Bpost/Order/Box/Option/Messaging.php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class SaturdayDelivery extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery {} } // src/Bpost/Order/Box/Option/SaturdayDelivery.php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option { /** @deprecated */ class Signature extends \Bpost\BpostApiClient\Bpost\Order\Box\Option\Signature {} } // src/Bpost/Order/Box/Option/Signature.php

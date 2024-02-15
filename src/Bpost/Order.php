@@ -6,6 +6,9 @@ use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Line;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Order class
@@ -145,11 +148,12 @@ class Order
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DOMDocument $document
-     * @param  string       $accountId
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $accountId
+     *
+     * @return DOMElement
      */
-    public function toXML(\DOMDocument $document, $accountId)
+    public function toXML(DOMDocument $document, $accountId)
     {
         $order = $document->createElement(
             'tns:order'
@@ -229,13 +233,14 @@ class Order
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Order
+     *
      * @throws BpostXmlNoReferenceFoundException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         // @todo work with classmaps ...
         if (!isset($xml->reference)) {

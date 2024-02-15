@@ -1,10 +1,11 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\LogicException;
+namespace Tests\Exception\LogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidWeightException;
+use PHPUnit_Framework_TestCase;
 
-class BpostInvalidWeightExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostInvalidWeightExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

@@ -2,17 +2,19 @@
 
 namespace Bpost\BpostApiClient\Bpost;
 
+use SimpleXMLElement;
+
 /**
  * Class Labels
  */
 class Labels
 {
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Label[]
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $labels = array();
 

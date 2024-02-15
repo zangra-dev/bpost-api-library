@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Common\BasicAttribute;
 
 use Bpost\BpostApiClient\Common\BasicAttribute;
@@ -6,7 +7,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthExcepti
 
 class PhoneNumber extends BasicAttribute
 {
-
     /**
      * @throws BpostInvalidLengthException
      */

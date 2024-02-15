@@ -6,7 +6,6 @@ use SimpleXMLElement;
 
 /**
  * Class Product
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class Product
 {
@@ -23,14 +22,14 @@ class Product
     const PRODUCT_NAME_BPACK_WORLD_BUSINESS = 'bpack World Business';
     const PRODUCT_NAME_BPACK_EUROPE_BUSINESS = 'bpack Europe Business';
 
-    /** @var  bool */
+    /** @var bool */
     private $default;
-    /** @var  string */
+    /** @var string */
     private $name;
 
-    /** @var  Price[] */
+    /** @var Price[] */
     private $prices = array();
-    /** @var  Option[] */
+    /** @var Option[] */
     private $options = array();
 
     /**
@@ -65,6 +64,7 @@ class Product
                 $product->addOption(Option::createFromXML($optionXml));
             }
         }
+
         return $product;
     }
 

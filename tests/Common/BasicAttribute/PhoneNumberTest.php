@@ -1,12 +1,14 @@
 <?php
 
+namespace Tests\Common\BasicAttribute;
+
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\BasicAttribute\PhoneNumber;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use PHPUnit_Framework_TestCase;
 
-class PhoneNumberTest extends \PHPUnit_Framework_TestCase
+class PhoneNumberTest extends PHPUnit_Framework_TestCase
 {
-
     public function testValidate()
     {
         $value = str_repeat('a', 20);
@@ -25,5 +27,4 @@ class PhoneNumberTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(true);
         }
     }
-
 }

@@ -2,19 +2,23 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour;
 
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use DomDocument;
+use DomElement;
 
 /**
  * bPost Day class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
 class Day
 {
-
     const DAY_MONDAY = 'Monday';
     const DAY_TUESDAY = 'Tuesday';
     const DAY_WEDNESDAY = 'Wednesday';
@@ -35,6 +39,7 @@ class Day
 
     /**
      * @param string $day
+     *
      * @throws BpostInvalidValueException
      */
     public function setDay($day)
@@ -101,17 +106,16 @@ class Day
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = $this->getDay();
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        return $document->createElement($tagName, $this->getValue());
+        return $document->createElement(
+            XmlHelper::getPrefixedTagName($this->getDay(), $prefix),
+            $this->getValue()
+        );
     }
 }

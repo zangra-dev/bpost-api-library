@@ -4,6 +4,7 @@ namespace Bpost\BpostApiClient\Bpost;
 
 use Bpost\BpostApiClient\Bpost\Label\Barcode;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use SimpleXMLElement;
 
 /**
  * bPost Label class
@@ -12,7 +13,6 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
  */
 class Label
 {
-
     const LABEL_MIME_TYPE_IMAGE_PNG = 'image/png';
     const LABEL_MIME_TYPE_IMAGE_PDF = 'image/pdf';
     const LABEL_MIME_TYPE_APPLICATION_PDF = 'application/pdf';
@@ -88,6 +88,7 @@ class Label
 
     /**
      * @param string $mimeType
+     *
      * @throws BpostInvalidValueException
      */
     public function setMimeType($mimeType)
@@ -130,12 +131,13 @@ class Label
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return Label
+     *
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $label = new Label();
         if (isset($xml->barcodeWithReference)) {

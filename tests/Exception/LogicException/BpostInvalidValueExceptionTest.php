@@ -1,11 +1,11 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\BpostLogicException;
+namespace Tests\Exception\BpostLogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use PHPUnit_Framework_TestCase;
 
-class BpostInvalidValueExceptionTest extends \PHPUnit_Framework_TestCase
-
+class BpostInvalidValueExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

@@ -3,8 +3,9 @@
 namespace Bpost\BpostApiClient\Geo6\test\Exception\BpostApiResponseException;
 
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
+use PHPUnit_Framework_TestCase;
 
-class BpostInvalidXmlResponseExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostInvalidXmlResponseExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

@@ -169,7 +169,7 @@ class Insured extends Option
         $insuranceDetail = $xml->children('common', true);
 
         $type = $insuranceDetail->getName();
-        $value = $insuranceDetail->attributes() !== null ? (int) $insuranceDetail->attributes()->value : null;
+        $value = (int) $insuranceDetail->attributes()->value ?? null;
 
         if ($type === static::INSURANCE_TYPE_ADDITIONAL_INSURANCE && $value === 1) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;

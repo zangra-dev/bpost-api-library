@@ -15,7 +15,7 @@ _bpost API library_ is a PHP library which permit to your PHP application to com
 ## Installation
 
 ```bash
-composer require antidot-be/bpost-api-library
+composer require zangra/bpost-api-library
 ```
 
 ## Usages
@@ -46,8 +46,7 @@ use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\BpostException;
 use Psr\Log\LoggerInterface;
 
-
-$apiUrl = "https://api-parcel.bpost.be/services/shm/";
+$apiUrl = 'https://shm-rest.bpost.cloud/services/shm';
 $apiUsername = "107423";
 $apiPassword = "MyGreatApiPassword";
 

@@ -2,20 +2,21 @@
 
 namespace Bpost\BpostApiClient\tests;
 
-use \Bpost\BpostApiClient\Bpost;
-use \Bpost\BpostApiClient\Bpost\Order;
-use \Bpost\BpostApiClient\Bpost\Order\Address;
-use \Bpost\BpostApiClient\Bpost\Order\Box;
-use \Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
-use \Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
-use \Bpost\BpostApiClient\Bpost\Order\Line as OrderLine;
-use \Bpost\BpostApiClient\Bpost\Order\Receiver;
-use \Bpost\BpostApiClient\Bpost\Order\Sender;
+use Bpost\BpostApiClient\Bpost;
+use Bpost\BpostApiClient\Bpost\Order;
+use Bpost\BpostApiClient\Bpost\Order\Address;
+use Bpost\BpostApiClient\Bpost\Order\Box;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
+use Bpost\BpostApiClient\Bpost\Order\Line as OrderLine;
+use Bpost\BpostApiClient\Bpost\Order\Receiver;
+use Bpost\BpostApiClient\Bpost\Order\Sender;
+use PHPUnit_Framework_TestCase;
 
 /**
  * test case.
  */
-class BpostTest extends \PHPUnit_Framework_TestCase
+class BpostTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Bpost
@@ -60,6 +61,7 @@ class BpostTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Create an order with 2 lines and 1 box
+     *
      * @return Order
      */
     protected function createAtHomeOrderObject()
@@ -182,6 +184,7 @@ class BpostTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests Bpost->createLabelForBox
+     *
      * @group qsd
      */
     public function testCreateLabelForBox()
@@ -200,6 +203,7 @@ class BpostTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests Bpost->createLabelInBulkForOrders
+     *
      * @group aze
      */
     public function testCreateLabelInBulkForOrders()

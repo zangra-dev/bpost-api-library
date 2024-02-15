@@ -2,13 +2,15 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
+use DomDocument;
+use DomElement;
+use SimpleXMLElement;
+
 /**
  * Interface IBox
- * @package Bpost\BpostApiClient\Bpost\Order\Box
  */
 interface IBox
 {
-
     /**
      * @param array $options
      */
@@ -36,21 +38,25 @@ interface IBox
 
     /**
      * @remark should be implemented by the child class
+     *
      * @return array
      */
     public static function getPossibleProductValues();
 
     /**
      * Return the object as an array for usage in the XML
-     * @param  \DomDocument $document
-     * @param  string $prefix
-     * @return \DomElement
+     *
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null);
+    public function toXML(DOMDocument $document, $prefix = null);
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return self
      */
-    public static function createFromXML(\SimpleXMLElement $xml);
+    public static function createFromXML(SimpleXMLElement $xml);
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\Bpack247\Customer;
@@ -6,12 +7,16 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostApiBusinessExc
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostApiSystemException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidResponseException;
+use DOMDocument;
+use SimpleXMLElement;
 
 /**
  * bPost Bpack24/7 class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -68,10 +73,12 @@ class Bpack247
     /**
      * Make the call
      *
-     * @param  string $url    The URL to call.
-     * @param  string $body   The data to pass.
-     * @param  string $method The HTTP-method to use.
-     * @return \SimpleXMLElement
+     * @param string $url    The URL to call.
+     * @param string $body   The data to pass.
+     * @param string $method The HTTP-method to use.
+     *
+     * @return SimpleXMLElement
+     *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
      * @throws BpostCurlException
@@ -221,7 +228,8 @@ class Bpack247
     /**
      * @param Customer $customer
      *
-     * @return \SimpleXMLElement
+     * @return SimpleXMLElement
+     *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
      * @throws BpostCurlException
@@ -231,7 +239,7 @@ class Bpack247
     {
         $url = '/customer';
 
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -251,9 +259,10 @@ class Bpack247
     /**
      * Retrieve member information
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return Customer
+     *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
      * @throws BpostCurlException

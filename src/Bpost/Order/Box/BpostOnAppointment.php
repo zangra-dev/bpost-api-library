@@ -1,12 +1,16 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
+use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 /**
  * Class BpostOnAppointment
- * @package Bpost\BpostApiClient\Bpost\Order\Box
  */
 class BpostOnAppointment extends National
 {
@@ -45,20 +49,21 @@ class BpostOnAppointment extends National
      */
     public function setInNetworkCutOff($inNetworkCutOff)
     {
-        $this->inNetworkCutOff = (string)$inNetworkCutOff;
+        $this->inNetworkCutOff = (string) $inNetworkCutOff;
     }
 
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @param  string       $type
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, $prefix = null, $type = null)
     {
-        $nationalElement = $document->createElement($this->getPrefixedTagName('nationalBox', $prefix));
+        $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'bpostOnAppointment');
         $nationalElement->appendChild($boxElement);
 
@@ -70,10 +75,10 @@ class BpostOnAppointment extends National
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $typeElement
+     * @param DOMDocument $document
+     * @param DOMElement  $typeElement
      */
-    protected function addToXmlReceiver(\DOMDocument $document, \DOMElement $typeElement)
+    protected function addToXmlReceiver(DOMDocument $document, DOMElement $typeElement)
     {
         if ($this->getReceiver() !== null) {
             $typeElement->appendChild(
@@ -83,16 +88,16 @@ class BpostOnAppointment extends National
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param \DOMElement  $typeElement
-     * @param string       $prefix
+     * @param DOMDocument $document
+     * @param DOMElement  $typeElement
+     * @param string      $prefix
      */
-    protected function addToXmlRequestedDeliveryDate(\DOMDocument $document, \DOMElement $typeElement, $prefix)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, $prefix)
     {
         if ($this->getInNetworkCutOff() !== null) {
             $typeElement->appendChild(
                 $document->createElement(
-                    $this->getPrefixedTagName('inNetworkCutOff', $prefix),
+                    XmlHelper::getPrefixedTagName('inNetworkCutOff', $prefix),
                     $this->getInNetworkCutOff()
                 )
             );
@@ -100,12 +105,14 @@ class BpostOnAppointment extends National
     }
 
     /**
-     * @param \SimpleXMLElement $xml
-     * @param National|null     $self
+     * @param SimpleXMLElement $xml
+     * @param National|null    $self
+     *
      * @return BpostOnAppointment
+     *
      * @throws BpostXmlInvalidItemException
      */
-    public static function createFromXML(\SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
         $self = new self();
 
@@ -125,7 +132,7 @@ class BpostOnAppointment extends National
 
         if (isset($bpostOnAppointmentXml->inNetworkCutOff) && $bpostOnAppointmentXml->inNetworkCutOff != '') {
             $self->setInNetworkCutOff(
-                (string)$bpostOnAppointmentXml->inNetworkCutOff
+                (string) $bpostOnAppointmentXml->inNetworkCutOff
             );
         }
 

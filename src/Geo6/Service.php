@@ -2,11 +2,15 @@
 
 namespace Bpost\BpostApiClient\Geo6;
 
+use SimpleXMLElement;
+
 /**
  * Geo6 class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -76,10 +80,11 @@ class Service
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Service
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $service = new Service();
         $service->setName((string) $xml);

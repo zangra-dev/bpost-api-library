@@ -1,14 +1,18 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
 use Bpost\BpostApiClient\Common\BasicAttribute\EmailAddressCharacteristic;
 use Bpost\BpostApiClient\Common\BasicAttribute\Language;
 use Bpost\BpostApiClient\Common\BasicAttribute\PhoneNumber;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
+use Bpost\BpostApiClient\Common\XmlHelper;
+use DOMDocument;
+use DOMElement;
+use SimpleXMLElement;
 
 class Unregistered extends ComplexAttribute
 {
-
     /** @var Language */
     private $language;
 
@@ -118,29 +122,30 @@ class Unregistered extends ComplexAttribute
     }
 
     /**
-     * @param \DOMDocument $document
-     * @param string       $prefix
-     * @param string       $type
-     * @return \DOMElement
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param string      $type
+     *
+     * @return DOMElement
      */
-    public function toXml(\DOMDocument $document, $prefix = null, $type = null)
+    public function toXml(DOMDocument $document, $prefix = null, $type = null)
     {
-        $tagName = $this->getPrefixedTagName('unregistered', $prefix);
+        $tagName = XmlHelper::getPrefixedTagName('unregistered', $prefix);
 
         $xml = $document->createElement($tagName);
 
         if ($this->hasLanguage()) {
-            $tagName = $this->getPrefixedTagName('language', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('language', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getLanguage()));
         }
 
         if ($this->getMobilePhone() !== null) {
-            $tagName = $this->getPrefixedTagName('mobilePhone', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('mobilePhone', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getMobilePhone()));
         }
 
         if ($this->getEmailAddress() !== null) {
-            $tagName = $this->getPrefixedTagName('emailAddress', $prefix);
+            $tagName = XmlHelper::getPrefixedTagName('emailAddress', $prefix);
             $xml->appendChild($document->createElement($tagName, $this->getEmailAddress()));
         }
 
@@ -154,23 +159,24 @@ class Unregistered extends ComplexAttribute
     }
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Unregistered
      */
-    public static function createFromXml(\SimpleXMLElement $xml)
+    public static function createFromXml(SimpleXMLElement $xml)
     {
         $self = new self();
 
         if (isset($xml->language) && $xml->language != '') {
-            $self->setLanguage((string)$xml->language);
+            $self->setLanguage((string) $xml->language);
         }
 
         if (isset($xml->mobilePhone) && $xml->mobilePhone != '') {
-            $self->setMobilePhone((string)$xml->mobilePhone);
+            $self->setMobilePhone((string) $xml->mobilePhone);
         }
 
         if (isset($xml->emailAddress) && $xml->emailAddress != '') {
-            $self->setEmailAddress((string)$xml->emailAddress);
+            $self->setEmailAddress((string) $xml->emailAddress);
         }
 
         if (isset($xml->parcelLockerReducedMobilityZone)) {

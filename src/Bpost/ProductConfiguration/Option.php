@@ -6,20 +6,18 @@ use SimpleXMLElement;
 
 /**
  * Class Option
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class Option
 {
-
     const OPTION_VISIBILITY_NOT_VISIBLE_BY_CONSUMER_OPTIONAL = 'NOT_VISIBLE_BY_CONSUMER_OPTIONAL';
     const OPTION_VISIBILITY_NOT_VISIBLE_BY_CONSUMER_DEFAULT = 'NOT_VISIBLE_BY_CONSUMER_DEFAULT';
     const OPTION_VISIBILITY_VISIBLE_BY_CONSUMER_AND_MANDATORY = 'VISIBLE_BY_CONSUMER_AND_MANDATORY';
 
-    /** @var  string */
+    /** @var string */
     private $visibility;
-    /** @var  int */
+    /** @var int */
     private $price;
-    /** @var  string */
+    /** @var string */
     private $name;
     /** @var Characteristic[] */
     private $characteristics = array();
@@ -114,5 +112,4 @@ class Option
     {
         $this->characteristics[] = $characteristic;
     }
-
 }

@@ -1,12 +1,20 @@
 <?php
+
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
-use Bpost\BpostApiClient\Bpost\CreateLabelInBulkForOrders;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\HttpRequestBuilderInterface;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
-use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insurance;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Insured;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
@@ -14,20 +22,24 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidRespons
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidSelectionException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
+use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
+use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
 use Psr\Log\LoggerInterface;
+use SimpleXMLElement;
 
 /**
  * Bpost class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
 class Bpost
 {
-
     const LABEL_FORMAT_A4 = 'A4';
     const LABEL_FORMAT_A6 = 'A6';
 
@@ -90,10 +102,9 @@ class Bpost
 
     private $apiUrl;
 
-    /** @var  Logger */
+    /** @var Logger */
     private $logger;
 
-    // class methods
     /**
      * Create Bpost instance
      *
@@ -103,9 +114,9 @@ class Bpost
      */
     public function __construct($accountId, $passPhrase, $apiUrl = self::API_URL)
     {
-        $this->accountId = (string)$accountId;
-        $this->passPhrase = (string)$passPhrase;
-        $this->apiUrl = (string)$apiUrl;
+        $this->accountId = (string) $accountId;
+        $this->passPhrase = (string) $passPhrase;
+        $this->apiUrl = (string) $apiUrl;
         $this->logger = new Logger();
     }
 
@@ -117,6 +128,7 @@ class Bpost
         if ($this->apiCaller === null) {
             $this->apiCaller = new ApiCaller($this->logger);
         }
+
         return $this->apiCaller;
     }
 
@@ -142,40 +154,42 @@ class Bpost
     /**
      * Decode the response
      *
-     * @param  \SimpleXMLElement $item   The item to decode.
-     * @param  array             $return Just a placeholder.
-     * @param  int               $i      A internal counter.
+     * @param SimpleXMLElement $item   The item to decode.
+     * @param array            $return Just a placeholder.
+     * @param int              $i      A internal counter.
+     *
      * @return array
+     *
      * @throws BpostXmlInvalidItemException
      */
     private static function decodeResponse($item, $return = null, $i = 0)
     {
-        if (!$item instanceof \SimpleXMLElement) {
+        if (!$item instanceof SimpleXMLElement) {
             throw new BpostXmlInvalidItemException();
         }
 
         $arrayKeys = array(
             'barcode',
             'orderLine',
-            Insurance::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
+            Insured::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
             Box\Option\Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
-            'infoPugo'
+            'infoPugo',
         );
         $integerKeys = array('totalPrice');
 
-        /** @var \SimpleXMLElement $value */
+        /** @var SimpleXMLElement $value */
         foreach ($item as $key => $value) {
-            $attributes = (array)$value->attributes();
+            $attributes = (array) $value->attributes();
 
             if (!empty($attributes) && isset($attributes['@attributes'])) {
                 $return[$key]['@attributes'] = $attributes['@attributes'];
             }
 
             // empty
-            if (isset($value['nil']) && (string)$value['nil'] === 'true') {
+            if (isset($value['nil']) && (string) $value['nil'] === 'true') {
                 $return[$key] = null;
             } // empty
-            elseif (isset($value[0]) && (string)$value == '') {
+            elseif (isset($value[0]) && (string) $value == '') {
                 if (in_array($key, $arrayKeys)) {
                     $return[$key][] = self::decodeResponse($value);
                 } else {
@@ -184,18 +198,18 @@ class Bpost
             } else {
                 // arrays
                 if (in_array($key, $arrayKeys)) {
-                    $return[$key][] = (string)$value;
+                    $return[$key][] = (string) $value;
                 } // booleans
-                elseif ((string)$value == 'true') {
+                elseif ((string) $value == 'true') {
                     $return[$key] = true;
-                } elseif ((string)$value == 'false') {
+                } elseif ((string) $value == 'false') {
                     $return[$key] = false;
                 } // integers
                 elseif (in_array($key, $integerKeys)) {
-                    $return[$key] = (int)$value;
+                    $return[$key] = (int) $value;
                 } // fallback to string
                 else {
-                    $return[$key] = (string)$value;
+                    $return[$key] = (string) $value;
                 }
             }
         }
@@ -206,37 +220,41 @@ class Bpost
     /**
      * Make the call
      *
-     * @param  string $url       The URL to call.
-     * @param  string $body      The data to pass.
-     * @param  array  $headers   The headers to pass.
-     * @param  string $method    The HTTP-method to use.
-     * @param  bool   $expectXML Do we expect XML?
+     * @param string $url       The URL to call.
+     * @param string $body      The data to pass.
+     * @param array  $headers   The headers to pass.
+     * @param string $method    The HTTP-method to use.
+     * @param bool   $expectXML Do we expect XML?
+     *
      * @return mixed
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
      * @throws BpostInvalidXmlResponseException
      */
-    private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
+    private function doCall(HttpRequestBuilderInterface $builder)
     {
+        $headers = $builder->getHeaders();
+
         // build Authorization header
         $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
 
         // set options
         $options = array();
-        $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $url;
+        $options[CURLOPT_URL] = $this->apiUrl . '/' . $this->accountId . $builder->getUrl();
         if ($this->getPort() != 0) {
             $options[CURLOPT_PORT] = $this->getPort();
         }
         $options[CURLOPT_USERAGENT] = $this->getUserAgent();
         $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_TIMEOUT] = (int)$this->getTimeOut();
+        $options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
         $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
         $options[CURLOPT_HTTPHEADER] = $headers;
 
-        if ($method == 'POST') {
+        if ($builder->getMethod() == 'POST') {
             $options[CURLOPT_POST] = true;
-            $options[CURLOPT_POSTFIELDS] = $body;
+            $options[CURLOPT_POSTFIELDS] = $builder->getXml();
         }
 
         $this->getApiCaller()->doCall($options);
@@ -254,8 +272,8 @@ class Bpost
             if ($xml !== false && (substr($xml->getName(), 0, 7) == 'invalid')
             ) {
                 // message
-                $message = (string)$xml->error;
-                $code = isset($xml->code) ? (int)$xml->code : null;
+                $message = (string) $xml->error;
+                $code = isset($xml->code) ? (int) $xml->code : null;
 
                 // throw exception
                 throw new BpostInvalidSelectionException($message, $code);
@@ -264,7 +282,7 @@ class Bpost
             $message = '';
             if (
                 ($contentType !== null && substr_count($contentType, 'text/plain') > 0) ||
-                (in_array($httpCode, array(400, 404)))
+                in_array($httpCode, array(400, 404))
             ) {
                 $message = $response;
             }
@@ -273,7 +291,7 @@ class Bpost
         }
 
         // if we don't expect XML we can return the content here
-        if (!$expectXML) {
+        if (!$builder->isExpectXml()) {
             return $response;
         }
 
@@ -324,7 +342,7 @@ class Bpost
      */
     public function getPort()
     {
-        return (int)$this->port;
+        return (int) $this->port;
     }
 
     /**
@@ -334,7 +352,7 @@ class Bpost
      */
     public function getTimeOut()
     {
-        return (int)$this->timeOut;
+        return (int) $this->timeOut;
     }
 
     /**
@@ -346,7 +364,7 @@ class Bpost
      */
     public function getUserAgent()
     {
-        return (string)'PHP Bpost/' . self::VERSION . ' ' . $this->userAgent;
+        return (string) 'PHP Bpost/' . self::VERSION . ' ' . $this->userAgent;
     }
 
     /**
@@ -357,7 +375,7 @@ class Bpost
      */
     public function setTimeOut($seconds)
     {
-        $this->timeOut = (int)$seconds;
+        $this->timeOut = (int) $seconds;
     }
 
     /**
@@ -368,74 +386,49 @@ class Bpost
      */
     public function setUserAgent($userAgent)
     {
-        $this->userAgent = (string)$userAgent;
+        $this->userAgent = (string) $userAgent;
     }
 
     // webservice methods
-// orders
+    // orders
     /**
      * Creates a new order. If an order with the same orderReference already exists
      *
-     * @param  Order $order
+     * @param Order $order
      *
      * @return bool
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createOrReplaceOrder(Order $order)
     {
-        $url = '/orders';
+        $builder = new CreateOrReplaceOrder($order, $this->accountId);
 
-        $document = new \DOMDocument('1.0', 'utf-8');
-        $document->preserveWhiteSpace = false;
-        $document->formatOutput = true;
-
-        $document->appendChild(
-            $order->toXML(
-                $document,
-                $this->accountId
-            )
-        );
-
-        $headers = array(
-            'Content-type: application/vnd.bpost.shm-order-v3.3+XML'
-        );
-
-        return (
-            $this->doCall(
-                $url,
-                $document->saveXML(),
-                $headers,
-                'POST',
-                false
-            ) == ''
-        );
+        return $this->doCall($builder) == '';
     }
 
     /**
      * Fetch an order
      *
-     * @param $reference
+     * @param string $reference
      *
      * @return Order
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
-     * @throws Exception\XmlException\BpostXmlNoReferenceFoundException
+     * @throws BpostInvalidXmlResponseException
+     * @throws BpostNotImplementedException
+     * @throws BpostXmlNoReferenceFoundException
      */
     public function fetchOrder($reference)
     {
-        $url = '/orders/' . (string)$reference;
+        $builder = new FetchOrder($reference);
 
-        $headers = array(
-            'Accept: application/vnd.bpost.shm-order-v3.3+XML',
-        );
-        $xml = $this->doCall(
-            $url,
-            null,
-            $headers
-        );
+        $xml = $this->doCall($builder);
 
         return Order::createFromXML($xml);
     }
@@ -444,23 +437,17 @@ class Bpost
      * Get the products configuration
      *
      * @return ProductConfiguration
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function fetchProductConfig()
     {
-        $url = '/productconfig';
+        $builder = new FetchProductConfig();
 
-        $headers = array(
-            'Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML',
-        );
-        /** @var \SimpleXMLElement $xml */
-        $xml = $this->doCall(
-            $url,
-            null,
-            $headers
-        );
+        $xml = $this->doCall($builder);
 
         return ProductConfiguration::createFromXML($xml);
     }
@@ -468,52 +455,26 @@ class Bpost
     /**
      * Modify the status for an order.
      *
-     * @param  string $reference The reference for an order
-     * @param  string $status    The new status, allowed values are: OPEN, PENDING, CANCELLED, COMPLETED, ON-HOLD or PRINTED
+     * @param string $reference The reference for an order
+     * @param string $status    The new status, allowed values are: OPEN, PENDING, CANCELLED, COMPLETED, ON-HOLD or PRINTED
      *
      * @return bool
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
      * @throws BpostInvalidValueException
+     * @throws BpostInvalidXmlResponseException
      */
     public function modifyOrderStatus($reference, $status)
     {
-        $status = strtoupper($status);
-        if (!in_array($status, Box::getPossibleStatusValues())) {
-            throw new BpostInvalidValueException('status', $status, Box::getPossibleStatusValues());
-        }
+        $builder = new ModifyOrder($reference, $status);
 
-        $url = '/orders/' . $reference;
-
-        $document = new \DOMDocument('1.0', 'utf-8');
-        $document->preserveWhiteSpace = false;
-        $document->formatOutput = true;
-
-        $orderUpdate = $document->createElement('orderUpdate');
-        $orderUpdate->setAttribute('xmlns', 'http://schema.post.be/shm/deepintegration/v3/');
-        $orderUpdate->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $orderUpdate->appendChild(
-            $document->createElement('status', $status)
-        );
-        $document->appendChild($orderUpdate);
-
-        $headers = array(
-            'Content-type: application/vnd.bpost.shm-orderUpdate-v3+XML'
-        );
-
-        return (
-            $this->doCall(
-                $url,
-                $document->saveXML(),
-                $headers,
-                'POST',
-                false
-            ) == ''
-        );
+        return $this->doCall($builder) == '';
     }
 
-// labels
+    // labels
+
     /**
      * Get the possible label formats
      *
@@ -528,63 +489,22 @@ class Bpost
     }
 
     /**
-     * Generic method to centralize handling of labels
-     *
-     * @param  string $url
-     * @param  string $format
-     * @param  bool   $withReturnLabels
-     * @param  bool   $asPdf
-     *
-     * @return Bpost\Label[]
-     * @throws BpostCurlException
-     * @throws BpostInvalidResponseException
-     * @throws BpostInvalidSelectionException
-     * @throws BpostInvalidValueException
-     */
-    protected function getLabel($url, $format = self::LABEL_FORMAT_A6, $withReturnLabels = false, $asPdf = false)
-    {
-        $format = strtoupper($format);
-        if (!in_array($format, self::getPossibleLabelFormatValues())) {
-            throw new BpostInvalidValueException('format', $format, self::getPossibleLabelFormatValues());
-        }
-
-        $url .= '/labels/' . $format;
-        if ($withReturnLabels) {
-            $url .= '/withReturnLabels';
-        }
-
-        if ($asPdf) {
-            $headers = array(
-                'Accept: application/vnd.bpost.shm-label-pdf-v3.4+XML'
-            );
-        } else {
-            $headers = array(
-                'Accept: application/vnd.bpost.shm-label-image-v3.4+XML',
-            );
-        }
-
-        $xml = $this->doCall(
-            $url,
-            null,
-            $headers
-        );
-
-        return Labels::createFromXML($xml);
-    }
-
-    /**
      * Create the labels for all unprinted boxes in an order.
      * The service will return labels for all unprinted boxes for that order.
      * Boxes that were unprinted will get the status PRINTED, the boxes that
      * had already been printed will remain the same.
      *
-     * @param  string $reference        The reference for an order
-     * @param  string $format           The desired format, allowed values are: A4, A6
-     * @param  bool   $withReturnLabels Should return labels be returned?
-     * @param  bool   $asPdf            Should we retrieve the PDF-version instead of PNG
+     * @param string $reference        The reference for an order
+     * @param string $format           The desired format, allowed values are: A4, A6
+     * @param bool   $withReturnLabels Should return labels be returned?
+     * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
-     * @throws BpostInvalidValueException
+     *
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
+     * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelForOrder(
         $reference,
@@ -592,21 +512,27 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $url = '/orders/' . (string)$reference;
+        $builder = new CreateLabelForOrder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        return $this->getLabel($url, $format, $withReturnLabels, $asPdf);
+        $xml = $this->doCall($builder);
+
+        return Labels::createFromXML($xml);
     }
 
     /**
      * Create a label for a known barcode.
      *
-     * @param  string $barcode          The barcode of the parcel
-     * @param  string $format           The desired format, allowed values are: A4, A6
-     * @param  bool   $withReturnLabels Should return labels be returned?
-     * @param  bool   $asPdf            Should we retrieve the PDF-version instead of PNG
+     * @param string $barcode          The barcode of the parcel
+     * @param string $format           The desired format, allowed values are: A4, A6
+     * @param bool   $withReturnLabels Should return labels be returned?
+     * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
      *
      * @return Bpost\Label[]
-     * @throws BpostInvalidValueException
+     *
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
+     * @throws BpostInvalidSelectionException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelForBox(
         $barcode,
@@ -614,9 +540,11 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $url = '/boxes/' . (string)$barcode;
+        $builder = new CreateLabelForBox($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
 
-        return $this->getLabel($url, $format, $withReturnLabels, $asPdf);
+        $xml = $this->doCall($builder);
+
+        return Labels::createFromXML($xml);
     }
 
     /**
@@ -625,17 +553,18 @@ class Bpost
      * request, the service will return a label of every box of that order. If
      * a certain box was not yet printed, it will have the status PRINTED
      *
-     * @param  array  $references       The references for the order
-     * @param  string $format           The desired format, allowed values are: A4, A6
-     * @param  bool   $withReturnLabels Should return labels be returned?
-     * @param  bool   $asPdf            Should we retrieve the PDF-version instead of PNG
-     * @param  bool   $forcePrinting    Reprint a already printed label
+     * @param array  $references       The references for the order
+     * @param string $format           The desired format, allowed values are: A4, A6
+     * @param bool   $withReturnLabels Should return labels be returned?
+     * @param bool   $asPdf            Should we retrieve the PDF-version instead of PNG
+     * @param bool   $forcePrinting    Reprint a already printed label
      *
      * @return Bpost\Label[]
+     *
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      * @throws BpostInvalidSelectionException
-     * @throws BpostInvalidValueException
+     * @throws BpostInvalidXmlResponseException
      */
     public function createLabelInBulkForOrders(
         array $references,
@@ -644,14 +573,15 @@ class Bpost
         $asPdf = false,
         $forcePrinting = false
     ) {
-        $createLabelInBulkForOrders = new CreateLabelInBulkForOrders();
-
-        $xml = $this->doCall(
-            $createLabelInBulkForOrders->getUrl(new LabelFormat($format), $withReturnLabels, $forcePrinting),
-            $createLabelInBulkForOrders->getXml($references),
-            $createLabelInBulkForOrders->getHeaders($asPdf),
-            'POST'
+        $builder = new CreateLabelInBulkForOrders(
+            $references,
+            new LabelFormat($format),
+            $asPdf,
+            $withReturnLabels,
+            $forcePrinting
         );
+
+        $xml = $this->doCall($builder);
 
         return Labels::createFromXML($xml);
     }
@@ -668,6 +598,7 @@ class Bpost
 
     /**
      * @param int $weight in grams
+     *
      * @return bool
      */
     public function isValidWeight($weight)

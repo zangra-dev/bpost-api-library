@@ -1,5 +1,8 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpack247;
+
+use SimpleXMLElement;
 
 /**
  * bPost Customer Pack Station class
@@ -72,10 +75,11 @@ class CustomerPackStation
     }
 
     /**
-     * @param  \SimpleXMLElement   $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return CustomerPackStation
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $packStation = new CustomerPackStation();
 

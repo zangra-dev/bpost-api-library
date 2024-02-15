@@ -1,4 +1,5 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
@@ -6,14 +7,22 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
+use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use DomDocument;
+use DomElement;
+use DOMException;
+use SimpleXMLElement;
 
 /**
  * bPost International class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -27,10 +36,10 @@ class International implements IBox
     /**
      * @var array
      */
-    private $options;
+    private $options = array();
 
     /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Receiver
+     * @var Receiver
      */
     private $receiver;
 
@@ -40,12 +49,12 @@ class International implements IBox
     private $parcelWeight;
 
     /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo
+     * @var CustomsInfo
      */
     private $customsInfo;
 
     /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo $customsInfo
+     * @param CustomsInfo $customsInfo
      */
     public function setCustomsInfo($customsInfo)
     {
@@ -53,7 +62,7 @@ class International implements IBox
     }
 
     /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo
+     * @return CustomsInfo
      */
     public function getCustomsInfo()
     {
@@ -102,6 +111,7 @@ class International implements IBox
 
     /**
      * @param string $product
+     *
      * @throws BpostInvalidValueException
      */
     public function setProduct($product)
@@ -135,7 +145,7 @@ class International implements IBox
     }
 
     /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Receiver $receiver
+     * @param Receiver $receiver
      */
     public function setReceiver($receiver)
     {
@@ -143,7 +153,7 @@ class International implements IBox
     }
 
     /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Receiver
+     * @return Receiver
      */
     public function getReceiver()
     {
@@ -153,36 +163,32 @@ class International implements IBox
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DOMElement
+     *
+     * @throws DOMException
      */
-    public function toXML(\DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, $prefix = null)
     {
-        $tagName = 'internationalBox';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $internationalBox = $document->createElement($tagName);
-        $international = $document->createElement('international:international');
+        $internationalBox = $document->createElement(XmlHelper::getPrefixedTagName('internationalBox', $prefix));
+        $prefix = 'international';
+        $international = $document->createElement(XmlHelper::getPrefixedTagName('international', $prefix));
         $internationalBox->appendChild($international);
 
         if ($this->getProduct() !== null) {
             $international->appendChild(
-                $document->createElement(
-                    'international:product',
-                    $this->getProduct()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('product', $prefix), $this->getProduct())
             );
         }
 
         $options = $this->getOptions();
         if (!empty($options)) {
-            $optionsElement = $document->createElement('international:options');
+            $optionsElement = $document->createElement(XmlHelper::getPrefixedTagName('options', $prefix));
             foreach ($options as $option) {
                 $optionsElement->appendChild(
-                    $option->toXML($document)
+                    $option->toXML($document, 'common')
                 );
             }
             $international->appendChild($optionsElement);
@@ -190,14 +196,14 @@ class International implements IBox
 
         if ($this->getReceiver() !== null) {
             $international->appendChild(
-                $this->getReceiver()->toXML($document, 'international')
+                $this->getReceiver()->toXML($document, $prefix)
             );
         }
 
         if ($this->getParcelWeight() !== null) {
             $international->appendChild(
                 $document->createElement(
-                    'international:parcelWeight',
+                    XmlHelper::getPrefixedTagName('parcelWeight', $prefix),
                     $this->getParcelWeight()
                 )
             );
@@ -205,7 +211,7 @@ class International implements IBox
 
         if ($this->getCustomsInfo() !== null) {
             $international->appendChild(
-                $this->getCustomsInfo()->toXML($document, 'international')
+                $this->getCustomsInfo()->toXML($document, $prefix)
             );
         }
 
@@ -213,13 +219,15 @@ class International implements IBox
     }
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return International
+     *
+     * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         $international = new International();
 

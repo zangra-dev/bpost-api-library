@@ -1,10 +1,11 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\BpostApiResponseException;
+namespace Tests\Exception\BpostApiResponseException;
 
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostTaxipostLocatorException;
+use PHPUnit_Framework_TestCase;
 
-class BpostTaxipostLocatorExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostTaxipostLocatorExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testGetMessage()
     {

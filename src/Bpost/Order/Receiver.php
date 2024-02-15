@@ -1,5 +1,9 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order;
+
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use SimpleXMLElement;
 
 /**
  * bPost Receiver class
@@ -11,13 +15,16 @@ class Receiver extends Customer
     const TAG_NAME = 'receiver';
 
     /**
-     * @param  \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return Receiver
+     *
+     * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
-        $receiver = new Receiver();
-        $receiver = parent::createFromXMLHelper($xml, $receiver);
+        /** @var Receiver $receiver */
+        $receiver = parent::createFromXMLHelper($xml, new Receiver());
 
         return $receiver;
     }

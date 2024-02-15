@@ -7,11 +7,9 @@ use SimpleXMLElement;
 
 /**
  * Class ProductConfiguration
- * @package Bpost\BpostApiClient\Bpost
  */
 class ProductConfiguration
 {
-
     /** @var array DeliveryMethod[] */
     private $deliveryMethods = array();
 

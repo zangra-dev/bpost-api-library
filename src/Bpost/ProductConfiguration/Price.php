@@ -7,22 +7,21 @@ use SimpleXMLElement;
 
 /**
  * Class Price
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class Price
 {
-    /** @var  string */
+    /** @var string */
     private $countryIso2;
 
-    /** @var  int */
+    /** @var int */
     private $priceLessThan2;
-    /** @var  int */
+    /** @var int */
     private $price2To5;
-    /** @var  int */
+    /** @var int */
     private $price5To10;
-    /** @var  int */
+    /** @var int */
     private $price10To20;
-    /** @var  int */
+    /** @var int */
     private $price20To30;
 
     /**
@@ -52,9 +51,11 @@ class Price
      * @param int $weight
      *
      * @return int
+     *
      * @throws BpostInvalidWeightException
      */
-    public function getPriceByWeight($weight) {
+    public function getPriceByWeight($weight)
+    {
         if ($weight <= 2000) {
             return $this->getPriceLessThan2();
         } elseif ($weight <= 5000) {

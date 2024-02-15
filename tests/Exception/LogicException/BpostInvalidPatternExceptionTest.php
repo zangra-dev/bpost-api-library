@@ -1,12 +1,12 @@
 <?php
 
-namespace Bpost\BpostApiClient\test\Exception\BpostLogicException;
+namespace Tests\Exception\BpostLogicException;
 
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidPatternException;
+use PHPUnit_Framework_TestCase;
 
-class BpostInvalidPatternExceptionTest extends \PHPUnit_Framework_TestCase
+class BpostInvalidPatternExceptionTest extends PHPUnit_Framework_TestCase
 {
-
     public function testGetMessage()
     {
         $ex = new BpostInvalidPatternException('error', 'OOPS', '([A-Z]{3})');

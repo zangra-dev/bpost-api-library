@@ -1,11 +1,18 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
+
+use Bpost\BpostApiClient\Common\XmlHelper;
+use DomDocument;
+use DomElement;
 
 /**
  * bPost CashOnDelivery class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
+ *
  * @version   3.0.0
+ *
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
@@ -89,51 +96,35 @@ class CashOnDelivery extends Option
     /**
      * Return the object as an array for usage in the XML
      *
-     * @param  \DomDocument $document
-     * @param  string       $prefix
-     * @return \DomElement
+     * @param DomDocument $document
+     * @param string      $prefix
+     *
+     * @return DomElement
      */
-    public function toXML(\DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        $tagName = 'cod';
-        if ($prefix !== null) {
-            $tagName = $prefix . ':' . $tagName;
-        }
-
-        $cod = $document->createElement($tagName);
+        $cod = $document->createElement(XmlHelper::getPrefixedTagName('cod', $prefix));
 
         if ($this->getAmount() !== null) {
-            $tagName = 'codAmount';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('codAmount', $prefix),
                     $this->getAmount()
                 )
             );
         }
         if ($this->getIban() !== null) {
-            $tagName = 'iban';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('iban', $prefix),
                     $this->getIban()
                 )
             );
         }
         if ($this->getBic() !== null) {
-            $tagName = 'bic';
-            if ($prefix !== null) {
-                $tagName = $prefix . ':' . $tagName;
-            }
             $cod->appendChild(
                 $document->createElement(
-                    $tagName,
+                    XmlHelper::getPrefixedTagName('bic', $prefix),
                     $this->getBic()
                 )
             );

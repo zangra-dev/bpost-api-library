@@ -4,8 +4,10 @@ namespace Bpost\BpostApiClient\Geo6\test;
 
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostTaxipostLocatorException;
 use Bpost\BpostApiClient\Geo6;
+use Exception;
+use PHPUnit_Framework_TestCase;
 
-class Geo6Test extends \PHPUnit_Framework_TestCase
+class Geo6Test extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Geo6
@@ -82,7 +84,7 @@ class Geo6Test extends \PHPUnit_Framework_TestCase
             $this->fail('BpostTaxipostLocatorException not launched');
         } catch (BpostTaxipostLocatorException $e) {
             $this->assertSame('No match for id : -1 and type : 3', $e->getMessage());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostTaxipostLocatorException not caught');
         }
 
@@ -91,10 +93,9 @@ class Geo6Test extends \PHPUnit_Framework_TestCase
             $this->fail('BpostTaxipostLocatorException not launched');
         } catch (BpostTaxipostLocatorException $e) {
             $this->assertSame('Id is mandatory', $e->getMessage());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('BpostTaxipostLocatorException not caught');
         }
-
     }
 
     /**

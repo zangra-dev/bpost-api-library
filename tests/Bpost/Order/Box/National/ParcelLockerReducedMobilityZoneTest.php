@@ -1,17 +1,22 @@
 <?php
-namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
-class ParcelLockerReducedMobilityZoneTest extends \PHPUnit_Framework_TestCase
+namespace Tests\Bpost\Order\Box\National;
+
+use Bpost\BpostApiClient\Bpost\Order\Box\National\ParcelLockerReducedMobilityZone;
+use DOMDocument;
+use PHPUnit_Framework_TestCase;
+use SimpleXMLElement;
+
+class ParcelLockerReducedMobilityZoneTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * Create a generic DOM Document
      *
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     private static function createDomDocument()
     {
-        $document = new \DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'utf-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
@@ -23,7 +28,6 @@ class ParcelLockerReducedMobilityZoneTest extends \PHPUnit_Framework_TestCase
      */
     public function testToXML()
     {
-
         // Without prefix
 
         $expectedDocument = self::createDomDocument();
@@ -56,7 +60,7 @@ class ParcelLockerReducedMobilityZoneTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXml()
     {
-        $xml = new \SimpleXMLElement('<parcelLockerReducedMobilityZone/>');
+        $xml = new SimpleXMLElement('<parcelLockerReducedMobilityZone/>');
 
         $this->assertInstanceOf(
             'Bpost\BpostApiClient\Bpost\Order\Box\National\ParcelLockerReducedMobilityZone',

@@ -1,5 +1,8 @@
 <?php
+
 namespace Bpost\BpostApiClient\Bpost\Order;
+
+use SimpleXMLElement;
 
 /**
  * bPost PugoAddress class
@@ -11,10 +14,11 @@ class PugoAddress extends Address
     const TAG_NAME = 'pugoAddress';
 
     /**
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
+     *
      * @return PugoAddress
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml)
     {
         return parent::createFromXML($xml);
     }

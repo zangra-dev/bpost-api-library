@@ -4,7 +4,6 @@ namespace Bpost\BpostApiClient\Bpost\ProductConfiguration;
 
 /**
  * Class Visibility
- * @package Bpost\BpostApiClient\Bpost\ProductConfiguration
  */
 class Visibility
 {

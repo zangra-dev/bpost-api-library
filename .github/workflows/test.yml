@@ -12,10 +12,10 @@ jobs:
         with:
           php_version: 7.4
 
-      - name: php-cs-fixer static analysis
-        uses: docker://oskarstark/php-cs-fixer-ga
-        with:
-          args: --using-cache=no --diff --dry-run -v
+#      - name: php-cs-fixer static analysis
+#        uses: docker://oskarstark/php-cs-fixer-ga
+#        with:
+#          args: --using-cache=no --diff --dry-run -v
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3

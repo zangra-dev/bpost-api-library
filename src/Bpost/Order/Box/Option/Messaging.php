@@ -230,17 +230,17 @@ class Messaging extends Option
      * @return Messaging
      *
      * @throws BpostInvalidLengthException
+     * @throws BpostInvalidValueException
      */
     public static function createFromXML(SimpleXMLElement $xml)
     {
         $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
 
-        $data = $xml->{$xml->getName()};
-        if (isset($data->emailAddress) && $data->emailAddress != '') {
-            $messaging->setEmailAddress((string) $data->emailAddress);
+        if ((string) $xml->emailAddress !== '') {
+            $messaging->setEmailAddress((string) $xml->emailAddress);
         }
-        if (isset($data->mobilePhone) && $data->mobilePhone != '') {
-            $messaging->setMobilePhone((string) $data->mobilePhone);
+        if ((string) $xml->mobilePhone !== '') {
+            $messaging->setMobilePhone((string) $xml->mobilePhone);
         }
 
         return $messaging;

@@ -160,19 +160,19 @@ class Order
         );
         $order->setAttribute(
             'xmlns:common',
-            'http://schema.post.be/shm/deepintegration/v3/common'
+            'http://schema.post.be/shm/deepintegration/v5/common'
         );
         $order->setAttribute(
             'xmlns:tns',
-            'http://schema.post.be/shm/deepintegration/v3/'
+            'http://schema.post.be/shm/deepintegration/v5/'
         );
         $order->setAttribute(
             'xmlns',
-            'http://schema.post.be/shm/deepintegration/v3/national'
+            'http://schema.post.be/shm/deepintegration/v5/national'
         );
         $order->setAttribute(
             'xmlns:international',
-            'http://schema.post.be/shm/deepintegration/v3/international'
+            'http://schema.post.be/shm/deepintegration/v5/international'
         );
         $order->setAttribute(
             'xmlns:xsi',
@@ -180,7 +180,7 @@ class Order
         );
         $order->setAttribute(
             'xsi:schemaLocation',
-            'http://schema.post.be/shm/deepintegration/v3/'
+            'http://schema.post.be/shm/deepintegration/v5/'
         );
 
         $document->appendChild($order);

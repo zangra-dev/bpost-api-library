@@ -3,6 +3,7 @@
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
+use Bpost\BpostApiClient\Bpost\Order\Box\International\ParcelContent;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
@@ -52,6 +53,14 @@ class International implements IBox
      * @var CustomsInfo
      */
     private $customsInfo;
+
+    /**
+     * Only for shipments outside Europe.
+     * Might include from 1 to 10 “parcelContent”.
+     *
+     * @var array|ParcelContent[]
+     */
+    private $parcelContents = array();
 
     /**
      * @param CustomsInfo $customsInfo
@@ -141,6 +150,7 @@ class International implements IBox
             Product::PRODUCT_NAME_BPACK_WORLD_EASY_RETURN,
             Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO,
             Product::PRODUCT_NAME_BPACK_EUROPE_BUSINESS,
+            Product::PRODUCT_NAME_BPACK_AT_BPOST_INTERNATIONAL,
         );
     }
 
@@ -158,6 +168,43 @@ class International implements IBox
     public function getReceiver()
     {
         return $this->receiver;
+    }
+
+    /**
+     * @return array|ParcelContent[]
+     */
+    public function getParcelContents()
+    {
+        return $this->parcelContents;
+    }
+
+    /**
+     * @param array|ParcelContent[] $parcelContents
+     *
+     * @return self
+     *
+     * @throws BpostInvalidValueException
+     */
+    public function setParcelContents(array $parcelContents)
+    {
+        foreach ($parcelContents as $parcelContent) {
+            if (!$parcelContent instanceof ParcelContent) {
+                throw new BpostInvalidValueException(
+                    'parcelContents',
+                    get_class($parcelContent),
+                    array('Bpost\BpostApiClient\Bpost\Order\Box\International\ParcelContent')
+                );
+            }
+
+            $this->addParcelContent($parcelContent);
+        }
+
+        return $this;
+    }
+
+    public function addParcelContent(ParcelContent $parcelContent)
+    {
+        $this->parcelContents[] = $parcelContent;
     }
 
     /**
@@ -215,6 +262,16 @@ class International implements IBox
             );
         }
 
+        if ($this->getParcelContents()) {
+            $parcelContents = $document->createElement(XmlHelper::getPrefixedTagName('parcelContents', $prefix));
+            foreach ($this->getParcelContents() as $parcelContent) {
+                $parcelContents->appendChild(
+                    $parcelContent->toXML($document, $prefix)
+                );
+            }
+            $international->appendChild($parcelContents);
+        }
+
         return $internationalBox;
     }
 
@@ -237,28 +294,23 @@ class International implements IBox
             );
         }
         if (isset($xml->international->options)) {
-            /** @var \SimpleXMLElement $optionData */
-            foreach ($xml->international->options as $optionData) {
-                $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
-
-                if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
-                    $option = Messaging::createFromXML($optionData);
-                } else {
-                    switch ($optionData->getName()) {
-                        case 'insured':
-                            $class = 'Insurance';
-                            break;
-                        default:
-                            $class = ucfirst($optionData->getName());
-                    }
-                    $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . $class;
-                    if (!method_exists($className, 'createFromXML')) {
-                        throw new BpostNotImplementedException('No createFromXML found into ' . $className);
-                    }
-                    $option = call_user_func(
-                        array($className, 'createFromXML'),
-                        $optionData
-                    );
+            /** @var SimpleXMLElement $optionData */
+            $options = $xml->international->options->children('http://schema.post.be/shm/deepintegration/v3/common');
+            foreach ($options as $optionData) {
+                switch ($optionData->getName()) {
+                    case Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED:
+                    case Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED:
+                    case Messaging::MESSAGING_TYPE_INFO_REMINDER:
+                    case Messaging::MESSAGING_TYPE_INFO_NEXT_DAY:
+                        $option = Messaging::createFromXML($optionData);
+                        break;
+                    default:
+                        $className = '\Bpost\BpostApiClient\Bpost\Order\Box\Option\\' . ucfirst($optionData->getName());
+                        XmlHelper::assertMethodCreateFromXmlExists($className);
+                        $option = call_user_func(
+                            array($className, 'createFromXML'),
+                            $optionData
+                        );
                 }
 
                 $international->addOption($option);
@@ -281,6 +333,14 @@ class International implements IBox
             $international->setCustomsInfo(
                 CustomsInfo::createFromXML($xml->international->customsInfo)
             );
+        }
+        if (isset($xml->international->parcelContents)) {
+            /** @var SimpleXMLElement $optionData */
+            $parcelContents = $xml->international->parcelContents->children('international', true);
+            foreach ($parcelContents as $parcelContentXml) {
+                $parcelContent = ParcelContent::createFromXML($parcelContentXml);
+                $international->addParcelContent($parcelContent);
+            }
         }
 
         return $international;

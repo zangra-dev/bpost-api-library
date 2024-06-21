@@ -7,6 +7,7 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthExcepti
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use SimpleXMLElement;
 
 /**
@@ -30,6 +31,11 @@ class CustomsInfo
     const CUSTOM_INFO_SHIPMENT_TYPE_GOODS = 'GOODS';
     const CUSTOM_INFO_SHIPMENT_TYPE_DOCUMENTS = 'DOCUMENTS';
     const CUSTOM_INFO_SHIPMENT_TYPE_OTHER = 'OTHER';
+
+    const CUSTOM_INFO_CURRENCY_EUR = 'EUR';
+    const CUSTOM_INFO_CURRENCY_GBP = 'GBP';
+    const CUSTOM_INFO_CURRENCY_USD = 'USD';
+    const CUSTOM_INFO_CURRENCY_CNY = 'CNY';
 
     /**
      * @var int
@@ -55,6 +61,27 @@ class CustomsInfo
      * @var bool
      */
     private $privateAddress;
+
+    /**
+     * this is the currency used for field parcelValue.In case of shipment to non-European country,
+     * this is also the currency used for all parcel contents value (field valueOfitem) in 3 letters format.
+     *
+     * Possible values are: EUR=Euro    GBP=Pound   Sterling    USD=US Dollar   CNY=Yuan Renminbi
+     *
+     * @var string
+     */
+    private $currency;
+
+    /**
+     * Amount paid by the sender for the sending of this shipment. See contract pricing with bpost.
+     * Decimal format field (3.2)
+     * Minimum value : 0
+     * Maximum value : 999.99
+     * Currency for field amtPostagePaidByAddresse is always EUR !
+     *
+     * @var float
+     */
+    private $amtPostagePaidByAddresse;
 
     /**
      * @param string $contentDescription
@@ -190,12 +217,61 @@ class CustomsInfo
     }
 
     /**
+     * @return float
+     */
+    public function getAmtPostagePaidByAddresse()
+    {
+        return $this->amtPostagePaidByAddresse;
+    }
+
+    /**
+     * @param float $amtPostagePaidByAddresse
+     */
+    public function setAmtPostagePaidByAddresse($amtPostagePaidByAddresse)
+    {
+        $this->amtPostagePaidByAddresse = $amtPostagePaidByAddresse;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     *
+     * @throws BpostInvalidValueException
+     */
+    public function setCurrency($currency)
+    {
+        if (!in_array($currency, self::getPossibleCurrencyValues())) {
+            throw new BpostInvalidValueException('currency', $currency, self::getPossibleCurrencyValues());
+        }
+        $this->currency = $currency;
+    }
+
+    public static function getPossibleCurrencyValues()
+    {
+        return array(
+            self::CUSTOM_INFO_CURRENCY_EUR,
+            self::CUSTOM_INFO_CURRENCY_GBP,
+            self::CUSTOM_INFO_CURRENCY_USD,
+            self::CUSTOM_INFO_CURRENCY_CNY,
+        );
+    }
+
+    /**
      * Return the object as an array for usage in the XML
      *
      * @param DomDocument $document
      * @param string      $prefix
      *
      * @return DomElement
+     *
+     * @throws DOMException
      */
     public function toXML(DOMDocument $document, $prefix = null)
     {
@@ -206,6 +282,8 @@ class CustomsInfo
         $this->shipmentTypeToXML($document, $prefix, $customsInfo);
         $this->parcelReturnInstructionValuesToXML($document, $prefix, $customsInfo);
         $this->privateAddressToXML($document, $prefix, $customsInfo);
+        $this->currencyToXML($document, $prefix, $customsInfo);
+        $this->amtPostagePaidByAddresseToXML($document, $prefix, $customsInfo);
 
         return $customsInfo;
     }
@@ -247,14 +325,26 @@ class CustomsInfo
                 (string) $xml->privateAddress == 'true'
             );
         }
+        if (isset($xml->currency) && $xml->currency != '') {
+            $customsInfo->setCurrency(
+                (string) $xml->currency
+            );
+        }
+        if (isset($xml->amtPostagePaidByAddresse) && $xml->amtPostagePaidByAddresse != '') {
+            $customsInfo->setAmtPostagePaidByAddresse(
+                (float) $xml->amtPostagePaidByAddresse
+            );
+        }
 
         return $customsInfo;
     }
 
     /**
      * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $customsInfo
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
      */
     private function parcelValueToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
@@ -270,8 +360,48 @@ class CustomsInfo
 
     /**
      * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $customsInfo
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
+     */
+    private function currencyToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    {
+        if ($this->getCurrency() !== null) {
+            $customsInfo->appendChild(
+                $document->createElement(
+                    XmlHelper::getPrefixedTagName('currency', $prefix),
+                    $this->getCurrency()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
+     */
+    private function amtPostagePaidByAddresseToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    {
+        if ($this->getAmtPostagePaidByAddresse() !== null) {
+            $customsInfo->appendChild(
+                $document->createElement(
+                    XmlHelper::getPrefixedTagName('amtPostagePaidByAddresse', $prefix),
+                    sprintf('%0.2f', $this->getAmtPostagePaidByAddresse())
+                )
+            );
+        }
+    }
+
+    /**
+     * @param DOMDocument $document
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
      */
     private function contentDescriptionToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
@@ -287,8 +417,10 @@ class CustomsInfo
 
     /**
      * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $customsInfo
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
      */
     private function shipmentTypeToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
@@ -304,8 +436,10 @@ class CustomsInfo
 
     /**
      * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $customsInfo
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
      */
     private function parcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {
@@ -321,8 +455,10 @@ class CustomsInfo
 
     /**
      * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $customsInfo
+     * @param string      $prefix
+     * @param DOMElement  $customsInfo
+     *
+     * @throws DOMException
      */
     private function privateAddressToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
     {

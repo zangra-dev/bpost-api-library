@@ -8,7 +8,7 @@ use DomElement;
 use SimpleXMLElement;
 
 /**
- * bPost AutomaticSecondPresentation class
+ * bPost Signature class
  *
  * @author    Tijs Verkoyen <php-bpost@verkoyen.eu>
  *
@@ -17,7 +17,7 @@ use SimpleXMLElement;
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
-class AutomaticSecondPresentation extends Option
+class Signed extends Option
 {
     /**
      * Return the object as an array for usage in the XML
@@ -29,7 +29,7 @@ class AutomaticSecondPresentation extends Option
      */
     public function toXML(DOMDocument $document, $prefix = 'common')
     {
-        return $document->createElement(XmlHelper::getPrefixedTagName('automaticSecondPresentation', $prefix));
+        return $document->createElement(XmlHelper::getPrefixedTagName('signed', $prefix));
     }
 
     /**

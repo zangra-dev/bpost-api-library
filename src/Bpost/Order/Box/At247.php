@@ -275,7 +275,7 @@ class At247 extends National
      */
     protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, $prefix)
     {
-        if ($this->getRequestedDeliveryDate() !== null) {
+        if ($this->getRequestedDeliveryDate() !== null && $this->getRequestedDeliveryDate() !== "" ) {
             $typeElement->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('requestedDeliveryDate', $prefix),

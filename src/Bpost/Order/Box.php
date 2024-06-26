@@ -241,11 +241,13 @@ class Box
             /** @var SimpleXMLElement $nationalBoxData */
             $nationalBoxData = $xml->nationalBox->children('http://schema.post.be/shm/deepintegration/v3/national');
 
-            // build classname based on the tag name
-            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($nationalBoxData->getName());
-            if ($nationalBoxData->getName() == 'at24-7') {
-                $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\At247';
+            $classNameExtracted = $nationalBoxData->getName();
+            if ($classNameExtracted == 'at24-7') {
+                $classNameExtracted = 'at247';
             }
+
+            // build classname based on the tag name
+            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($classNameExtracted);
 
             XmlHelper::assertMethodCreateFromXmlExists($className);
 
@@ -257,8 +259,12 @@ class Box
             /** @var SimpleXMLElement $internationalBoxData */
             $internationalBoxData = $xml->internationalBox->children('http://schema.post.be/shm/deepintegration/v3/international');
 
+            $classNameExtracted = $internationalBoxData->getName();
+            if ($classNameExtracted == 'atIntlHome') {
+                $classNameExtracted = 'international';
+            }
             // build classname based on the tag name
-            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($internationalBoxData->getName());
+            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($classNameExtracted);
 
             XmlHelper::assertMethodCreateFromXmlExists($className);
 

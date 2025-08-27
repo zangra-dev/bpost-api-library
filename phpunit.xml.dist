@@ -1,42 +1,35 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit
-    colors="true"
-    bootstrap="tests/phpunit-bootstrap.php"
-    strict="true"
->
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="tests/phpunit-bootstrap.php"
+         colors="true">
 
   <testsuites>
-    <testsuite name="unit-tests">
+    <testsuite name="unit">
       <directory>tests</directory>
       <exclude>tests/connection-tests</exclude>
     </testsuite>
   </testsuites>
 
-  <filter processUncoveredFilesFromWhitelist="true">
-    <whitelist>
+  <source>
+    <include>
       <directory suffix=".php">src</directory>
-      <exclude>
-        <!-- Classes with connection to API -->
-        <directory>src/Bpack247.php</directory>
-        <directory>src/Bpost.php</directory>
-        <directory>src/Geo6.php</directory>
-      </exclude>
-    </whitelist>
-  </filter>
-
-  <filter>
-    <whitelist processUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">src</directory>
-      <exclude>
-        <directory>tests/reports</directory>
-      </exclude>
-    </whitelist>
-  </filter>
+    </include>
+    <exclude>
+      <directory>tests/reports</directory>
+      <!-- Classes with connection to API -->
+      <file>src/Bpack247.php</file>
+      <file>src/Bpost.php</file>
+      <file>src/Geo6.php</file>
+    </exclude>
+  </source>
 
   <logging>
-    <log type="junit" target="tests/reports/phpunit.xml"/>
-    <log type="coverage-html" target="tests/reports/coverage-clover-html" showUncoveredFiles="true"/>
-    <log type="coverage-clover" target="tests/reports/coverage-clover.xml" showUncoveredFiles="true"/>
+    <junit outputFile="tests/reports/phpunit.xml"/>
+    <coverage>
+      <html outputDirectory="tests/reports/coverage-clover-html"/>
+      <clover outputFile="tests/reports/coverage-clover.xml"/>
+    </coverage>
   </logging>
 
 </phpunit>

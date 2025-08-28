@@ -5,7 +5,7 @@ namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
 class CreateLabelForBoxBuilder extends CreateLabelBuilder
 {
-    protected function getUrlPrefix()
+    protected function getUrlPrefix(): string
     {
         return 'boxes';
     }

@@ -3,55 +3,27 @@ declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
+use Bpost\BpostApiClient\Common\ApiVersions;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use DOMDocument;
 use DOMException;
 
 class CreateLabelInBulkForOrders implements HttpRequestBuilderInterface
 {
-    /**
-     * @var array
-     */
-    protected $references;
-    /**
-     * @var LabelFormat
-     */
-    protected $labelFormat;
-    /**
-     * @var bool
-     */
-    protected $asPdf;
-    /**
-     * @var bool
-     */
-    protected $withReturnLabels;
-    /**
-     * @var bool
-     */
-    private $forcePrinting;
-
-    /**
-     * @param array       $references
-     * @param LabelFormat $labelFormat
-     * @param bool        $asPdf
-     * @param bool        $withReturnLabels
-     * @param bool        $forcePrinting
-     */
-    public function __construct($references, LabelFormat $labelFormat, $asPdf, $withReturnLabels, $forcePrinting)
-    {
-        $this->references = $references;
-        $this->labelFormat = $labelFormat;
-        $this->asPdf = $asPdf;
-        $this->withReturnLabels = $withReturnLabels;
-        $this->forcePrinting = $forcePrinting;
-    }
+    public function __construct(
+        private readonly array $references,
+        private readonly LabelFormat $labelFormat,
+        private readonly bool $asPdf,
+        private readonly bool $withReturnLabels,
+        private readonly bool $forcePrinting
+    ) {}
 
     /**
      * @return string
      *
      * @throws DOMException
      */
-    public function getXml()
+    public function getXml(): string
     {
         $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
@@ -59,43 +31,45 @@ class CreateLabelInBulkForOrders implements HttpRequestBuilderInterface
 
         $batchLabels = $document->createElement('batchLabels');
         $batchLabels->setAttribute('xmlns', 'http://schema.post.be/shm/deepintegration/v3/');
+
         foreach ($this->references as $reference) {
-            $batchLabels->appendChild(
-                $document->createElement('order', $reference)
-            );
+            $batchLabels->appendChild($document->createElement('order', (string) $reference));
         }
+
         $document->appendChild($batchLabels);
 
-        return $document->saveXML();
+        return $document->saveXML() ?: '';
     }
 
-    /**
-     * @return string[]
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
-        return array(
-            'Accept: application/vnd.bpost.shm-label-' . ($this->asPdf ? 'pdf' : 'image') . '-v3+XML',
-            'Content-Type: application/vnd.bpost.shm-labelRequest-v3+XML',
-        );
+        $media = $this->asPdf ? 'pdf' : 'image';
+
+        return [
+            'Accept: application/vnd.bpost.shm-label-' . $media . '-' . ApiVersions::V3 . '+XML',
+            'Content-Type: application/vnd.bpost.shm-labelRequest-' . ApiVersions::V3 . '+XML',
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+
+    public function getUrl(): string
     {
-        return '/labels/' . $this->labelFormat->getValue()
-            . ($this->withReturnLabels ? '/withReturnLabels' : '')
-            . ($this->forcePrinting ? '?forcePrinting=true' : '');
+        $url = '/labels/' . $this->labelFormat->getValue();
+        if ($this->withReturnLabels) {
+            $url .= '/withReturnLabels';
+        }
+        if ($this->forcePrinting) {
+            $url .= '?forcePrinting=true';
+        }
+        return $url;
     }
 
-    public function isExpectXml()
+    public function isExpectXml(): bool
     {
         return true;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return self::METHOD_POST;
     }

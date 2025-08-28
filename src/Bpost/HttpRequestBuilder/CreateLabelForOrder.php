@@ -5,7 +5,7 @@ namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
 class CreateLabelForOrder extends CreateLabel
 {
-    protected function getUrlPrefix()
+    protected function getUrlPrefix(): string
     {
         return 'orders';
     }

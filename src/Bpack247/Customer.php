@@ -21,8 +21,8 @@ class Customer
     public const CUSTOMER_PREFERRED_LANGUAGE_FR = 'fr-BE';
     public const CUSTOMER_PREFERRED_LANGUAGE_EN = 'en-US';
 
-    const CUSTOMER_TITLE_MR = 'Mr.';
-    const CUSTOMER_TITLE_MS = 'Ms.';
+    public const CUSTOMER_TITLE_MR = 'Mr.';
+    public const CUSTOMER_TITLE_MS = 'Ms.';
 
     public function __construct(
         private ?bool $activated = null,
@@ -41,7 +41,7 @@ class Customer
         private ?string $preferredLanguage = null,
         private ?string $title = null,
         private ?bool $isComfortZoneUser = null,
-        private ?\DateTime $dateOfBirth = null,
+        private ?DateTime $dateOfBirth = null,
         private ?string $deliveryCode = null,
         private ?bool $optIn = null,
         private ?bool $receivePromotions = null,
@@ -217,11 +217,11 @@ class Customer
 
     public static function getPossiblePreferredLanguageValues(): array
     {
-        return array(
+        return [
             self::CUSTOMER_PREFERRED_LANGUAGE_NL,
             self::CUSTOMER_PREFERRED_LANGUAGE_FR,
             self::CUSTOMER_PREFERRED_LANGUAGE_EN,
-        );
+        ];
     }
 
     public function setReceivePromotions(?bool $receivePromotions): void
@@ -266,10 +266,10 @@ class Customer
 
     public static function getPossibleTitleValues(): array
     {
-        return array(
+        return [
             self::CUSTOMER_TITLE_MR,
             self::CUSTOMER_TITLE_MS,
-        );
+        ];
     }
 
     public function setTown(?string $town): void

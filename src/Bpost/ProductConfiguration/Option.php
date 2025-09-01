@@ -10,106 +10,82 @@ use SimpleXMLElement;
  */
 class Option
 {
-    const OPTION_VISIBILITY_NOT_VISIBLE_BY_CONSUMER_OPTIONAL = 'NOT_VISIBLE_BY_CONSUMER_OPTIONAL';
-    const OPTION_VISIBILITY_NOT_VISIBLE_BY_CONSUMER_DEFAULT = 'NOT_VISIBLE_BY_CONSUMER_DEFAULT';
-    const OPTION_VISIBILITY_VISIBLE_BY_CONSUMER_AND_MANDATORY = 'VISIBLE_BY_CONSUMER_AND_MANDATORY';
-
-    /** @var string */
-    private $visibility;
-    /** @var int */
-    private $price;
-    /** @var string */
-    private $name;
+    private string $visibility;
+    private int $price;
+    private string $name;
     /** @var Characteristic[] */
-    private $characteristics = array();
+    private array $characteristics = [];
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Option
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        /*
-        <option visiblity="NOT_VISIBLE_BY_CONSUMER_OPTIONAL" price="0" name="Cash on delivery"/>
-        */
-        $attributes = $xml->attributes();
+        // Ex: <option visibility="NOT_VISIBLE_BY_CONSUMER_OPTIONAL" price="0" name="Cash on delivery"/>
+        $attr     = $xml->attributes();
         $children = $xml->children();
 
-        $option = new self();
-        $option->setVisibility($attributes['visiblity']);
-        $option->setPrice($attributes['price']);
-        $option->setName($attributes['name']);
+        $self = new self();
 
-        if (isset($children->chracteristic)) {
-            foreach ($children->chracteristic as $characteristicXml) {
-                $option->addCharacteristic(Characteristic::createFromXML($characteristicXml));
+        // visibility (supporte l’ancienne faute "visiblity")
+        if (isset($attr['visibility'])) {
+            $self->setVisibility((string) $attr['visibility']);
+        } elseif (isset($attr['visiblity'])) {
+            $self->setVisibility((string) $attr['visiblity']);
+        }
+
+        if (isset($attr['price'])) {
+            $self->setPrice((int) $attr['price']);
+        }
+
+        if (isset($attr['name'])) {
+            $self->setName((string) $attr['name']);
+        }
+
+        // characteristics (supporte l’ancienne faute "chracteristic")
+        if (isset($children->characteristic)) {
+            foreach ($children->characteristic as $charXml) {
+                $self->addCharacteristic(Characteristic::createFromXML($charXml));
+            }
+        } elseif (isset($children->chracteristic)) {
+            foreach ($children->chracteristic as $charXml) {
+                $self->addCharacteristic(Characteristic::createFromXML($charXml));
             }
         }
 
-        return $option;
+        return $self;
     }
 
-    /**
-     * @return string
-     */
-    public function getVisibility()
+    public function getVisibility(): string
     {
         return $this->visibility;
     }
-
-    /**
-     * @param string $visibility
-     */
-    public function setVisibility($visibility)
+    public function setVisibility(string $visibility): void
     {
-        $this->visibility = (string) $visibility;
+        $this->visibility = $visibility;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrice()
+    public function getPrice(): int
     {
         return $this->price;
     }
-
-    /**
-     * @param int $price
-     */
-    public function setPrice($price)
+    public function setPrice(int $price): void
     {
-        $this->price = (int) $price;
+        $this->price = $price;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string) $name;
+        $this->name = $name;
     }
 
-    /**
-     * @return Characteristic[]
-     */
-    public function getCharacteristics()
+    /** @return Characteristic[] */
+    public function getCharacteristics(): array
     {
         return $this->characteristics;
     }
-
-    /**
-     * @param Characteristic $characteristic
-     */
-    public function addCharacteristic(Characteristic $characteristic)
+    public function addCharacteristic(Characteristic $characteristic): void
     {
         $this->characteristics[] = $characteristic;
     }

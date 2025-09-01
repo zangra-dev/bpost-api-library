@@ -11,159 +11,104 @@ use SimpleXMLElement;
  */
 class Price
 {
-    /** @var string */
-    private $countryIso2;
+    private string $countryIso2;
+    private int $priceLessThan2;
+    private int $price2To5;
+    private int $price5To10;
+    private int $price10To20;
+    private int $price20To30;
 
-    /** @var int */
-    private $priceLessThan2;
-    /** @var int */
-    private $price2To5;
-    /** @var int */
-    private $price5To10;
-    /** @var int */
-    private $price10To20;
-    /** @var int */
-    private $price20To30;
-
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Price
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        /*
-        <price price20To30="820" price10To20="720" price5To10="620" price2To5="520" priceLessThan2="420" countryIso2Code="BE"/>
-        */
-        $attributes = $xml->attributes();
+        // <price price20To30="820" price10To20="720" price5To10="620" price2To5="520" priceLessThan2="420" countryIso2Code="BE"/>
+        $a = $xml->attributes();
 
-        $price = new self();
-        $price->setCountryIso2($attributes['countryIso2Code']);
-        $price->setPriceLessThan2($attributes['priceLessThan2']);
-        $price->setPrice2To5($attributes['price2To5']);
-        $price->setPrice5To10($attributes['price5To10']);
-        $price->setPrice10To20($attributes['price10To20']);
-        $price->setPrice20To30($attributes['price20To30']);
+        $self = new self();
+        $self->setCountryIso2((string) $a['countryIso2Code']);
+        $self->setPriceLessThan2((int) $a['priceLessThan2']);
+        $self->setPrice2To5((int) $a['price2To5']);
+        $self->setPrice5To10((int) $a['price5To10']);
+        $self->setPrice10To20((int) $a['price10To20']);
+        $self->setPrice20To30((int) $a['price20To30']);
 
-        return $price;
+        return $self;
     }
 
     /**
-     * @param int $weight
-     *
-     * @return int
-     *
      * @throws BpostInvalidWeightException
      */
-    public function getPriceByWeight($weight)
+    public function getPriceByWeight(int $weight): int
     {
         if ($weight <= 2000) {
             return $this->getPriceLessThan2();
-        } elseif ($weight <= 5000) {
+        }
+        if ($weight <= 5000) {
             return $this->getPrice2To5();
-        } elseif ($weight <= 10000) {
+        }
+        if ($weight <= 10000) {
             return $this->getPrice5To10();
-        } elseif ($weight <= 20000) {
+        }
+        if ($weight <= 20000) {
             return $this->getPrice10To20();
-        } elseif ($weight <= 30000) {
+        }
+        if ($weight <= 30000) {
             return $this->getPrice20To30();
         }
+
         throw new BpostInvalidWeightException($weight, 30);
     }
 
-    /**
-     * @return string
-     */
-    public function getCountryIso2()
+    public function getCountryIso2(): string
     {
         return $this->countryIso2;
     }
-
-    /**
-     * @param string $countryIso2
-     */
-    public function setCountryIso2($countryIso2)
+    public function setCountryIso2(string $countryIso2): void
     {
-        $this->countryIso2 = (string) $countryIso2;
+        $this->countryIso2 = $countryIso2;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriceLessThan2()
+    public function getPriceLessThan2(): int
     {
         return $this->priceLessThan2;
     }
-
-    /**
-     * @param int $priceLessThan2
-     */
-    public function setPriceLessThan2($priceLessThan2)
+    public function setPriceLessThan2(int $priceLessThan2): void
     {
-        $this->priceLessThan2 = (int) $priceLessThan2;
+        $this->priceLessThan2 = $priceLessThan2;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrice2To5()
+    public function getPrice2To5(): int
     {
         return $this->price2To5;
     }
-
-    /**
-     * @param int $price2To5
-     */
-    public function setPrice2To5($price2To5)
+    public function setPrice2To5(int $price2To5): void
     {
-        $this->price2To5 = (int) $price2To5;
+        $this->price2To5 = $price2To5;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrice5To10()
+    public function getPrice5To10(): int
     {
         return $this->price5To10;
     }
-
-    /**
-     * @param int $price5To10
-     */
-    public function setPrice5To10($price5To10)
+    public function setPrice5To10(int $price5To10): void
     {
-        $this->price5To10 = (int) $price5To10;
+        $this->price5To10 = $price5To10;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrice10To20()
+    public function getPrice10To20(): int
     {
         return $this->price10To20;
     }
-
-    /**
-     * @param int $price10To20
-     */
-    public function setPrice10To20($price10To20)
+    public function setPrice10To20(int $price10To20): void
     {
-        $this->price10To20 = (int) $price10To20;
+        $this->price10To20 = $price10To20;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrice20To30()
+    public function getPrice20To30(): int
     {
         return $this->price20To30;
     }
-
-    /**
-     * @param int $price20To30
-     */
-    public function setPrice20To30($price20To30)
+    public function setPrice20To30(int $price20To30): void
     {
-        $this->price20To30 = (int) $price20To30;
+        $this->price20To30 = $price20To30;
     }
 }

@@ -10,104 +10,70 @@ use SimpleXMLElement;
  */
 class DeliveryMethod
 {
-    const DELIVERY_METHOD_NAME_HOME_OR_OFFICE = 'home or office';
-    const DELIVERY_METHOD_NAME_PICKUP_POINT = 'pick-up point';
-    const DELIVERY_METHOD_NAME_PARCEL_LOCKER = 'parcel locker';
-    const DELIVERY_METHOD_NAME_CLICK_AND_COLLECT = 'Click & Collect';
+    public const DELIVERY_METHOD_NAME_HOME_OR_OFFICE  = 'home or office';
+    public const DELIVERY_METHOD_NAME_PICKUP_POINT    = 'pick-up point';
+    public const DELIVERY_METHOD_NAME_PARCEL_LOCKER   = 'parcel locker';
+    public const DELIVERY_METHOD_NAME_CLICK_AND_COLLECT = 'Click & Collect';
 
-    const DELIVERY_METHOD_VISIBILITY_VISIBLE = 'VISIBLE';
-    const DELIVERY_METHOD_VISIBILITY_GREYED_OUT = 'GREYED_OUT';
-    const DELIVERY_METHOD_VISIBILITY_INVISIBLE = 'INVISIBLE';
-
-    /** @var string */
-    private $name;
-    /** @var string */
-    private $visibility;
+    private string $name;
+    private string $visibility;
     /** @var Product[] */
-    private $products = array();
+    private array $products = [];
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return DeliveryMethod
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        /*
-        <characteristic displayValue="Basic (0-500 EUR)" value="1" name="Insurance range code"/>
-        */
         $attributes = $xml->attributes();
-        $children = $xml->children();
+        $children   = $xml->children();
 
-        $deliveryMethod = new self();
-        $deliveryMethod->setName($attributes['name']);
-        $deliveryMethod->setVisibility($attributes['visiblity']);
+        $instance = new self();
+        if (isset($attributes['name'])) {
+            $instance->setName((string) $attributes['name']);
+        }
+        // Correction de l'attribut: visibility (et fallback si l’API renvoie l’ancienne coquille)
+        if (isset($attributes['visibility'])) {
+            $instance->setVisibility((string) $attributes['visibility']);
+        } elseif (isset($attributes['visiblity'])) {
+            $instance->setVisibility((string) $attributes['visiblity']);
+        }
 
         if (isset($children->product)) {
             foreach ($children->product as $productXml) {
-                $deliveryMethod->addProduct(Product::createFromXML($productXml));
+                $instance->addProduct(Product::createFromXML($productXml));
             }
         }
 
-        return $deliveryMethod;
+        return $instance;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string) $name;
+        $this->name = $name;
     }
 
-    /**
-     * @return string
-     *
-     * @see Constants self::VISIBLITY_*
-     */
-    public function getVisibility()
+    public function getVisibility(): string
     {
         return $this->visibility;
     }
 
-    /**
-     * @return bool
-     */
-    public function isVisibleAndActive()
+    public function setVisibility(string $visibility): void
     {
-        return $this->getVisibility() === self::DELIVERY_METHOD_VISIBILITY_VISIBLE;
+        $this->visibility = $visibility;
     }
 
-    /**
-     * @param string $visibility
-     *
-     * @see Constants self::VISIBLITY_*
-     */
-    public function setVisibility($visibility)
+    public function isVisibleAndActive(): bool
     {
-        $this->visibility = (string) $visibility;
+        return $this->getVisibility() === Visibility::DELIVERY_METHOD_VISIBILITY_VISIBLE;
     }
 
-    /**
-     * @return Product[]
-     */
-    public function getProducts()
+    public function getProducts(): array
     {
         return $this->products;
     }
-
-    /**
-     * @param Product $product
-     */
-    public function addProduct(Product $product)
+    public function addProduct(Product $product): void
     {
         $this->products[] = $product;
     }

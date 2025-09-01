@@ -14,112 +14,77 @@ use SimpleXMLElement;
  */
 class Label
 {
-    const LABEL_MIME_TYPE_IMAGE_PNG = 'image/png';
-    const LABEL_MIME_TYPE_IMAGE_PDF = 'image/pdf';
-    const LABEL_MIME_TYPE_APPLICATION_PDF = 'application/pdf';
+    public const LABEL_MIME_TYPE_IMAGE_PNG        = 'image/png';
+    public const LABEL_MIME_TYPE_IMAGE_PDF        = 'image/pdf';
+    public const LABEL_MIME_TYPE_APPLICATION_PDF  = 'application/pdf';
 
-    /**
-     * @var Barcode[]
-     */
-    private $barcodes;
+    private array $barcodes = [];
+    private ?string $mimeType = null;
+    private string $bytes = '';
 
-    /**
-     * @var string
-     */
-    private $mimeType;
-
-    /**
-     * @var string
-     */
-    private $bytes;
-
-    /**
-     * @param Barcode $barcode
-     */
-    public function addBarcode(Barcode $barcode)
+    public function addBarcode(Barcode $barcode): void
     {
         $this->barcodes[] = $barcode;
     }
 
-    /**
-     * @return string
-     */
-    public function getBarcode()
+    public function setBarcodes(array $barcodes): void
     {
-        if (is_array($this->getBarcodes())) {
-            $barcode = current($this->getBarcodes());
+        $this->barcodes = $barcodes;
+    }
 
-            return $barcode->getBarcode();
+    /** @return Barcode[] */
+    public function getBarcodes(): array
+    {
+        return $this->barcodes;
+    }
+
+    public function getBarcode(): string
+    {
+        if (!empty($this->barcodes)) {
+            $first = $this->barcodes[0];
+            return $first->getBarcode() ?? '';
         }
 
         return '';
     }
 
-    /**
-     * @param Barcode[] $barcodes
-     */
-    public function setBarcodes(array $barcodes)
-    {
-        $this->barcodes = $barcodes;
-    }
-
-    /**
-     * @return Barcode[]
-     */
-    public function getBarcodes()
-    {
-        return $this->barcodes;
-    }
-
-    /**
-     * @param string $bytes
-     */
-    public function setBytes($bytes)
+    public function setBytes(string $bytes): void
     {
         $this->bytes = $bytes;
     }
 
-    /**
-     * @return string
-     */
-    public function getBytes()
+    public function getBytes(): string
     {
         return $this->bytes;
     }
 
     /**
-     * @param string $mimeType
-     *
      * @throws BpostInvalidValueException
      */
-    public function setMimeType($mimeType)
+    public function setMimeType(string $mimeType): void
     {
-        if (!in_array($mimeType, self::getPossibleMimeTypeValues())) {
+        if (!in_array($mimeType, self::getPossibleMimeTypeValues(), true)) {
             throw new BpostInvalidValueException('mimeType', $mimeType, self::getPossibleMimeTypeValues());
         }
 
         $this->mimeType = $mimeType;
     }
 
-    /**
-     * @return string
-     */
-    public function getMimeType()
+    public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleMimeTypeValues()
+    /** @return string[] */
+    public static function getPossibleMimeTypeValues(): array
     {
-        return array(
+        return [
             self::LABEL_MIME_TYPE_IMAGE_PNG,
             self::LABEL_MIME_TYPE_IMAGE_PDF,
             self::LABEL_MIME_TYPE_APPLICATION_PDF,
-        );
+        ];
     }
+
 
     /**
      * Output the bytes directly to the screen
@@ -132,25 +97,24 @@ class Label
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Label
-     *
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $label = new Label();
+        $label = new self();
+
         if (isset($xml->barcodeWithReference)) {
             foreach ($xml->barcodeWithReference as $barcodeWithReference) {
                 $label->addBarcode(Barcode::createFromXML($barcodeWithReference));
             }
         }
-        if (isset($xml->mimeType) && $xml->mimeType != '') {
+
+        if (!empty($xml->mimeType)) {
             $label->setMimeType((string) $xml->mimeType);
         }
-        if (isset($xml->bytes) && $xml->bytes != '') {
-            $label->setBytes((string) base64_decode($xml->bytes));
+
+        if (!empty($xml->bytes)) {
+            $label->setBytes((string) base64_decode((string) $xml->bytes));
         }
 
         return $label;

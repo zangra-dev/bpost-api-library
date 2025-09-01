@@ -5,8 +5,8 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 use DOMException;
 use SimpleXMLElement;
 
@@ -22,91 +22,61 @@ use SimpleXMLElement;
  */
 class Insured extends Option
 {
-    const INSURANCE_TYPE_BASIC_INSURANCE = 'basicInsurance';
-    const INSURANCE_TYPE_ADDITIONAL_INSURANCE = 'additionalInsurance';
+    public const INSURANCE_TYPE_BASIC_INSURANCE      = 'basicInsurance';
+    public const INSURANCE_TYPE_ADDITIONAL_INSURANCE = 'additionalInsurance';
 
-    const INSURANCE_AMOUNT_UP_TO_2500_EUROS = 2;
-    const INSURANCE_AMOUNT_UP_TO_5000_EUROS = 3;
-    const INSURANCE_AMOUNT_UP_TO_7500_EUROS = 4;
-    const INSURANCE_AMOUNT_UP_TO_10000_EUROS = 5;
-    const INSURANCE_AMOUNT_UP_TO_12500_EUROS = 6;
-    const INSURANCE_AMOUNT_UP_TO_15000_EUROS = 7;
-    const INSURANCE_AMOUNT_UP_TO_17500_EUROS = 8;
-    const INSURANCE_AMOUNT_UP_TO_20000_EUROS = 9;
-    const INSURANCE_AMOUNT_UP_TO_22500_EUROS = 10;
-    const INSURANCE_AMOUNT_UP_TO_25000_EUROS = 11;
+    public const INSURANCE_AMOUNT_UP_TO_2500_EUROS  = 2;
+    public const INSURANCE_AMOUNT_UP_TO_5000_EUROS  = 3;
+    public const INSURANCE_AMOUNT_UP_TO_7500_EUROS  = 4;
+    public const INSURANCE_AMOUNT_UP_TO_10000_EUROS = 5;
+    public const INSURANCE_AMOUNT_UP_TO_12500_EUROS = 6;
+    public const INSURANCE_AMOUNT_UP_TO_15000_EUROS = 7;
+    public const INSURANCE_AMOUNT_UP_TO_17500_EUROS = 8;
+    public const INSURANCE_AMOUNT_UP_TO_20000_EUROS = 9;
+    public const INSURANCE_AMOUNT_UP_TO_22500_EUROS = 10;
+    public const INSURANCE_AMOUNT_UP_TO_25000_EUROS = 11;
 
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
+    private ?int $value = null;
 
     /**
-     * @var string
+     * @throws BpostInvalidValueException
      */
-    private $value;
-
-    /**
-     * @return array
-     */
-    public static function getPossibleTypeValues()
+    public function __construct(string $type, ?int $value = null)
     {
-        return array(
+        $this->setType($type);
+        if ($value !== null) {
+            $this->setValue($value);
+        }
+    }
+
+    public static function getPossibleTypeValues(): array
+    {
+        return [
             self::INSURANCE_TYPE_BASIC_INSURANCE,
             self::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
-        );
+        ];
     }
 
     /**
-     * @param string $type
-     *
      * @throws BpostInvalidValueException
      */
-    public function setType($type)
+    public function setType(string $type): void
     {
-        if (!in_array($type, self::getPossibleTypeValues())) {
+        if (!in_array($type, self::getPossibleTypeValues(), true)) {
             throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
         }
-
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $value
-     *
-     * @throws BpostInvalidValueException
-     */
-    public function setValue($value)
+    public static function getPossibleValueValues(): array
     {
-        if (!in_array($value, self::getPossibleValueValues())) {
-            throw new BpostInvalidValueException('value', $value, self::getPossibleValueValues());
-        }
-
-        $this->value = $value;
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getPossibleValueValues()
-    {
-        return array(
+        return [
             self::INSURANCE_AMOUNT_UP_TO_2500_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_5000_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_7500_EUROS,
@@ -117,34 +87,30 @@ class Insured extends Option
             self::INSURANCE_AMOUNT_UP_TO_20000_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_22500_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_25000_EUROS,
-        );
+        ];
     }
 
     /**
-     * @param string      $type
-     * @param string|null $value
-     *
      * @throws BpostInvalidValueException
      */
-    public function __construct($type, $value = null)
+    public function setValue(int $value): void
     {
-        $this->setType($type);
-        if ($value !== null) {
-            $this->setValue($value);
+        if (!in_array($value, self::getPossibleValueValues(), true)) {
+            throw new BpostInvalidValueException('value', (string)$value, self::getPossibleValueValues());
         }
+        $this->value = $value;
     }
 
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
-     *
      * @throws DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
         $insured = $document->createElement(XmlHelper::getPrefixedTagName('insured', $prefix));
 
@@ -152,26 +118,23 @@ class Insured extends Option
         $insured->appendChild($insurance);
 
         if ($this->getValue() !== null) {
-            $insurance->setAttribute('value', $this->getValue());
+            $insurance->setAttribute('value', (string)$this->getValue());
         }
 
         return $insured;
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return static
-     *
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): static
     {
         $insuranceDetail = $xml->children('http://schema.post.be/shm/deepintegration/v3/common');
-
         $type = $insuranceDetail->getName();
-        $value = $insuranceDetail->attributes()->value !== null ? (int) $insuranceDetail->attributes()->value : null;
+        $valueAttr = $insuranceDetail->attributes()->value ?? null;
+        $value = $valueAttr !== null ? (int)$valueAttr : null;
 
+        // Compat héritée : additionalInsurance avec value=1 => basicInsurance sans value
         if ($type === static::INSURANCE_TYPE_ADDITIONAL_INSURANCE && $value === 1) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;
             $value = null;

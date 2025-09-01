@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
-use DomDocument;
+use DOMDocument;
 use DOMElement;
 use SimpleXMLElement;
 
@@ -15,106 +15,68 @@ use SimpleXMLElement;
  */
 class Line
 {
-    /**
-     * @var string
-     */
-    private $text;
+    private ?string $text = null;
+    private ?int $numberOfItems = null;
 
-    /**
-     * @var int
-     */
-    private $numberOfItems;
+    public function __construct(?string $text = null, ?int $numberOfItems = null)
+    {
+        if ($text !== null) {
+            $this->setText($text);
+        }
+        if ($numberOfItems !== null) {
+            $this->setNumberOfItems($numberOfItems);
+        }
+    }
 
-    /**
-     * @param int $nbOfItems
-     */
-    public function setNumberOfItems($nbOfItems)
+    public function setNumberOfItems(int $nbOfItems): void
     {
         $this->numberOfItems = $nbOfItems;
     }
 
-    /**
-     * @return int
-     */
-    public function getNumberOfItems()
+    public function getNumberOfItems(): ?int
     {
         return $this->numberOfItems;
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text): void
     {
         $this->text = $text;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
     /**
-     * @param string $text
-     * @param int    $numberOfItems
+     * @throws \DOMException
      */
-    public function __construct($text = null, $numberOfItems = null)
-    {
-        if ($text != null) {
-            $this->setText($text);
-        }
-        if ($numberOfItems != null) {
-            $this->setNumberOfItems($numberOfItems);
-        }
-    }
-
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DOMElement
-     */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         $line = $document->createElement(XmlHelper::getPrefixedTagName('orderLine', $prefix));
 
-        if ($this->getText() !== null) {
+        if ($this->text !== null) {
             $line->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('text', $prefix),
-                    $this->getText()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('text', $prefix), $this->text)
             );
         }
-        if ($this->getNumberOfItems() !== null) {
+        if ($this->numberOfItems !== null) {
             $line->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('nbOfItems', $prefix),
-                    $this->getNumberOfItems()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('nbOfItems', $prefix), (string) $this->numberOfItems)
             );
         }
 
         return $line;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Line
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): Line
     {
         $line = new Line();
-        if (isset($xml->text) && $xml->text !== '') {
+
+        if (isset($xml->text) && (string) $xml->text !== '') {
             $line->setText((string) $xml->text);
         }
-        if (isset($xml->nbOfItems) && $xml->nbOfItems !== '') {
+        if (isset($xml->nbOfItems) && (string) $xml->nbOfItems !== '') {
             $line->setNumberOfItems((int) $xml->nbOfItems);
         }
 

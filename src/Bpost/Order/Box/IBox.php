@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
-use DomDocument;
-use DomElement;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
+use DOMDocument;
+use DOMElement;
 use SimpleXMLElement;
 
 /**
@@ -12,52 +13,19 @@ use SimpleXMLElement;
  */
 interface IBox
 {
-    /**
-     * @param array $options
-     */
-    public function setOptions($options);
+    public function setOptions(array $options): void;
 
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getOptions(): array;
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Box\Option\Option $option
-     */
-    public function addOption(Option\Option $option);
+    public function addOption(Option $option): void;
 
-    /**
-     * @param string $product
-     */
-    public function setProduct($product);
+    public function setProduct(string $product): void;
 
-    /**
-     * @return string
-     */
-    public function getProduct();
+    public function getProduct(): ?string;
 
-    /**
-     * @remark should be implemented by the child class
-     *
-     * @return array
-     */
-    public static function getPossibleProductValues();
+    public static function getPossibleProductValues(): array;
 
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
-     */
-    public function toXML(DOMDocument $document, $prefix = null);
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement;
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return self
-     */
-    public static function createFromXML(SimpleXMLElement $xml);
+    public static function createFromXML(SimpleXMLElement $xml): self;
 }

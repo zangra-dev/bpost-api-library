@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Bpost\Order\Box\International;
+use Bpost\BpostApiClient\Bpost\Order\Box\National;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
@@ -17,173 +19,107 @@ use SimpleXMLElement;
  */
 class Box
 {
-    const BOX_STATUS_OPEN = 'OPEN';
-    const BOX_STATUS_PENDING = 'PENDING';
-    const BOX_STATUS_PRINTED = 'PRINTED';
-    const BOX_STATUS_CANCELLED = 'CANCELLED';
-    const BOX_STATUS_ON_HOLD = 'ON-HOLD';
-    const BOX_STATUS_ANNOUNCED = 'ANNOUNCED';
-    const BOX_STATUS_IN_TRANSIT = 'IN_TRANSIT';
-    const BOX_STATUS_AWAITING_PICKUP = 'AWAITING_PICKUP';
-    const BOX_STATUS_DELIVERED = 'DELIVERED';
-    const BOX_STATUS_BACK_TO_SENDER = 'BACK_TO_SENDER';
+    public const BOX_STATUS_OPEN             = 'OPEN';
+    public const BOX_STATUS_PENDING          = 'PENDING';
+    public const BOX_STATUS_PRINTED          = 'PRINTED';
+    public const BOX_STATUS_CANCELLED        = 'CANCELLED';
+    public const BOX_STATUS_ON_HOLD          = 'ON-HOLD';
+    public const BOX_STATUS_ANNOUNCED        = 'ANNOUNCED';
+    public const BOX_STATUS_IN_TRANSIT       = 'IN_TRANSIT';
+    public const BOX_STATUS_AWAITING_PICKUP  = 'AWAITING_PICKUP';
+    public const BOX_STATUS_DELIVERED        = 'DELIVERED';
+    public const BOX_STATUS_BACK_TO_SENDER   = 'BACK_TO_SENDER';
 
-    /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Sender
-     */
-    private $sender;
+    private ?Sender $sender = null;
+    private ?National $nationalBox = null;
+    private ?International $internationalBox = null;
 
-    /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Box\AtHome
-     */
-    private $nationalBox;
+    private ?string $remark = null;
+    private ?string $status = null;
+    private ?string $barcode = null;
+    private ?string $additionalCustomerReference = null;
 
-    /**
-     * @var \Bpost\BpostApiClient\Bpost\Order\Box\International
-     */
-    private $internationalBox;
-
-    /**
-     * @var string
-     */
-    private $remark;
-
-    /**
-     * @var string
-     */
-    private $status;
-
-    /** @var string */
-    private $barcode;
-
-    /** @var string */
-    private $additionalCustomerReference;
-
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Box\International $internationalBox
-     */
-    public function setInternationalBox(Box\International $internationalBox)
+    public function setInternationalBox(International $internationalBox): void
     {
         $this->internationalBox = $internationalBox;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Box\International
-     */
-    public function getInternationalBox()
+    public function getInternationalBox(): ?International
     {
         return $this->internationalBox;
     }
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Box\National $nationalBox
-     */
-    public function setNationalBox(Box\National $nationalBox)
+    public function setNationalBox(National $nationalBox): void
     {
         $this->nationalBox = $nationalBox;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Box\National
-     */
-    public function getNationalBox()
+    public function getNationalBox(): ?National
     {
         return $this->nationalBox;
     }
 
-    /**
-     * @param string $remark
-     */
-    public function setRemark($remark)
+    public function setRemark(string $remark): void
     {
         $this->remark = $remark;
     }
 
-    /**
-     * @return string
-     */
-    public function getRemark()
+    public function getRemark(): ?string
     {
         return $this->remark;
     }
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Sender $sender
-     */
-    public function setSender(Sender $sender)
+    public function setSender(Sender $sender): void
     {
         $this->sender = $sender;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Sender
-     */
-    public function getSender()
+    public function getSender(): ?Sender
     {
         return $this->sender;
     }
 
     /**
-     * @param string $status
-     *
      * @throws BpostInvalidValueException
      */
-    public function setStatus($status)
+    public function setStatus(string $status): void
     {
         $status = strtoupper($status);
-        if (!in_array($status, self::getPossibleStatusValues())) {
+        if (!in_array($status, self::getPossibleStatusValues(), true)) {
             throw new BpostInvalidValueException('status', $status, self::getPossibleStatusValues());
         }
-
         $this->status = $status;
     }
 
-    /**
-     * @param string $barcode
-     */
-    public function setBarcode($barcode)
+    public function setBarcode(string $barcode): void
     {
-        $this->barcode = strtoupper((string) $barcode);
+        $this->barcode = strtoupper($barcode);
     }
 
-    /**
-     * @return string
-     */
-    public function getBarcode()
+    public function getBarcode(): ?string
     {
         return $this->barcode;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $additionalCustomerReference
-     */
-    public function setAdditionalCustomerReference($additionalCustomerReference)
+    public function setAdditionalCustomerReference(string $additionalCustomerReference): void
     {
-        $this->additionalCustomerReference = (string) $additionalCustomerReference;
+        $this->additionalCustomerReference = $additionalCustomerReference;
     }
 
-    /**
-     * @return string
-     */
-    public function getAdditionalCustomerReference()
+    public function getAdditionalCustomerReference(): ?string
     {
         return $this->additionalCustomerReference;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleStatusValues()
+
+    public static function getPossibleStatusValues(): array
     {
-        return array(
+        return [
             self::BOX_STATUS_OPEN,
             self::BOX_STATUS_PENDING,
             self::BOX_STATUS_PRINTED,
@@ -194,18 +130,13 @@ class Box
             self::BOX_STATUS_AWAITING_PICKUP,
             self::BOX_STATUS_DELIVERED,
             self::BOX_STATUS_BACK_TO_SENDER,
-        );
+        ];
     }
 
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         $box = $document->createElement(XmlHelper::getPrefixedTagName('box', $prefix));
 
@@ -219,158 +150,116 @@ class Box
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Box
-     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $box = new Box();
+        $box = new self();
+
         if (isset($xml->sender)) {
             $box->setSender(
                 Sender::createFromXML(
-                    $xml->sender->children(
-                        'http://schema.post.be/shm/deepintegration/v3/common'
-                    )
+                    $xml->sender->children('http://schema.post.be/shm/deepintegration/v3/common')
                 )
             );
         }
-        if (isset($xml->nationalBox)) {
-            /** @var SimpleXMLElement $nationalBoxData */
-            $nationalBoxData = $xml->nationalBox->children('http://schema.post.be/shm/deepintegration/v3/national');
 
+        if (isset($xml->nationalBox)) {
+            $nationalBoxData = $xml->nationalBox->children('http://schema.post.be/shm/deepintegration/v3/national');
             $classNameExtracted = $nationalBoxData->getName();
-            if ($classNameExtracted == 'at24-7') {
+            if ($classNameExtracted === 'at24-7') {
                 $classNameExtracted = 'at247';
             }
-
-            // build classname based on the tag name
-            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($classNameExtracted);
-
+            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst((string)$classNameExtracted);
             XmlHelper::assertMethodCreateFromXmlExists($className);
 
-            $nationalBox = call_user_func(array($className, 'createFromXML'), $nationalBoxData);
-
+            /** @var National $nationalBox */
+            $nationalBox = call_user_func([$className, 'createFromXML'], $nationalBoxData);
             $box->setNationalBox($nationalBox);
         }
-        if (isset($xml->internationalBox)) {
-            /** @var SimpleXMLElement $internationalBoxData */
-            $internationalBoxData = $xml->internationalBox->children('http://schema.post.be/shm/deepintegration/v3/international');
 
+        if (isset($xml->internationalBox)) {
+            $internationalBoxData = $xml->internationalBox->children('http://schema.post.be/shm/deepintegration/v3/international');
             $classNameExtracted = $internationalBoxData->getName();
-            if ($classNameExtracted == 'atIntlHome') {
+            if ($classNameExtracted === 'atIntlHome') {
                 $classNameExtracted = 'international';
             }
-            // build classname based on the tag name
-            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($classNameExtracted);
-
+            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst((string)$classNameExtracted);
             XmlHelper::assertMethodCreateFromXmlExists($className);
 
-            $internationalBox = call_user_func(
-                array($className, 'createFromXML'),
-                $internationalBoxData
-            );
-
+            /** @var International $internationalBox */
+            $internationalBox = call_user_func([$className, 'createFromXML'], $internationalBoxData);
             $box->setInternationalBox($internationalBox);
         }
-        if (isset($xml->remark) && $xml->remark != '') {
-            $box->setRemark((string) $xml->remark);
+
+        if (isset($xml->remark) && (string) $xml->remark !== '') {
+            $box->setRemark((string)$xml->remark);
         }
-        if (isset($xml->additionalCustomerReference) && $xml->additionalCustomerReference != '') {
-            $box->setAdditionalCustomerReference((string) $xml->additionalCustomerReference);
+        if (isset($xml->additionalCustomerReference) && (string) $xml->additionalCustomerReference !== '') {
+            $box->setAdditionalCustomerReference((string)$xml->additionalCustomerReference);
         }
         if (!empty($xml->barcode)) {
-            $box->setBarcode((string) $xml->barcode);
+            $box->setBarcode((string)$xml->barcode);
         }
-        if (isset($xml->status) && $xml->status != '') {
-            $box->setStatus((string) $xml->status);
+        if (isset($xml->status) && (string) $xml->status !== '') {
+            $box->setStatus((string)$xml->status);
         }
 
         return $box;
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $box
+     * @throws \DOMException
      */
-    private function barcodeToXML(DOMDocument $document, $prefix, DOMElement $box)
+    private function barcodeToXML(DOMDocument $document, ?string $prefix, DOMElement $box): void
     {
-        if ($this->getBarcode() !== null) {
+        if ($this->barcode !== null) {
             $box->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('barcode', $prefix),
-                    $this->getBarcode()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('barcode', $prefix), $this->barcode)
             );
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $box
+     * @throws \DOMException
      */
-    private function boxToXML(DOMDocument $document, $prefix, DOMElement $box)
+    private function boxToXML(DOMDocument $document, ?string $prefix, DOMElement $box): void
     {
-        if ($this->getNationalBox() !== null) {
-            $box->appendChild(
-                $this->getNationalBox()->toXML($document, $prefix)
-            );
+        if ($this->nationalBox !== null) {
+            $box->appendChild($this->nationalBox->toXML($document, $prefix));
         }
-        if ($this->getInternationalBox() !== null) {
-            $box->appendChild(
-                $this->getInternationalBox()->toXML($document, $prefix)
-            );
+        if ($this->internationalBox !== null) {
+            $box->appendChild($this->internationalBox->toXML($document, $prefix));
+        }
+    }
+
+    private function senderToXML(DOMDocument $document, ?string $prefix, DOMElement $box): void
+    {
+        if ($this->sender !== null) {
+            $box->appendChild($this->sender->toXML($document, $prefix));
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $box
+     * @throws \DOMException
      */
-    private function senderToXML(DOMDocument $document, $prefix, DOMElement $box)
+    private function remarkToXML(DOMDocument $document, ?string $prefix, DOMElement $box): void
     {
-        if ($this->getSender() !== null) {
+        if ($this->remark !== null) {
             $box->appendChild(
-                $this->getSender()->toXML($document, $prefix)
+                $document->createElement(XmlHelper::getPrefixedTagName('remark', $prefix), $this->remark)
             );
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $box
-     */
-    private function remarkToXML(DOMDocument $document, $prefix, DOMElement $box)
+    private function additionalCustomerReferenceToXML(DOMDocument $document, ?string $prefix, DOMElement $box): void
     {
-        if ($this->getRemark() !== null) {
-            $box->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('remark', $prefix),
-                    $this->getRemark()
-                )
-            );
-        }
-    }
-
-    /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $box
-     */
-    private function additionalCustomerReferenceToXML(DOMDocument $document, $prefix, DOMElement $box)
-    {
-        if ($this->getAdditionalCustomerReference() !== null) {
+        if ($this->additionalCustomerReference !== null) {
             $box->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('additionalCustomerReference', $prefix),
-                    $this->getAdditionalCustomerReference()
+                    $this->additionalCustomerReference
                 )
             );
         }

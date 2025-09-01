@@ -13,20 +13,15 @@ use SimpleXMLElement;
  */
 class Receiver extends Customer
 {
-    const TAG_NAME = 'receiver';
+    public const TAG_NAME = 'receiver';
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Receiver
-     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        /** @var Receiver $receiver */
-        $receiver = parent::createFromXMLHelper($xml, new Receiver());
-
+        /** @var self $receiver */
+        $receiver = parent::createFromXMLHelper($xml, new self());
         return $receiver;
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 use SimpleXMLElement;
 
 /**
@@ -21,24 +21,16 @@ use SimpleXMLElement;
 class AutomaticSecondPresentation extends Option
 {
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
-        return $document->createElement(XmlHelper::getPrefixedTagName('automaticSecondPresentation', $prefix));
+        return $document->createElement(
+            XmlHelper::getPrefixedTagName('automaticSecondPresentation', $prefix)
+        );
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return static
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): static
     {
         return new static();
     }

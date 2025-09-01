@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 
 /**
  * bPost CashOnDelivery class
@@ -19,117 +19,75 @@ use DomElement;
  */
 class CashOnDelivery extends Option
 {
-    /**
-     * @var float
-     */
-    private $amount;
+    private float $amount;
+    private string $iban;
+    private string $bic;
 
-    /**
-     * @var string
-     */
-    private $iban;
-
-    /**
-     * @var string
-     */
-    private $bic;
-
-    /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
-     * @param string $bic
-     */
-    public function setBic($bic)
-    {
-        $this->bic = $bic;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBic()
-    {
-        return $this->bic;
-    }
-
-    /**
-     * @param string $iban
-     */
-    public function setIban($iban)
-    {
-        $this->iban = $iban;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIban()
-    {
-        return $this->iban;
-    }
-
-    /**
-     * @param float  $amount
-     * @param string $iban
-     * @param string $bic
-     */
-    public function __construct($amount, $iban, $bic)
+    public function __construct(float $amount, string $iban, string $bic)
     {
         $this->setAmount($amount);
         $this->setIban($iban);
         $this->setBic($bic);
     }
 
+    public function setAmount(float $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function getAmount(): float
+    {
+        return $this->amount;
+    }
+
+    public function setBic(string $bic): void
+    {
+        $this->bic = $bic;
+    }
+
+    public function getBic(): string
+    {
+        return $this->bic;
+    }
+
+    public function setIban(string $iban): void
+    {
+        $this->iban = $iban;
+    }
+
+    public function getIban(): string
+    {
+        return $this->iban;
+    }
+
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
         $cod = $document->createElement(XmlHelper::getPrefixedTagName('cod', $prefix));
 
-        if ($this->getAmount() !== null) {
-            $cod->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('codAmount', $prefix),
-                    $this->getAmount()
-                )
-            );
-        }
-        if ($this->getIban() !== null) {
-            $cod->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('iban', $prefix),
-                    $this->getIban()
-                )
-            );
-        }
-        if ($this->getBic() !== null) {
-            $cod->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('bic', $prefix),
-                    $this->getBic()
-                )
-            );
-        }
+        // Montant formaté en 2 décimales (ex: 10 => "10.00")
+        $cod->appendChild(
+            $document->createElement(
+                XmlHelper::getPrefixedTagName('codAmount', $prefix),
+                sprintf('%.2f', $this->getAmount())
+            )
+        );
+
+        $cod->appendChild(
+            $document->createElement(
+                XmlHelper::getPrefixedTagName('iban', $prefix),
+                $this->getIban()
+            )
+        );
+
+        $cod->appendChild(
+            $document->createElement(
+                XmlHelper::getPrefixedTagName('bic', $prefix),
+                $this->getBic()
+            )
+        );
 
         return $cod;
     }

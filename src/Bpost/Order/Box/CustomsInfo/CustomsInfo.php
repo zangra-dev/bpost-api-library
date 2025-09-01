@@ -23,45 +23,26 @@ use SimpleXMLElement;
  */
 class CustomsInfo
 {
-    const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTA = 'RTA';
-    const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTS = 'RTS';
-    const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_ABANDONED = 'ABANDONED';
+    public const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTA       = 'RTA';
+    public const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTS       = 'RTS';
+    public const CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_ABANDONED = 'ABANDONED';
 
-    const CUSTOM_INFO_SHIPMENT_TYPE_SAMPLE = 'SAMPLE';
-    const CUSTOM_INFO_SHIPMENT_TYPE_GIFT = 'GIFT';
-    const CUSTOM_INFO_SHIPMENT_TYPE_GOODS = 'GOODS';
-    const CUSTOM_INFO_SHIPMENT_TYPE_DOCUMENTS = 'DOCUMENTS';
-    const CUSTOM_INFO_SHIPMENT_TYPE_OTHER = 'OTHER';
+    public const CUSTOM_INFO_SHIPMENT_TYPE_SAMPLE    = 'SAMPLE';
+    public const CUSTOM_INFO_SHIPMENT_TYPE_GIFT      = 'GIFT';
+    public const CUSTOM_INFO_SHIPMENT_TYPE_GOODS     = 'GOODS';
+    public const CUSTOM_INFO_SHIPMENT_TYPE_DOCUMENTS = 'DOCUMENTS';
+    public const CUSTOM_INFO_SHIPMENT_TYPE_OTHER     = 'OTHER';
 
-    const CUSTOM_INFO_CURRENCY_EUR = 'EUR';
-    const CUSTOM_INFO_CURRENCY_GBP = 'GBP';
-    const CUSTOM_INFO_CURRENCY_USD = 'USD';
-    const CUSTOM_INFO_CURRENCY_CNY = 'CNY';
+    public const CUSTOM_INFO_CURRENCY_EUR = 'EUR';
+    public const CUSTOM_INFO_CURRENCY_GBP = 'GBP';
+    public const CUSTOM_INFO_CURRENCY_USD = 'USD';
+    public const CUSTOM_INFO_CURRENCY_CNY = 'CNY';
 
-    /**
-     * @var int
-     */
-    private $parcelValue;
-
-    /**
-     * @var string
-     */
-    private $contentDescription;
-
-    /**
-     * @var string
-     */
-    private $shipmentType;
-
-    /**
-     * @var string
-     */
-    private $parcelReturnInstructions;
-
-    /**
-     * @var bool
-     */
-    private $privateAddress;
+    private ?int $parcelValue = null;
+    private ?string $contentDescription = null;
+    private ?string $shipmentType = null;
+    private ?string $parcelReturnInstructions = null;
+    private ?bool $privateAddress = null;
 
     /**
      * this is the currency used for field parcelValue.In case of shipment to non-European country,
@@ -69,9 +50,8 @@ class CustomsInfo
      *
      * Possible values are: EUR=Euro    GBP=Pound   Sterling    USD=US Dollar   CNY=Yuan Renminbi
      *
-     * @var string
      */
-    private $currency;
+    private ?string $currency = null;
 
     /**
      * Amount paid by the sender for the sending of this shipment. See contract pricing with bpost.
@@ -80,201 +60,168 @@ class CustomsInfo
      * Maximum value : 999.99
      * Currency for field amtPostagePaidByAddresse is always EUR !
      *
-     * @var float
      */
-    private $amtPostagePaidByAddresse;
+    private ?float $amtPostagePaidByAddresse = null;
+
 
     /**
-     * @param string $contentDescription
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setContentDescription($contentDescription)
+    public function setContentDescription(?string $contentDescription): void
     {
+        if ($contentDescription === null) {
+            $this->contentDescription = null;
+            return;
+        }
         $length = 50;
         if (mb_strlen($contentDescription) > $length) {
             throw new BpostInvalidLengthException('contentDescription', mb_strlen($contentDescription), $length);
         }
-
         $this->contentDescription = $contentDescription;
     }
 
-    /**
-     * @return string
-     */
-    public function getContentDescription()
+    public function getContentDescription(): ?string
     {
         return $this->contentDescription;
     }
 
     /**
-     * @param string $parcelReturnInstructions
-     *
      * @throws BpostInvalidValueException
      */
-    public function setParcelReturnInstructions($parcelReturnInstructions)
+    public function setParcelReturnInstructions(?string $parcelReturnInstructions): void
     {
-        $parcelReturnInstructions = strtoupper($parcelReturnInstructions);
+        if ($parcelReturnInstructions === null) {
+            $this->parcelReturnInstructions = null;
+            return;
+        }
 
-        if (!in_array($parcelReturnInstructions, self::getPossibleParcelReturnInstructionValues())) {
+        $normalized = strtoupper($parcelReturnInstructions);
+        if (!in_array($normalized, self::getPossibleParcelReturnInstructionValues(), true)) {
             throw new BpostInvalidValueException(
                 'parcelReturnInstructions',
-                $parcelReturnInstructions,
+                $normalized,
                 self::getPossibleParcelReturnInstructionValues()
             );
         }
-
-        $this->parcelReturnInstructions = $parcelReturnInstructions;
+        $this->parcelReturnInstructions = $normalized;
     }
 
-    /**
-     * @return string
-     */
-    public function getParcelReturnInstructions()
+    public function getParcelReturnInstructions(): ?string
     {
         return $this->parcelReturnInstructions;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleParcelReturnInstructionValues()
+    public static function getPossibleParcelReturnInstructionValues(): array
     {
-        return array(
+        return [
             self::CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTA,
             self::CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTS,
             self::CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_ABANDONED,
-        );
+        ];
     }
 
-    /**
-     * @param int $parcelValue
-     */
-    public function setParcelValue($parcelValue)
+    public function setParcelValue(?int $parcelValue): void
     {
         $this->parcelValue = $parcelValue;
     }
 
-    /**
-     * @return int
-     */
-    public function getParcelValue()
+    public function getParcelValue(): ?int
     {
         return $this->parcelValue;
     }
 
-    /**
-     * @param bool $privateAddress
-     */
-    public function setPrivateAddress($privateAddress)
+    public function setPrivateAddress(?bool $privateAddress): void
     {
         $this->privateAddress = $privateAddress;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPrivateAddress()
+    public function getPrivateAddress(): ?bool
     {
         return $this->privateAddress;
     }
 
     /**
-     * @param string $shipmentType
-     *
      * @throws BpostInvalidValueException
      */
-    public function setShipmentType($shipmentType)
+    public function setShipmentType(?string $shipmentType): void
     {
-        $shipmentType = strtoupper($shipmentType);
-
-        if (!in_array($shipmentType, self::getPossibleShipmentTypeValues())) {
-            throw new BpostInvalidValueException('shipmentType', $shipmentType, self::getPossibleShipmentTypeValues());
+        if ($shipmentType === null) {
+            $this->shipmentType = null;
+            return;
         }
 
-        $this->shipmentType = $shipmentType;
+        $normalized = strtoupper($shipmentType);
+        if (!in_array($normalized, self::getPossibleShipmentTypeValues(), true)) {
+            throw new BpostInvalidValueException('shipmentType', $normalized, self::getPossibleShipmentTypeValues());
+        }
+        $this->shipmentType = $normalized;
     }
 
-    /**
-     * @return string
-     */
-    public function getShipmentType()
+    public function getShipmentType(): ?string
     {
         return $this->shipmentType;
     }
 
+
     /**
      * @return array
      */
-    public static function getPossibleShipmentTypeValues()
+    public static function getPossibleShipmentTypeValues(): array
     {
-        return array(
+        return [
             self::CUSTOM_INFO_SHIPMENT_TYPE_SAMPLE,
             self::CUSTOM_INFO_SHIPMENT_TYPE_GIFT,
             self::CUSTOM_INFO_SHIPMENT_TYPE_GOODS,
             self::CUSTOM_INFO_SHIPMENT_TYPE_DOCUMENTS,
             self::CUSTOM_INFO_SHIPMENT_TYPE_OTHER,
-        );
+        ];
     }
 
-    /**
-     * @return float
-     */
-    public function getAmtPostagePaidByAddresse()
+    public function getAmtPostagePaidByAddresse(): ?float
     {
         return $this->amtPostagePaidByAddresse;
     }
 
-    /**
-     * @param float $amtPostagePaidByAddresse
-     */
-    public function setAmtPostagePaidByAddresse($amtPostagePaidByAddresse)
+    public function setAmtPostagePaidByAddresse(?float $amtPostagePaidByAddresse): void
     {
         $this->amtPostagePaidByAddresse = $amtPostagePaidByAddresse;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
+
     /**
-     * @param string $currency
-     *
      * @throws BpostInvalidValueException
      */
-    public function setCurrency($currency)
+    public function setCurrency(?string $currency): void
     {
-        if (!in_array($currency, self::getPossibleCurrencyValues())) {
+        if ($currency === null) {
+            $this->currency = null;
+            return;
+        }
+        if (!in_array($currency, self::getPossibleCurrencyValues(), true)) {
             throw new BpostInvalidValueException('currency', $currency, self::getPossibleCurrencyValues());
         }
         $this->currency = $currency;
     }
 
-    public static function getPossibleCurrencyValues()
+    public static function getPossibleCurrencyValues(): array
     {
-        return array(
+        return [
             self::CUSTOM_INFO_CURRENCY_EUR,
             self::CUSTOM_INFO_CURRENCY_GBP,
             self::CUSTOM_INFO_CURRENCY_USD,
             self::CUSTOM_INFO_CURRENCY_CNY,
-        );
+        ];
     }
 
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
-     *
      * @throws DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         $customsInfo = $document->createElement(XmlHelper::getPrefixedTagName('customsInfo', $prefix));
 
@@ -290,83 +237,53 @@ class CustomsInfo
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return CustomsInfo
-     *
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $customsInfo = new CustomsInfo();
+        $customsInfo = new self();
 
-        if (isset($xml->parcelValue) && $xml->parcelValue != '') {
-            $customsInfo->setParcelValue(
-                (int) $xml->parcelValue
-            );
+        if (isset($xml->parcelValue) && (string)$xml->parcelValue !== '') {
+            $customsInfo->setParcelValue((int)$xml->parcelValue);
         }
-        if (isset($xml->contentDescription) && $xml->contentDescription != '') {
-            $customsInfo->setContentDescription(
-                (string) $xml->contentDescription
-            );
+        if (isset($xml->contentDescription) && (string)$xml->contentDescription !== '') {
+            $customsInfo->setContentDescription((string)$xml->contentDescription);
         }
-        if (isset($xml->shipmentType) && $xml->shipmentType != '') {
-            $customsInfo->setShipmentType(
-                (string) $xml->shipmentType
-            );
+        if (isset($xml->shipmentType) && (string)$xml->shipmentType !== '') {
+            $customsInfo->setShipmentType((string)$xml->shipmentType);
         }
-        if (isset($xml->parcelReturnInstructions) && $xml->parcelReturnInstructions != '') {
-            $customsInfo->setParcelReturnInstructions(
-                (string) $xml->parcelReturnInstructions
-            );
+        if (isset($xml->parcelReturnInstructions) && (string)$xml->parcelReturnInstructions !== '') {
+            $customsInfo->setParcelReturnInstructions((string)$xml->parcelReturnInstructions);
         }
-        if (isset($xml->privateAddress) && $xml->privateAddress != '') {
-            $customsInfo->setPrivateAddress(
-                (string) $xml->privateAddress == 'true'
-            );
+        if (isset($xml->privateAddress) && (string)$xml->privateAddress !== '') {
+            $customsInfo->setPrivateAddress(in_array((string)$xml->privateAddress, ['true', '1'], true));
         }
-        if (isset($xml->currency) && $xml->currency != '') {
-            $customsInfo->setCurrency(
-                (string) $xml->currency
-            );
+        if (isset($xml->currency) && (string)$xml->currency !== '') {
+            $customsInfo->setCurrency((string)$xml->currency);
         }
-        if (isset($xml->amtPostagePaidByAddresse) && $xml->amtPostagePaidByAddresse != '') {
-            $customsInfo->setAmtPostagePaidByAddresse(
-                (float) $xml->amtPostagePaidByAddresse
-            );
+        if (isset($xml->amtPostagePaidByAddresse) && (string)$xml->amtPostagePaidByAddresse !== '') {
+            $customsInfo->setAmtPostagePaidByAddresse((float)$xml->amtPostagePaidByAddresse);
         }
 
         return $customsInfo;
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function parcelValueToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function parcelValueToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getParcelValue() !== null) {
             $customsInfo->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('parcelValue', $prefix),
-                    $this->getParcelValue()
+                    (string)$this->getParcelValue()
                 )
             );
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function currencyToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function currencyToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getCurrency() !== null) {
             $customsInfo->appendChild(
@@ -378,14 +295,8 @@ class CustomsInfo
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function amtPostagePaidByAddresseToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function amtPostagePaidByAddresseToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getAmtPostagePaidByAddresse() !== null) {
             $customsInfo->appendChild(
@@ -397,14 +308,8 @@ class CustomsInfo
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function contentDescriptionToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function contentDescriptionToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getContentDescription() !== null) {
             $customsInfo->appendChild(
@@ -416,14 +321,8 @@ class CustomsInfo
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function shipmentTypeToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function shipmentTypeToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getShipmentType() !== null) {
             $customsInfo->appendChild(
@@ -435,14 +334,8 @@ class CustomsInfo
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function parcelReturnInstructionValuesToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function parcelReturnInstructionValuesToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getParcelReturnInstructions() !== null) {
             $customsInfo->appendChild(
@@ -454,21 +347,11 @@ class CustomsInfo
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param DOMElement  $customsInfo
-     *
-     * @throws DOMException
-     */
-    private function privateAddressToXML(DOMDocument $document, $prefix, DOMElement $customsInfo)
+    /** @throws DOMException */
+    private function privateAddressToXML(DOMDocument $document, ?string $prefix, DOMElement $customsInfo): void
     {
         if ($this->getPrivateAddress() !== null) {
-            if ($this->getPrivateAddress()) {
-                $value = 'true';
-            } else {
-                $value = 'false';
-            }
+            $value = $this->getPrivateAddress() ? 'true' : 'false';
             $customsInfo->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('privateAddress', $prefix),

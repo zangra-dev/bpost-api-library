@@ -18,11 +18,5 @@ use DOMElement;
  */
 abstract class Option
 {
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     *
-     * @return DOMElement
-     */
-    abstract public function toXML(DOMDocument $document, $prefix = null);
+    abstract public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement;
 }

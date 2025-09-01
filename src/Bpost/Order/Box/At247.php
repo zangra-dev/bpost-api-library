@@ -8,6 +8,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DOMDocument;
@@ -26,306 +27,192 @@ use SimpleXMLElement;
  */
 class At247 extends National
 {
-    /** @var string */
-    private $parcelsDepotId;
+    private ?string $parcelsDepotId = null;
+    private ?string $parcelsDepotName = null;
+    private ?ParcelsDepotAddress $parcelsDepotAddress = null;
 
     /** @var string */
-    private $parcelsDepotName;
+    protected string $product = Product::PRODUCT_NAME_BPACK_24H_PRO;
 
-    /** @var \Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress */
-    private $parcelsDepotAddress;
+    private ?string $memberId = null;
+    private ?Unregistered $unregistered = null;
+    private ?string $receiverName = null;
+    private ?string $receiverCompany = null;
+    protected ?string $requestedDeliveryDate = null;
 
-    /** @var string */
-    protected $product = Product::PRODUCT_NAME_BPACK_24H_PRO;
-
-    /** @var string */
-    private $memberId;
-
-    /** @var Unregistered */
-    private $unregistered;
-
-    /** @var string */
-    private $receiverName;
-
-    /** @var string */
-    private $receiverCompany;
-
-    /** @var string */
-    protected $requestedDeliveryDate;
-
-    /**
-     * @param string $memberId
-     */
-    public function setMemberId($memberId)
+    public function setMemberId(?string $memberId): void
     {
         $this->memberId = $memberId;
     }
 
-    /**
-     * @return string
-     */
-    public function getMemberId()
+    public function getMemberId(): ?string
     {
         return $this->memberId;
     }
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress $parcelsDepotAddress
-     */
-    public function setParcelsDepotAddress($parcelsDepotAddress)
+    public function setParcelsDepotAddress(?ParcelsDepotAddress $parcelsDepotAddress): void
     {
         $this->parcelsDepotAddress = $parcelsDepotAddress;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress
-     */
-    public function getParcelsDepotAddress()
+    public function getParcelsDepotAddress(): ?ParcelsDepotAddress
     {
         return $this->parcelsDepotAddress;
     }
 
-    /**
-     * @param string $parcelsDepotId
-     */
-    public function setParcelsDepotId($parcelsDepotId)
+    public function setParcelsDepotId(?string $parcelsDepotId): void
     {
         $this->parcelsDepotId = $parcelsDepotId;
     }
 
-    /**
-     * @return string
-     */
-    public function getParcelsDepotId()
+    public function getParcelsDepotId(): ?string
     {
         return $this->parcelsDepotId;
     }
 
-    /**
-     * @param string $parcelsDepotName
-     */
-    public function setParcelsDepotName($parcelsDepotName)
+    public function setParcelsDepotName(?string $parcelsDepotName): void
     {
         $this->parcelsDepotName = $parcelsDepotName;
     }
 
-    /**
-     * @return string
-     */
-    public function getParcelsDepotName()
+    public function getParcelsDepotName(): ?string
     {
         return $this->parcelsDepotName;
     }
 
-    /**
-     * @return Unregistered
-     */
-    public function getUnregistered()
+    public function getUnregistered(): ?Unregistered
     {
         return $this->unregistered;
     }
 
-    /**
-     * @param Unregistered $unregistered
-     */
-    public function setUnregistered(Unregistered $unregistered)
+    public function setUnregistered(?Unregistered $unregistered): void
     {
         $this->unregistered = $unregistered;
     }
 
     /**
-     * @param string $product Possible values are: bpack 24h Pro
-     *
      * @throws BpostInvalidValueException
      */
-    public function setProduct($product)
+    public function setProduct(string $product): void
     {
-        if (!in_array($product, self::getPossibleProductValues())) {
+        if (!in_array($product, self::getPossibleProductValues(), true)) {
             throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
-
         parent::setProduct($product);
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleProductValues()
+    public static function getPossibleProductValues(): array
     {
-        return array(
+        return [
             Product::PRODUCT_NAME_BPACK_24H_PRO,
             Product::PRODUCT_NAME_BPACK_24_7,
-        );
+        ];
     }
 
-    /**
-     * @param string $receiverCompany
-     */
-    public function setReceiverCompany($receiverCompany)
+    public function setReceiverCompany(?string $receiverCompany): void
     {
         $this->receiverCompany = $receiverCompany;
     }
 
-    /**
-     * @return string
-     */
-    public function getReceiverCompany()
+    public function getReceiverCompany(): ?string
     {
         return $this->receiverCompany;
     }
 
-    /**
-     * @param string $receiverName
-     */
-    public function setReceiverName($receiverName)
+    public function setReceiverName(?string $receiverName): void
     {
         $this->receiverName = $receiverName;
     }
 
-    /**
-     * @return string
-     */
-    public function getReceiverName()
+    public function getReceiverName(): ?string
     {
         return $this->receiverName;
     }
 
-    /**
-     * @return string
-     */
-    public function getRequestedDeliveryDate()
+    public function getRequestedDeliveryDate(): ?string
     {
         return $this->requestedDeliveryDate;
     }
 
-    /**
-     * @param string $requestedDeliveryDate
-     */
-    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    public function setRequestedDeliveryDate(?string $requestedDeliveryDate): void
     {
-        $this->requestedDeliveryDate = (string) $requestedDeliveryDate;
+        $this->requestedDeliveryDate = $requestedDeliveryDate;
     }
 
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
     {
         $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'at24-7');
         $nationalElement->appendChild($boxElement);
 
-        if ($this->getParcelsDepotId() !== null) {
-            $boxElement->appendChild(
-                $document->createElement('parcelsDepotId', $this->getParcelsDepotId())
-            );
+        if ($this->parcelsDepotId !== null) {
+            $boxElement->appendChild($document->createElement('parcelsDepotId', $this->parcelsDepotId));
         }
-        if ($this->getParcelsDepotName() !== null) {
-            $boxElement->appendChild(
-                $document->createElement(
-                    'parcelsDepotName',
-                    $this->getParcelsDepotName()
-                )
-            );
+        if ($this->parcelsDepotName !== null) {
+            $boxElement->appendChild($document->createElement('parcelsDepotName', $this->parcelsDepotName));
         }
-        if ($this->getParcelsDepotAddress() !== null) {
-            $boxElement->appendChild(
-                $this->getParcelsDepotAddress()->toXML($document)
-            );
+        if ($this->parcelsDepotAddress !== null) {
+            $boxElement->appendChild($this->parcelsDepotAddress->toXML($document));
         }
-        if ($this->getMemberId() !== null) {
-            $boxElement->appendChild(
-                $document->createElement(
-                    'memberId',
-                    $this->getMemberId()
-                )
-            );
+        if ($this->memberId !== null) {
+            $boxElement->appendChild($document->createElement('memberId', $this->memberId));
         }
+
         $this->addToXmlUnregistered($document, $boxElement, $prefix);
-        if ($this->getReceiverName() !== null) {
-            $boxElement->appendChild(
-                $document->createElement(
-                    'receiverName',
-                    $this->getReceiverName()
-                )
-            );
+
+        if ($this->receiverName !== null) {
+            $boxElement->appendChild($document->createElement('receiverName', $this->receiverName));
         }
-        if ($this->getReceiverCompany() !== null) {
-            $boxElement->appendChild(
-                $document->createElement(
-                    'receiverCompany',
-                    $this->getReceiverCompany()
-                )
-            );
+        if ($this->receiverCompany !== null) {
+            $boxElement->appendChild($document->createElement('receiverCompany', $this->receiverCompany));
         }
+
         $this->addToXmlRequestedDeliveryDate($document, $boxElement, $prefix);
 
         return $nationalElement;
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $typeElement
-     * @param string      $prefix
-     */
-    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, $prefix)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, ?string $prefix): void
     {
-        if ($this->getRequestedDeliveryDate() !== null && $this->getRequestedDeliveryDate() !== "" ) {
+        $date = $this->requestedDeliveryDate;
+        if ($date !== null && $date !== '') {
             $typeElement->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('requestedDeliveryDate', $prefix),
-                    $this->getRequestedDeliveryDate()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('requestedDeliveryDate', $prefix), $date)
             );
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param DOMElement  $typeElement
-     * @param string      $prefix
+     * @throws \DOMException
      */
-    protected function addToXmlUnregistered(DOMDocument $document, DOMElement $typeElement, $prefix)
+    protected function addToXmlUnregistered(DOMDocument $document, DOMElement $typeElement, ?string $prefix): void
     {
-        if ($this->getUnregistered() !== null) {
-            $typeElement->appendChild(
-                $this->getUnregistered()->toXml($document)
-            );
+        if ($this->unregistered !== null) {
+            $typeElement->appendChild($this->unregistered->toXml($document, $prefix, null));
         }
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     * @param National|null    $self
-     *
-     * @return At247
-     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
-     * @throws \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
-     * @throws \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
+     * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, ?National $self = null): At247
     {
         $at247 = new At247();
 
-        if (isset($xml->{'at24-7'}->product) && $xml->{'at24-7'}->product != '') {
-            $at247->setProduct(
-                (string) $xml->{'at24-7'}->product
-            );
+        if (isset($xml->{'at24-7'}->product) && (string)$xml->{'at24-7'}->product !== '') {
+            $at247->setProduct((string)$xml->{'at24-7'}->product);
         }
+
         if (isset($xml->{'at24-7'}->options)) {
-            /** @var SimpleXMLElement $optionData */
             foreach ($xml->{'at24-7'}->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
-                if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
+                if ($optionData->getName() === Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
                     $option = self::getOptionFromOptionData($optionData);
@@ -334,49 +221,32 @@ class At247 extends National
                 $at247->addOption($option);
             }
         }
-        if (isset($xml->{'at24-7'}->weight) && $xml->{'at24-7'}->weight != '') {
-            $at247->setWeight(
-                (int) $xml->{'at24-7'}->weight
-            );
+
+        if (isset($xml->{'at24-7'}->weight) && (string)$xml->{'at24-7'}->weight !== '') {
+            $at247->setWeight((int)$xml->{'at24-7'}->weight);
         }
-        if (isset($xml->{'at24-7'}->memberId) && $xml->{'at24-7'}->memberId != '') {
-            $at247->setMemberId(
-                (string) $xml->{'at24-7'}->memberId
-            );
+        if (isset($xml->{'at24-7'}->memberId) && (string)$xml->{'at24-7'}->memberId !== '') {
+            $at247->setMemberId((string)$xml->{'at24-7'}->memberId);
         }
-        if (isset($xml->{'at24-7'}->receiverName) && $xml->{'at24-7'}->receiverName != '') {
-            $at247->setReceiverName(
-                (string) $xml->{'at24-7'}->receiverName
-            );
+        if (isset($xml->{'at24-7'}->receiverName) && (string)$xml->{'at24-7'}->receiverName !== '') {
+            $at247->setReceiverName((string)$xml->{'at24-7'}->receiverName);
         }
-        if (isset($xml->{'at24-7'}->receiverCompany) && $xml->{'at24-7'}->receiverCompany != '') {
-            $at247->setReceiverCompany(
-                (string) $xml->{'at24-7'}->receiverCompany
-            );
+        if (isset($xml->{'at24-7'}->receiverCompany) && (string)$xml->{'at24-7'}->receiverCompany !== '') {
+            $at247->setReceiverCompany((string)$xml->{'at24-7'}->receiverCompany);
         }
-        if (isset($xml->{'at24-7'}->parcelsDepotId) && $xml->{'at24-7'}->parcelsDepotId != '') {
-            $at247->setParcelsDepotId(
-                (string) $xml->{'at24-7'}->parcelsDepotId
-            );
+        if (isset($xml->{'at24-7'}->parcelsDepotId) && (string)$xml->{'at24-7'}->parcelsDepotId !== '') {
+            $at247->setParcelsDepotId((string)$xml->{'at24-7'}->parcelsDepotId);
         }
-        if (isset($xml->{'at24-7'}->parcelsDepotName) && $xml->{'at24-7'}->parcelsDepotName != '') {
-            $at247->setParcelsDepotName(
-                (string) $xml->{'at24-7'}->parcelsDepotName
-            );
+        if (isset($xml->{'at24-7'}->parcelsDepotName) && (string)$xml->{'at24-7'}->parcelsDepotName !== '') {
+            $at247->setParcelsDepotName((string)$xml->{'at24-7'}->parcelsDepotName);
         }
         if (isset($xml->{'at24-7'}->parcelsDepotAddress)) {
-            /** @var SimpleXMLElement $parcelsDepotAddressData */
-            $parcelsDepotAddressData = $xml->{'at24-7'}->parcelsDepotAddress->children(
-                'http://schema.post.be/shm/deepintegration/v3/common'
-            );
-            $at247->setParcelsDepotAddress(
-                ParcelsDepotAddress::createFromXML($parcelsDepotAddressData)
-            );
+            $parcelsDepotAddressData = $xml->{'at24-7'}->parcelsDepotAddress
+                ->children('http://schema.post.be/shm/deepintegration/v3/common');
+            $at247->setParcelsDepotAddress(ParcelsDepotAddress::createFromXML($parcelsDepotAddressData));
         }
-        if (isset($xml->{'at24-7'}->requestedDeliveryDate) && $xml->{'at24-7'}->requestedDeliveryDate != '') {
-            $at247->setRequestedDeliveryDate(
-                (string) $xml->{'at24-7'}->requestedDeliveryDate
-            );
+        if (isset($xml->{'at24-7'}->requestedDeliveryDate) && (string)$xml->{'at24-7'}->requestedDeliveryDate !== '') {
+            $at247->setRequestedDeliveryDate((string)$xml->{'at24-7'}->requestedDeliveryDate);
         }
 
         return $at247;

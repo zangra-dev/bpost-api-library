@@ -7,15 +7,12 @@ use Bpost\BpostApiClient\Common\BasicAttribute;
 
 class ShopHandlingInstruction extends BasicAttribute
 {
-    public function validate()
+    public function validate(): void
     {
         $this->validateLength(50);
     }
 
-    /**
-     * @return string
-     */
-    protected function getDefaultKey()
+    protected function getDefaultKey(): string
     {
         return 'shopHandlingInstruction';
     }

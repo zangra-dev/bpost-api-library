@@ -16,221 +16,136 @@ use SimpleXMLElement;
  */
 class Address
 {
-    const TAG_NAME = 'common:address';
+    public const TAG_NAME = 'common:address';
+
+    private ?string $streetName   = null;
+    private ?string $number       = null;
+    private ?string $box          = null;
+    private ?string $postalCode   = null;
+    private ?string $locality     = null;
+    private ?string $countryCode  = 'BE';
 
     /**
-     * @var string
-     */
-    private $streetName;
-
-    /**
-     * @var string
-     */
-    private $number;
-
-    /**
-     * @var string
-     */
-    private $box;
-
-    /**
-     * @var string
-     */
-    private $postalCode;
-
-    /**
-     * @var string
-     */
-    private $locality;
-
-    /**
-     * @var string
-     */
-    private $countryCode = 'BE';
-
-    /**
-     * @param string $box
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setBox($box)
-    {
-        $length = 8;
-        if (mb_strlen($box) > $length) {
-            throw new BpostInvalidLengthException('box', mb_strlen($box), $length);
-        }
-        $this->box = $box;
+    public function __construct(
+        ?string $streetName = null,
+        ?string $number = null,
+        ?string $box = null,
+        ?string $postalCode = null,
+        ?string $locality = null,
+        ?string $countryCode = null
+    ) {
+        if ($streetName   !== null) $this->setStreetName($streetName);
+        if ($number       !== null) $this->setNumber($number);
+        if ($box          !== null) $this->setBox($box);
+        if ($postalCode   !== null) $this->setPostalCode($postalCode);
+        if ($locality     !== null) $this->setLocality($locality);
+        if ($countryCode  !== null) $this->setCountryCode($countryCode);
     }
 
     /**
-     * @return string
+     * @throws BpostInvalidLengthException
      */
-    public function getBox()
+    public function setBox(string $box): void
+    {
+        $max = 8;
+        if (mb_strlen($box) > $max) {
+            throw new BpostInvalidLengthException('box', mb_strlen($box), $max);
+        }
+        $this->box = $box;
+    }
+    public function getBox(): ?string
     {
         return $this->box;
     }
 
     /**
-     * @param string $countryCode
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setCountryCode($countryCode)
+    public function setCountryCode(string $countryCode): void
     {
-        $length = 2;
-        if (mb_strlen($countryCode) > $length) {
-            throw new BpostInvalidLengthException('countryCode', mb_strlen($countryCode), $length);
+        $max = 2;
+        if (mb_strlen($countryCode) > $max) {
+            throw new BpostInvalidLengthException('countryCode', mb_strlen($countryCode), $max);
         }
         $this->countryCode = strtoupper($countryCode);
     }
-
-    /**
-     * @return string
-     */
-    public function getCountryCode()
+    public function getCountryCode(): ?string
     {
         return $this->countryCode;
     }
 
     /**
-     * @param string $locality
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setLocality($locality)
+    public function setLocality(string $locality): void
     {
-        $length = 40;
-        if (mb_strlen($locality) > $length) {
-            throw new BpostInvalidLengthException('locality', mb_strlen($locality), $length);
+        $max = 40;
+        if (mb_strlen($locality) > $max) {
+            throw new BpostInvalidLengthException('locality', mb_strlen($locality), $max);
         }
         $this->locality = $locality;
     }
-
-    /**
-     * @return string
-     */
-    public function getLocality()
+    public function getLocality(): ?string
     {
         return $this->locality;
     }
 
     /**
-     * @param string $number
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setNumber($number)
+    public function setNumber(string $number): void
     {
-        $length = 8;
-        if (mb_strlen($number) > $length) {
-            throw new BpostInvalidLengthException('number', mb_strlen($number), $length);
+        $max = 8;
+        if (mb_strlen($number) > $max) {
+            throw new BpostInvalidLengthException('number', mb_strlen($number), $max);
         }
         $this->number = $number;
     }
-
-    /**
-     * @return string
-     */
-    public function getNumber()
+    public function getNumber(): ?string
     {
         return $this->number;
     }
 
     /**
-     * @param string $postalCode
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode): void
     {
-        $length = 40;
-        if (mb_strlen($postalCode) > $length) {
-            throw new BpostInvalidLengthException('postalCode', mb_strlen($postalCode), $length);
+        $max = 40;
+        if (mb_strlen($postalCode) > $max) {
+            throw new BpostInvalidLengthException('postalCode', mb_strlen($postalCode), $max);
         }
         $this->postalCode = $postalCode;
     }
-
-    /**
-     * @return string
-     */
-    public function getPostalCode()
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
 
     /**
-     * @param string $streetName
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setStreetName($streetName)
+    public function setStreetName(string $streetName): void
     {
-        $length = 40;
-        if (mb_strlen($streetName) > $length) {
-            throw new BpostInvalidLengthException('streetName', mb_strlen($streetName), $length);
+        $max = 40;
+        if (mb_strlen($streetName) > $max) {
+            throw new BpostInvalidLengthException('streetName', mb_strlen($streetName), $max);
         }
         $this->streetName = $streetName;
     }
-
-    /**
-     * @return string
-     */
-    public function getStreetName()
+    public function getStreetName(): ?string
     {
         return $this->streetName;
     }
 
     /**
-     * @param string $streetName
-     * @param string $number
-     * @param string $box
-     * @param string $postalCode
-     * @param string $locality
-     * @param string $countryCode
-     *
-     * @throws BpostInvalidLengthException
+     * @throws \DOMException
      */
-    public function __construct(
-        $streetName = null,
-        $number = null,
-        $box = null,
-        $postalCode = null,
-        $locality = null,
-        $countryCode = null
-    ) {
-        if ($streetName !== null) {
-            $this->setStreetName($streetName);
-        }
-        if ($number !== null) {
-            $this->setNumber($number);
-        }
-        if ($box !== null) {
-            $this->setBox($box);
-        }
-        if ($postalCode !== null) {
-            $this->setPostalCode($postalCode);
-        }
-        if ($locality !== null) {
-            $this->setLocality($locality);
-        }
-        if ($countryCode !== null) {
-            $this->setCountryCode($countryCode);
-        }
-    }
-
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DOMDocument $document
-     * @param string      $prefix
-     *
-     * @return DOMElement
-     */
-    public function toXML(DOMDocument $document, $prefix = 'common')
+    public function toXML(DOMDocument $document, string $prefix = 'common'): DOMElement
     {
-        $tagName = static::TAG_NAME;
-        $address = $document->createElement($tagName);
-        $document->appendChild($address);
+        $address = $document->createElement(self::TAG_NAME);
 
         $this->streetToXML($document, $prefix, $address);
         $this->streetNumbersToXML($document, $prefix, $address);
@@ -241,15 +156,11 @@ class Address
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Address
-     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): Address
     {
-        $address = new Address();
+        $address = new static();
 
         if (isset($xml->streetName) && $xml->streetName != '') {
             $address->setStreetName((string) $xml->streetName);
@@ -274,85 +185,59 @@ class Address
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $address
+     * @throws \DOMException
      */
-    private function streetToXML(DOMDocument $document, $prefix, DOMElement $address)
+    private function streetToXML(DOMDocument $document, string $prefix, DOMElement $address): void
     {
-        if ($this->getStreetName() !== null) {
+        if ($this->streetName !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('streetName', $prefix),
-                    $this->getStreetName()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('streetName', $prefix), $this->streetName)
             );
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $address
+     * @throws \DOMException
      */
-    private function localityToXML(DOMDocument $document, $prefix, DOMElement $address)
+    private function localityToXML(DOMDocument $document, string $prefix, DOMElement $address): void
     {
-        if ($this->getPostalCode() !== null) {
+        if ($this->postalCode !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('postalCode', $prefix),
-                    $this->getPostalCode()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('postalCode', $prefix), $this->postalCode)
             );
         }
-        if ($this->getLocality() !== null) {
+        if ($this->locality !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('locality', $prefix),
-                    $this->getLocality()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('locality', $prefix), $this->locality)
             );
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $address
+     * @throws \DOMException
      */
-    private function countryToXML(DOMDocument $document, $prefix, DOMElement $address)
+    private function countryToXML(DOMDocument $document, string $prefix, DOMElement $address): void
     {
-        if ($this->getCountryCode() !== null) {
+        if ($this->countryCode !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('countryCode', $prefix),
-                    $this->getCountryCode()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('countryCode', $prefix), $this->countryCode)
             );
         }
     }
 
     /**
-     * @param DOMDocument $document
-     * @param $prefix
-     * @param DOMElement $address
+     * @throws \DOMException
      */
-    private function streetNumbersToXML(DOMDocument $document, $prefix, DOMElement $address)
+    private function streetNumbersToXML(DOMDocument $document, string $prefix, DOMElement $address): void
     {
-        if ($this->getNumber() !== null) {
+        if ($this->number !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('number', $prefix),
-                    $this->getNumber()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('number', $prefix), $this->number)
             );
         }
-        if ($this->getBox() !== null) {
+        if ($this->box !== null) {
             $address->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('box', $prefix),
-                    $this->getBox()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('box', $prefix), $this->box)
             );
         }
     }

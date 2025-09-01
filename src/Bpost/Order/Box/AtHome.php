@@ -24,93 +24,59 @@ use SimpleXMLElement;
  */
 class AtHome extends National
 {
-    /** @var \Bpost\BpostApiClient\Bpost\Order\Receiver */
-    private $receiver;
-
-    /** @var string */
-    protected $requestedDeliveryDate;
+    private ?Receiver $receiver = null;
+    protected ?string $requestedDeliveryDate = null;
 
     /**
-     * @param string $product
-     *
-     * @see getPossibleProductValues
-     *
      * @throws BpostInvalidValueException
      */
-    public function setProduct($product)
+    public function setProduct(string $product): void
     {
-        if (!in_array($product, self::getPossibleProductValues())) {
+        if (!in_array($product, self::getPossibleProductValues(), true)) {
             throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
-
         parent::setProduct($product);
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleProductValues()
+    public static function getPossibleProductValues(): array
     {
-        return array(
+        return [
             Product::PRODUCT_NAME_BPACK_24H_PRO,
             Product::PRODUCT_NAME_BPACK_24H_BUSINESS,
             Product::PRODUCT_NAME_BPACK_BUSINESS,
             Product::PRODUCT_NAME_BPACK_PALLET,
             Product::PRODUCT_NAME_BPACK_EASY_RETOUR,
-        );
+        ];
     }
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Receiver $receiver
-     */
-    public function setReceiver($receiver)
+    public function setReceiver(?Receiver $receiver): void
     {
         $this->receiver = $receiver;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Receiver
-     */
-    public function getReceiver()
+    public function getReceiver(): ?Receiver
     {
         return $this->receiver;
     }
 
-    /**
-     * @return string
-     */
-    public function getRequestedDeliveryDate()
+    public function getRequestedDeliveryDate(): ?string
     {
         return $this->requestedDeliveryDate;
     }
 
-    /**
-     * @param string $requestedDeliveryDate
-     */
-    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    public function setRequestedDeliveryDate(?string $requestedDeliveryDate): void
     {
-        $this->requestedDeliveryDate = (string) $requestedDeliveryDate;
+        $this->requestedDeliveryDate = $requestedDeliveryDate;
     }
 
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DomElement
-     */
-    public function toXML(DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
     {
         $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'atHome');
         $nationalElement->appendChild($boxElement);
 
-        if ($this->getReceiver() !== null) {
-            $boxElement->appendChild(
-                $this->getReceiver()->toXML($document)
-            );
+        if ($this->receiver !== null) {
+            $boxElement->appendChild($this->receiver->toXML($document));
         }
 
         $this->addToXmlRequestedDeliveryDate($document, $boxElement);
@@ -119,31 +85,18 @@ class AtHome extends National
     }
 
     /**
-     * @param DOMDocument $document
-     * @param DOMElement  $typeElement
+     * @throws \DOMException
      */
-    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement): void
     {
-        if ($this->getRequestedDeliveryDate() !== null) {
+        if ($this->requestedDeliveryDate !== null) {
             $typeElement->appendChild(
-                $document->createElement(
-                    'requestedDeliveryDate',
-                    $this->getRequestedDeliveryDate()
-                )
+                $document->createElement('requestedDeliveryDate', $this->requestedDeliveryDate)
             );
         }
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     * @param National         $self
-     *
-     * @return AtHome
-     *
-     * @throws BpostXmlInvalidItemException
-     * @throws \Bpost\BpostApiClient\BpostException
-     */
-    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null): AtHome
     {
         if ($self === null) {
             $self = new self();
@@ -155,6 +108,7 @@ class AtHome extends National
 
         $atHomeXml = $xml->atHome[0];
 
+        /** @var AtHome $self */
         $self = parent::createFromXML($atHomeXml, $self);
 
         if (isset($atHomeXml->receiver)) {
@@ -165,10 +119,8 @@ class AtHome extends National
             );
         }
 
-        if (isset($atHomeXml->requestedDeliveryDate) && $atHomeXml->requestedDeliveryDate != '') {
-            $self->setRequestedDeliveryDate(
-                $atHomeXml->requestedDeliveryDate
-            );
+        if (isset($atHomeXml->requestedDeliveryDate) && (string)$atHomeXml->requestedDeliveryDate !== '') {
+            $self->setRequestedDeliveryDate((string)$atHomeXml->requestedDeliveryDate);
         }
 
         return $self;

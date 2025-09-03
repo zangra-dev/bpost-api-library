@@ -11,17 +11,10 @@ use Exception;
  */
 class BpostInvalidValueException extends BpostLogicException
 {
-    /**
-     * @param string    $key
-     * @param string    $invalidValue
-     * @param array     $allowedValues
-     * @param int       $code
-     * @param Exception $previous
-     */
-    public function __construct($key, $invalidValue, array $allowedValues, $code = 0, Exception $previous = null)
+    public function __construct(string $key, string $invalidValue, array $allowedValues, int $code = 0, ?Exception $previous = null)
     {
         $message = sprintf(
-            'Invalid value (%1$s) for %2$s, possible values are: %3$s.',
+            'Invalid value (%s) for %s, possible values are: %s.',
             $invalidValue,
             $key,
             implode(', ', $allowedValues)

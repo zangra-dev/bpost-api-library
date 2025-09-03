@@ -11,14 +11,9 @@ use Exception;
  */
 class BpostXmlInvalidItemException extends BpostXmlException
 {
-    /**
-     * @param string    $message
-     * @param int       $code
-     * @param Exception $previous
-     */
-    public function __construct($message = '', $code = 0, Exception $previous = null)
+    public function __construct(string $message = '', int $code = 0, ?Exception $previous = null)
     {
-        $message = 'Invalid item' . (empty($message) ? '' : ': ' . $message);
+        $message = 'Invalid item' . ($message !== '' ? ': ' . $message : '');
         parent::__construct($message, $code, $previous);
     }
 }

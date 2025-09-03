@@ -8,26 +8,23 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
 
 class Language extends BasicAttribute
 {
-    const LANGUAGE_EN = 'EN';
-    const LANGUAGE_FR = 'FR';
-    const LANGUAGE_NL = 'NL';
+    public const LANGUAGE_EN = 'EN';
+    public const LANGUAGE_FR = 'FR';
+    public const LANGUAGE_NL = 'NL';
 
     /**
      * @throws BpostInvalidValueException
      */
-    public function validate()
+    public function validate(): void
     {
-        $this->validateChoice(array(
+        $this->validateChoice([
             self::LANGUAGE_EN,
             self::LANGUAGE_FR,
             self::LANGUAGE_NL,
-        ));
+        ]);
     }
 
-    /**
-     * @return string
-     */
-    protected function getDefaultKey()
+    protected function getDefaultKey(): string
     {
         return 'language';
     }

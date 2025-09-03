@@ -11,15 +11,12 @@ class PhoneNumber extends BasicAttribute
     /**
      * @throws BpostInvalidLengthException
      */
-    public function validate()
+    public function validate(): void
     {
         $this->validateLength(20);
     }
 
-    /**
-     * @return string
-     */
-    protected function getDefaultKey()
+    protected function getDefaultKey(): string
     {
         return 'phoneNumber';
     }

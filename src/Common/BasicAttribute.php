@@ -10,100 +10,72 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
 
 abstract class BasicAttribute
 {
-    /** @var mixed */
-    private $value;
+    private mixed $value;
+    private string $key;
 
-    /** @var string */
-    private $key;
-
-    /**
-     * BasicAttribute constructor.
-     *
-     * @param mixed  $value
-     * @param string $key
-     */
-    public function __construct($value, $key = '')
+    public function __construct(mixed $value, string $key = '')
     {
         $this->value = $value;
         $this->setKey($key);
         $this->validate();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * @param string $key
-     */
-    private function setKey($key)
+    private function setKey(string $key): void
     {
-        $this->key = (string) ($key ?: $this->getDefaultKey());
+        $this->key = $key !== '' ? $key : $this->getDefaultKey();
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return (string) $this->getValue();
     }
 
     /**
-     * @param int $length
-     *
      * @throws BpostInvalidLengthException
      */
-    public function validateLength($length)
+    public function validateLength(int $length): void
     {
-        if (mb_strlen($this->getValue()) > $length) {
-            throw new BpostInvalidLengthException($this->getKey(), mb_strlen($this->getValue()), $length);
+        if (mb_strlen((string) $this->getValue()) > $length) {
+            throw new BpostInvalidLengthException($this->getKey(), mb_strlen((string) $this->getValue()), $length);
         }
     }
 
     /**
-     * @param array $allowedValues
-     *
      * @throws BpostInvalidValueException
      */
-    public function validateChoice(array $allowedValues)
+    public function validateChoice(array $allowedValues): void
     {
-        if (!in_array($this->getValue(), $allowedValues)) {
+        if (!in_array($this->getValue(), $allowedValues, true)) {
             throw new BpostInvalidValueException($this->getKey(), $this->getValue(), $allowedValues);
         }
     }
 
     /**
-     * @param string $regexPattern
-     *
      * @throws BpostInvalidPatternException
      */
-    public function validatePattern($regexPattern)
+    public function validatePattern(string $regexPattern): void
     {
-        if (!preg_match("/^$regexPattern\$/", $this->getValue())) {
-            throw new BpostInvalidPatternException($this->getKey(), $this->getValue(), $regexPattern);
+        if (!preg_match("/^$regexPattern$/", (string) $this->getValue())) {
+            throw new BpostInvalidPatternException($this->getKey(), (string) $this->getValue(), $regexPattern);
         }
     }
 
-    /**
-     * @return string
-     */
-    protected abstract function getDefaultKey();
+    abstract protected function getDefaultKey(): string;
 
     /**
+     * Each class must validate data
+     * and throw BpostLogicException if crash
      * @throws BpostLogicException
      */
-    public abstract function validate();
+    abstract public function validate(): void;
 }

@@ -8,31 +8,24 @@ use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 class XmlHelper
 {
     /**
-     * Prefix $tagName with the $prefix, if needed
-     *
-     * @param string $prefix
-     * @param string $tagName
-     *
-     * @return string
+     * Prefix $tagName with the $prefix, if needed.
      */
-    public static function getPrefixedTagName($tagName, $prefix = null)
+    public static function getPrefixedTagName(string $tagName, ?string $prefix = null): string
     {
-        if (empty($prefix)) {
-            return $tagName;
-        }
-
-        return $prefix . ':' . $tagName;
+        return empty($prefix) ? $tagName : $prefix . ':' . $tagName;
     }
 
     /**
-     * @param string $className
+     * Ensure the given class has a createFromXML method.
      *
      * @throws BpostNotImplementedException
      */
-    public static function assertMethodCreateFromXmlExists($className)
+    public static function assertMethodCreateFromXmlExists(string $className): void
     {
         if (!method_exists($className, 'createFromXML')) {
-            throw new BpostNotImplementedException('Method createFromXML not found for class ' . $className);
+            throw new BpostNotImplementedException(
+                sprintf('Method createFromXML not found for class %s', $className)
+            );
         }
     }
 }

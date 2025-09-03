@@ -17,83 +17,49 @@ use SimpleXMLElement;
  */
 class Service
 {
-    /**
-     * @var string
-     */
-    private $category;
+    private ?string $category = null;
+    private ?string $flag     = null;
+    private ?string $name     = null;
 
-    /**
-     * @var string
-     */
-    private $flag;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @param string $category
-     */
-    public function setCategory($category)
+    public function setCategory(string $category): void
     {
         $this->category = $category;
     }
 
-    /**
-     * @return string
-     */
-    public function getCategory()
+    public function getCategory(): ?string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $flag
-     */
-    public function setFlag($flag)
+    public function setFlag(string $flag): void
     {
         $this->flag = $flag;
     }
 
-    /**
-     * @return string
-     */
-    public function getFlag()
+    public function getFlag(): ?string
     {
         return $this->flag;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Service
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $service = new Service();
+        $service = new self();
         $service->setName((string) $xml);
 
-        if (isset($xml['category'])) {
+        if (isset($xml['category']) && (string) $xml['category'] !== '') {
             $service->setCategory((string) $xml['category']);
         }
-        if (isset($xml['flag'])) {
+        if (isset($xml['flag']) && (string) $xml['flag'] !== '') {
             $service->setFlag((string) $xml['flag']);
         }
 

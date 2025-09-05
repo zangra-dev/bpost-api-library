@@ -10,6 +10,7 @@ use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidResponseException;
 use DOMDocument;
 use SimpleXMLElement;
+use CurlHandle;
 
 /**
  * bPost Bpack24/7 class
@@ -23,171 +24,141 @@ use SimpleXMLElement;
  */
 class Bpack247
 {
-    // URL for the api
-    const API_URL = 'http://www.bpack247.be/BpostRegistrationWebserviceREST/servicecontroller.svc';
+    /** URL for the API */
+    public const API_URL = 'http://www.bpack247.be/BpostRegistrationWebserviceREST/servicecontroller.svc';
 
-    // current version
-    const VERSION = '3.0.0';
+    /** current version */
+    public const VERSION = '3.0.0';
 
-    /**
-     * The account id
-     *
-     * @var string
-     */
-    private $accountId;
+    private string $accountId;
+    private string $passPhrase;
 
-    /**
-     * A cURL instance
-     *
-     * @var resource
-     */
-    private $curl;
+    /** @var CurlHandle|null */
+    private ?CurlHandle $curl = null;
 
-    /**
-     * The passPhrase
-     *
-     * @var string
-     */
-    private $passPhrase;
+    /** * The port to use. */
+    private ?int $port = null;
 
-    /**
-     * The port to use.
-     *
-     * @var int
-     */
-    private $port;
+    /** Timeout in seconds */
+    private int $timeOut = 30;
 
-    /**
-     * The timeout
-     *
-     * @var int
-     */
-    private $timeOut = 30;
+    private string $userAgent = '';
 
-    /**
-     * The user agent
-     *
-     * @var string
-     */
-    private $userAgent;
+    public function __construct(string $accountId, string $passPhrase)
+    {
+        $this->accountId  = $accountId;
+        $this->passPhrase = $passPhrase;
+    }
 
     /**
      * Make the call
-     *
-     * @param string $url    The URL to call.
-     * @param string $body   The data to pass.
-     * @param string $method The HTTP-method to use.
-     *
-     * @return SimpleXMLElement
      *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      */
-    private function doCall($url, $body = null, $method = 'GET')
+    private function doCall(string $url, ?string $body = null, string $method = 'GET'): SimpleXMLElement
     {
-        // build Authorization header
-        $headers = array();
-        $headers[] = 'Authorization: Basic ' . $this->getAuthorizationHeader();
+        $headers = [
+            'Authorization: Basic ' . $this->getAuthorizationHeader(),
+        ];
 
-        // set options
-        $options = array();
-        $options[CURLOPT_URL] = self::API_URL . $url;
-        $options[CURLOPT_USERAGENT] = $this->getUserAgent();
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
-        $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
-        $options[CURLOPT_HTTPHEADER] = $headers;
+        $options = [
+            CURLOPT_URL            => self::API_URL . $url,
+            CURLOPT_USERAGENT      => $this->getUserAgent(),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => $this->getTimeOut(),
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => $headers,
+        ];
 
-        if ($method == 'POST') {
-            $options[CURLOPT_POST] = true;
-            $options[CURLOPT_POSTFIELDS] = $body;
+        if ($this->port !== null) {
+            $options[CURLOPT_PORT] = $this->port;
         }
 
-        // init
-        $this->curl = curl_init();
+        if ($method === 'POST') {
+            $options[CURLOPT_POST]       = true;
+            $options[CURLOPT_POSTFIELDS] = $body ?? '';
+        }
 
-        // set options
+        $this->curl = curl_init();
         curl_setopt_array($this->curl, $options);
 
-        // execute
-        $response = curl_exec($this->curl);
-        $headers = curl_getinfo($this->curl);
+        try {
+            $response = curl_exec($this->curl);
+            $info     = curl_getinfo($this->curl);
 
-        // fetch errors
-        $errorNumber = curl_errno($this->curl);
-        $errorMessage = curl_error($this->curl);
+            $errorNumber  = curl_errno($this->curl);
+            $errorMessage = curl_error($this->curl);
 
-        // error?
-        if ($errorNumber != '') {
-            throw new BpostCurlException($errorMessage, $errorNumber);
-        }
-
-        // valid HTTP-code
-        if (!in_array($headers['http_code'], array(0, 200))) {
-            $xml = @simplexml_load_string($response);
-
-            if (
-                $xml !== false
-                && ($xml->getName() == 'businessException' || $xml->getName() == 'systemException')
-            ) {
-                $message = (string) $xml->message;
-                $code = isset($xml->code) ? (int) $xml->code : null;
-                switch ($xml->getName()) {
-                    case 'businessException':
-                        throw new BpostApiBusinessException($message, $code);
-                    case 'systemException':
-                        throw new BpostApiSystemException($message, $code);
-                }
+            if ($errorNumber !== 0) {
+                throw new BpostCurlException($errorMessage, $errorNumber);
             }
 
-            throw new BpostInvalidResponseException('', $headers['http_code']);
+            $httpCode = (int)($info['http_code'] ?? 0);
+
+            // Non 200 => tenter de parser l'erreur métier pour renvoyer l’exception dédiée
+            if (!in_array($httpCode, [0, 200], true)) {
+                $xml = @simplexml_load_string((string)$response);
+
+                if (
+                    $xml !== false
+                    && ($xml->getName() === 'businessException' || $xml->getName() === 'systemException')
+                ) {
+                    $message = (string) ($xml->message ?? '');
+                    $code    = isset($xml->code) ? (int) $xml->code : 0;
+
+                    if ($xml->getName() === 'businessException') {
+                        throw new BpostApiBusinessException($message, $code);
+                    }
+                    throw new BpostApiSystemException($message, $code);
+                }
+
+                throw new BpostInvalidResponseException('', $httpCode);
+            }
+
+            // 200: parser XML
+            $xml = simplexml_load_string((string)$response);
+            if ($xml === false) {
+                // pas de XML valide alors que 200 => considérer comme réponse invalide
+                throw new BpostInvalidResponseException('Empty or invalid XML body', 200);
+            }
+
+            if ($xml->getName() === 'businessException') {
+                $message = (string) ($xml->message ?? '');
+                $code    = (int) ($xml->code ?? 0);
+                throw new BpostApiBusinessException($message, $code);
+            }
+
+            return $xml;
+        } finally {
+            if (is_resource($this->curl) || $this->curl instanceof CurlHandle) {
+                curl_close($this->curl);
+            }
+            $this->curl = null;
         }
-
-        // convert into XML
-        $xml = simplexml_load_string($response);
-
-        // validate
-        if ($xml->getName() == 'businessException') {
-            $message = (string) $xml->message;
-            $code = (string) $xml->code;
-            throw new BpostApiBusinessException($message, $code);
-        }
-
-        // return the response
-        return $xml;
     }
 
     /**
      * Generate the secret string for the Authorization header
-     *
-     * @return string
      */
-    private function getAuthorizationHeader()
+    private function getAuthorizationHeader(): string
     {
         return base64_encode($this->accountId . ':' . $this->passPhrase);
     }
 
     /**
-     * Set the timeout
-     * After this time the request will stop. You should handle any errors triggered by this.
-     *
-     * @param int $seconds The timeout in seconds.
+     * After this time the request will stop.
      */
-    public function setTimeOut($seconds)
+    public function setTimeOut(int $seconds): void
     {
-        $this->timeOut = (int) $seconds;
+        $this->timeOut = $seconds;
     }
 
-    /**
-     * Get the timeout that will be used
-     *
-     * @return int
-     */
-    public function getTimeOut()
+    public function getTimeOut(): int
     {
-        return (int) $this->timeOut;
+        return $this->timeOut;
     }
 
     /**
@@ -197,46 +168,28 @@ class Bpack247
      *
      * @return string
      */
-    public function getUserAgent()
+    public function getUserAgent(): string
     {
-        return (string) 'PHP Bpost Bpack247/' . self::VERSION . ' ' . $this->userAgent;
+        $extra = trim($this->userAgent);
+        return sprintf('PHP Bpost Bpack247/%s%s', self::VERSION, $extra !== '' ? ' ' . $extra : '');
     }
 
     /**
-     * Set the user-agent for you application
-     * It will be appended to ours, the result will look like: "PHP Bpost/<version> <your-user-agent>"
-     *
-     * @param string $userAgent Your user-agent, it should look like <app-name>/<app-version>.
+     * Set your application user-agent, e.g. "MyApp/1.2.3"
      */
-    public function setUserAgent($userAgent)
+    public function setUserAgent(string $userAgent): void
     {
-        $this->userAgent = (string) $userAgent;
+        $this->userAgent = $userAgent;
     }
 
+    // Webservice methods
     /**
-     * Create Bpost instance
-     *
-     * @param string $accountId
-     * @param string $passPhrase
-     */
-    public function __construct($accountId, $passPhrase)
-    {
-        $this->accountId = (string) $accountId;
-        $this->passPhrase = (string) $passPhrase;
-    }
-
-    // webservice methods
-    /**
-     * @param Customer $customer
-     *
-     * @return SimpleXMLElement
-     *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
      * @throws BpostCurlException
      * @throws BpostInvalidResponseException
      */
-    public function createMember(Customer $customer)
+    public function createMember(Customer $customer): SimpleXMLElement
     {
         $url = '/customer';
 
@@ -244,25 +197,13 @@ class Bpack247
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
-        $document->appendChild(
-            $customer->toXML(
-                $document
-            )
-        );
+        $document->appendChild($customer->toXML($document));
 
-        return $this->doCall(
-            $url,
-            $document->saveXML(),
-            'POST'
-        );
+        return $this->doCall($url, $document->saveXML(), 'POST');
     }
 
     /**
      * Retrieve member information
-     *
-     * @param string $id
-     *
-     * @return Customer
      *
      * @throws BpostApiBusinessException
      * @throws BpostApiSystemException
@@ -270,12 +211,9 @@ class Bpack247
      * @throws BpostInvalidResponseException
      * @throws Exception\XmlException\BpostXmlNoUserIdFoundException
      */
-    public function getMember($id)
+    public function getMember(string $id): Customer
     {
-        $xml = $this->doCall(
-            '/customer/' . $id
-        );
-
+        $xml = $this->doCall('/customer/' . $id);
         return Customer::createFromXML($xml);
     }
 }

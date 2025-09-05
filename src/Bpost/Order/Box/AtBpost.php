@@ -142,7 +142,7 @@ class AtBpost extends National
             $boxElement->appendChild($document->createElement('pugoName', $this->pugoName));
         }
         if ($this->pugoAddress !== null) {
-            $boxElement->appendChild($this->pugoAddress->toXML($document, 'common'));
+            $boxElement->appendChild($this->pugoAddress->toXML($document));
         }
         if ($this->receiverName !== null) {
             $boxElement->appendChild($document->createElement('receiverName', $this->receiverName));

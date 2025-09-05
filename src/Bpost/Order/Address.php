@@ -47,8 +47,13 @@ class Address
     /**
      * @throws BpostInvalidLengthException
      */
-    public function setBox(string $box): void
+    public function setBox(?string $box): void
     {
+        if ($box === null) {
+            $this->box = null;
+            return;
+        }
+
         $max = 8;
         if (mb_strlen($box) > $max) {
             throw new BpostInvalidLengthException('box', mb_strlen($box), $max);
@@ -145,7 +150,7 @@ class Address
      */
     public function toXML(DOMDocument $document, string $prefix = 'common'): DOMElement
     {
-        $address = $document->createElement(self::TAG_NAME);
+        $address = $document->createElement(XmlHelper::getPrefixedTagName(static::TAG_NAME, $prefix));
 
         $this->streetToXML($document, $prefix, $address);
         $this->streetNumbersToXML($document, $prefix, $address);

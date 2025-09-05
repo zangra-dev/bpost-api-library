@@ -100,6 +100,7 @@ class Order
         $order->setAttribute('xmlns:international', 'http://schema.post.be/shm/deepintegration/v5/international');
         $order->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $order->setAttribute('xsi:schemaLocation', 'http://schema.post.be/shm/deepintegration/v5/');
+        $order->setAttribute('xmlns:national', 'http://schema.post.be/shm/deepintegration/v5/national');
 
         $document->appendChild($order);
 

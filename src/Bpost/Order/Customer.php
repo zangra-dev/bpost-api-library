@@ -93,7 +93,7 @@ class Customer
      */
     public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
-        $customer = $document->createElement(XmlHelper::getPrefixedTagName(self::TAG_NAME, $prefix));
+        $customer = $document->createElement(XmlHelper::getPrefixedTagName(static::TAG_NAME, $prefix));
 
         if ($this->name !== null) {
             $customer->appendChild($document->createElement('common:name', $this->name));

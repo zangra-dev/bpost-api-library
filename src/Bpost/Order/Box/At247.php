@@ -31,8 +31,7 @@ class At247 extends National
     private ?string $parcelsDepotName = null;
     private ?ParcelsDepotAddress $parcelsDepotAddress = null;
 
-    /** @var string */
-    protected string $product = Product::PRODUCT_NAME_BPACK_24H_PRO;
+    protected ?string $product = Product::PRODUCT_NAME_BPACK_24H_PRO;
 
     private ?string $memberId = null;
     private ?Unregistered $unregistered = null;

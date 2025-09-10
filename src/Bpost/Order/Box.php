@@ -54,6 +54,17 @@ class Box
     /** @var string */
     private $additionalCustomerReference;
 
+    public $email;
+
+    public $mobilePhone;
+
+    public $messageLanguage;
+
+    public $receiverName;
+
+    public $requestedDeliveryDate;
+
+
     /**
      * @param \Bpost\BpostApiClient\Bpost\Order\Box\International $internationalBox
      */
@@ -318,14 +329,86 @@ class Box
      */
     private function boxToXML(\DOMDocument $document, $prefix, \DOMElement $box)
     {
+        $nationalOrInternational = false;
+
         if ($this->getNationalBox() !== null) {
-            $box->appendChild(
-                $this->getNationalBox()->toXML($document, $prefix)
-            );
+            $nationalOrInternational = $this->getNationalBox()->toXML($document, $prefix);
         }
+
         if ($this->getInternationalBox() !== null) {
+            $nationalOrInternational = $this->getInternationalBox()->toXML($document, $prefix);
+        }
+
+        if($nationalOrInternational instanceof \DOMElement) {
+            $firstChild = $nationalOrInternational->firstChild;
+
+
+            if ($this->getEmail() !== null) {
+
+                $unregistered  = $document->createElement(
+                    'unregistered'
+                );
+
+                if ($this->getMessageLanguage() !== null) {
+                    $tagName = 'language';
+                    $unregistered->appendChild(
+                        $document->createElement(
+                            $tagName,
+                            $this->getMessageLanguage()
+                        )
+                    );
+                }
+                if ($this->getMobilePhone() !== null) {
+                    $tagName = 'mobilePhone';
+
+                    $unregistered->appendChild(
+                        $document->createElement(
+                            $tagName,
+                            $this->getMobilePhone()
+                        )
+                    );
+                }
+
+                if ($this->getEmail() !== null) {
+                    $tagName = 'emailAddress';
+                    $unregistered->appendChild(
+                        $document->createElement(
+                            $tagName,
+                            $this->getEmail()
+                        )
+                    );
+                }
+
+
+                $firstChild->appendChild(
+                    $unregistered
+                );
+
+                if ($this->getReceiverName() !== null) {
+                    $tagName = 'receiverName';
+                    $firstChild->appendChild(
+                        $document->createElement(
+                            $tagName,
+                            $this->getReceiverName()
+                        )
+                    );
+                }
+
+
+                if ($this->getRequestedDeliveryDate() !== null) {
+                    $tagName = 'requestedDeliveryDate';
+
+                    $firstChild->appendChild(
+                        $document->createElement(
+                            $tagName,
+                            $this->getRequestedDeliveryDate()
+                        )
+                    );
+                }
+            }
+
             $box->appendChild(
-                $this->getInternationalBox()->toXML($document, $prefix)
+                $nationalOrInternational
             );
         }
     }
@@ -384,5 +467,60 @@ class Box
                 )
             );
         }
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function getMobilePhone()
+    {
+        return $this->mobilePhone;
+    }
+
+    public function setMobilePhone($mobilePhone)
+    {
+        $this->mobilePhone = $mobilePhone;
+        return $this;
+    }
+
+    public function getMessageLanguage()
+    {
+        return $this->messageLanguage;
+    }
+
+    public function setMessageLanguage($messageLanguage)
+    {
+        $this->messageLanguage = $messageLanguage;
+        return $this;
+    }
+
+    public function getReceiverName()
+    {
+        return $this->receiverName;
+    }
+
+    public function setReceiverName($receiverName)
+    {
+        $this->receiverName = $receiverName;
+        return $this;
+    }
+
+    public function getRequestedDeliveryDate()
+    {
+        return $this->requestedDeliveryDate;
+    }
+
+    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    {
+        $this->requestedDeliveryDate = $requestedDeliveryDate;
+        return $this;
     }
 }

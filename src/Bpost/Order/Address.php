@@ -16,7 +16,7 @@ use SimpleXMLElement;
  */
 class Address
 {
-    public const TAG_NAME = 'common:address';
+    public const TAG_NAME = 'address';
 
     private ?string $streetName   = null;
     private ?string $number       = null;
@@ -148,14 +148,52 @@ class Address
     /**
      * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, string $prefix = 'common'): DOMElement
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
-        $address = $document->createElement(XmlHelper::getPrefixedTagName(static::TAG_NAME, $prefix));
+        // <common:address>
+        $address = $document->createElement(
+            XmlHelper::getPrefixedTagName(self::TAG_NAME, $prefix)
+        );
 
-        $this->streetToXML($document, $prefix, $address);
-        $this->streetNumbersToXML($document, $prefix, $address);
-        $this->localityToXML($document, $prefix, $address);
-        $this->countryToXML($document, $prefix, $address);
+        // <common:streetName>, <common:number>, <common:box>
+        if ($this->streetName !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('streetName', $prefix),
+                $this->streetName
+            ));
+        }
+        if ($this->number !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('number', $prefix),
+                $this->number
+            ));
+        }
+        if ($this->box !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('box', $prefix),
+                $this->box
+            ));
+        }
+
+        // <common:postalCode>, <common:locality>, <common:countryCode>
+        if ($this->postalCode !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('postalCode', $prefix),
+                $this->postalCode
+            ));
+        }
+        if ($this->locality !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('locality', $prefix),
+                $this->locality
+            ));
+        }
+        if ($this->countryCode !== null) {
+            $address->appendChild($document->createElement(
+                XmlHelper::getPrefixedTagName('countryCode', $prefix),
+                $this->countryCode
+            ));
+        }
 
         return $address;
     }
@@ -166,7 +204,6 @@ class Address
     public static function createFromXML(SimpleXMLElement $xml): Address
     {
         $address = new static();
-
         if (isset($xml->streetName) && $xml->streetName != '') {
             $address->setStreetName((string) $xml->streetName);
         }
@@ -185,7 +222,6 @@ class Address
         if (isset($xml->countryCode) && $xml->countryCode != '') {
             $address->setCountryCode((string) $xml->countryCode);
         }
-
         return $address;
     }
 

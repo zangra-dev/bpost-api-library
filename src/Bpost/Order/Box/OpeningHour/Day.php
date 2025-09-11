@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 
 /**
  * bPost Day class
@@ -19,52 +20,45 @@ use DomElement;
  */
 class Day
 {
-    const DAY_MONDAY = 'Monday';
-    const DAY_TUESDAY = 'Tuesday';
-    const DAY_WEDNESDAY = 'Wednesday';
-    const DAY_THURSDAY = 'Thursday';
-    const DAY_FRIDAY = 'Friday';
-    const DAY_SATURDAY = 'Saturday';
-    const DAY_SUNDAY = 'Sunday';
+    public const DAY_MONDAY    = 'Monday';
+    public const DAY_TUESDAY   = 'Tuesday';
+    public const DAY_WEDNESDAY = 'Wednesday';
+    public const DAY_THURSDAY  = 'Thursday';
+    public const DAY_FRIDAY    = 'Friday';
+    public const DAY_SATURDAY  = 'Saturday';
+    public const DAY_SUNDAY    = 'Sunday';
+
+    private string $day;
+    private string $value;
 
     /**
-     * @var string
-     */
-    private $day;
-
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * @param string $day
-     *
      * @throws BpostInvalidValueException
      */
-    public function setDay($day)
+    public function __construct(string $day, string $value)
     {
-        if (!in_array($day, self::getPossibleDayValues())) {
-            throw new BpostInvalidValueException('day', $day, self::getPossibleDayValues());
-        }
-
-        $this->day = $day;
+        $this->setDay($day);
+        $this->setValue($value);
     }
 
     /**
-     * @return string
+     * @throws BpostInvalidValueException
      */
-    public function getDay()
+    public function setDay(string $day): void
+    {
+        if (!in_array($day, self::getPossibleDayValues(), true)) {
+            throw new BpostInvalidValueException('day', $day, self::getPossibleDayValues());
+        }
+        $this->day = $day;
+    }
+
+    public function getDay(): string
     {
         return $this->day;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleDayValues()
+    public static function getPossibleDayValues(): array
     {
-        return array(
+        return [
             self::DAY_MONDAY,
             self::DAY_TUESDAY,
             self::DAY_WEDNESDAY,
@@ -72,46 +66,23 @@ class Day
             self::DAY_FRIDAY,
             self::DAY_SATURDAY,
             self::DAY_SUNDAY,
-        );
+        ];
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
     /**
-     * @param string $day
-     * @param string $value
-     *
-     * @throws BpostInvalidValueException
+     * @throws \DOMException
      */
-    public function __construct($day, $value)
-    {
-        $this->setDay($day);
-        $this->setValue($value);
-    }
-
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
-     */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         return $document->createElement(
             XmlHelper::getPrefixedTagName($this->getDay(), $prefix),

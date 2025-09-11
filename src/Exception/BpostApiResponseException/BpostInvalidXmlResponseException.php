@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Exception\BpostApiResponseException;
 
@@ -10,14 +11,9 @@ use Exception;
  */
 class BpostInvalidXmlResponseException extends BpostApiResponseException
 {
-    /**
-     * @param string    $message
-     * @param int       $code
-     * @param Exception $previous
-     */
-    public function __construct($message = '', $code = 0, Exception $previous = null)
+    public function __construct(string $message = '', int $code = 0, ?Exception $previous = null)
     {
-        $message = 'Invalid XML-response' . (empty($message) ? '' : ': ' . $message);
+        $message = 'Invalid XML-response' . ($message === '' ? '' : ': ' . $message);
         parent::__construct($message, $code, $previous);
     }
 }

@@ -1,54 +1,39 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
+use Bpost\BpostApiClient\Common\ApiVersions;
+
 class FetchOrderBuilder implements HttpRequestBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $reference;
+    public function __construct(
+        private readonly string $reference
+    ) {}
 
-    /**
-     * @param string $reference
-     */
-    public function __construct($reference)
-    {
-        $this->reference = (string) $reference;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getXml()
+    public function getXml(): ?string
     {
         return null;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
-        return array(
-            'Accept: application/vnd.bpost.shm-order-v3.5+XML',
-        );
+        return [
+            'Accept: application/vnd.bpost.shm-order-' . ApiVersions::V3_5 . '+XML',
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return '/orders/' . $this->reference;
     }
 
-    public function isExpectXml()
+    public function isExpectXml(): bool
     {
         return true;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return self::METHOD_GET;
     }

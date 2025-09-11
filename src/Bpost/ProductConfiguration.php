@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost;
 
@@ -10,38 +11,27 @@ use SimpleXMLElement;
  */
 class ProductConfiguration
 {
-    /** @var array DeliveryMethod[] */
-    private $deliveryMethods = array();
+    private array $deliveryMethods = [];
 
-    /**
-     * @return DeliveryMethod[]
-     */
-    public function getDeliveryMethods()
+    public function getDeliveryMethods(): array
     {
         return $this->deliveryMethods;
     }
 
-    /**
-     * @param DeliveryMethod $deliveryMethod
-     */
-    public function addDeliveryMethod(DeliveryMethod $deliveryMethod)
+    public function addDeliveryMethod(DeliveryMethod $deliveryMethod): void
     {
         $this->deliveryMethods[] = $deliveryMethod;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return ProductConfiguration
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
         $productConfiguration = new self();
-        $children = $xml->children();
 
-        if (isset($children->deliveryMethod)) {
-            foreach ($children->deliveryMethod as $deliveryMethodXml) {
-                $productConfiguration->addDeliveryMethod(DeliveryMethod::createFromXML($deliveryMethodXml));
+        if (isset($xml->deliveryMethod)) {
+            foreach ($xml->deliveryMethod as $deliveryMethodXml) {
+                $productConfiguration->addDeliveryMethod(
+                    DeliveryMethod::createFromXML($deliveryMethodXml)
+                );
             }
         }
 

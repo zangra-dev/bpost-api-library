@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\ProductConfiguration;
 
@@ -9,151 +10,96 @@ use SimpleXMLElement;
  */
 class Product
 {
-    const PRODUCT_NAME_BPACK_EASY_RETOUR = 'bpack Easy Retour';
-    const PRODUCT_NAME_BPACK_24H_PRO = 'bpack 24h Pro';
-    const PRODUCT_NAME_BPACK_24H_BUSINESS = 'bpack 24h business';
-    const PRODUCT_NAME_BPACK_AT_BPOST = 'bpack@bpost';
-    const PRODUCT_NAME_BPACK_CLICK_AND_COLLECT = 'bpack Click & Collect';
-    const PRODUCT_NAME_BPACK_24_7 = 'bpack 24/7';
-    const PRODUCT_NAME_BPACK_BUSINESS = 'bpack Bus';
-    const PRODUCT_NAME_BPACK_PALLET = 'bpack Pallet';
-    const PRODUCT_NAME_BPACK_WORLD_EASY_RETURN = 'bpack World Easy Return';
-    const PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO = 'bpack World Express Pro';
-    const PRODUCT_NAME_BPACK_WORLD_BUSINESS = 'bpack World Business';
-    const PRODUCT_NAME_BPACK_EUROPE_BUSINESS = 'bpack Europe Business';
-    const PRODUCT_NAME_BPACK_AT_BPOST_INTERNATIONAL = 'bpack@bpost international';
+    public const PRODUCT_NAME_BPACK_EASY_RETOUR           = 'bpack Easy Retour';
+    public const PRODUCT_NAME_BPACK_24H_PRO               = 'bpack 24h Pro';
+    public const PRODUCT_NAME_BPACK_24H_BUSINESS          = 'bpack 24h business';
+    public const PRODUCT_NAME_BPACK_AT_BPOST              = 'bpack@bpost';
+    public const PRODUCT_NAME_BPACK_CLICK_AND_COLLECT     = 'bpack Click & Collect';
+    public const PRODUCT_NAME_BPACK_24_7                  = 'bpack 24/7';
+    public const PRODUCT_NAME_BPACK_BUSINESS              = 'bpack Bus';
+    public const PRODUCT_NAME_BPACK_PALLET                = 'bpack Pallet';
+    public const PRODUCT_NAME_BPACK_WORLD_EASY_RETURN     = 'bpack World Easy Return';
+    public const PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO     = 'bpack World Express Pro';
+    public const PRODUCT_NAME_BPACK_WORLD_BUSINESS        = 'bpack World Business';
+    public const PRODUCT_NAME_BPACK_EUROPE_BUSINESS       = 'bpack Europe Business';
+    public const PRODUCT_NAME_BPACK_AT_BPOST_INTERNATIONAL= 'bpack@bpost international';
 
-    /** @var bool */
-    private $default;
-    /** @var string */
-    private $name;
+    private bool $default;
+    private string $name;
 
     /** @var Price[] */
-    private $prices = array();
+    private array $prices = [];
     /** @var Option[] */
-    private $options = array();
+    private array $options = [];
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Product
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        /*
-        <product default="true" name="bpack 24/7">
-          <price price20To30="750" price10To20="650" price5To10="550" price2To5="450" priceLessThan2="350" countryIso2Code="BE"/>
-          <option visiblity="NOT_VISIBLE_BY_CONSUMER_OPTIONAL" price="0" name="Saturday"/>
-          <option visiblity="NOT_VISIBLE_BY_CONSUMER_OPTIONAL" price="0" name="Info &quot;Distributed&quot;"/>
-          <option visiblity="NOT_VISIBLE_BY_CONSUMER_OPTIONAL" price="0" name="Insurance"/>
-        </product>
-        */
-        $attributes = $xml->attributes();
-        $children = $xml->children();
+        // <product default="true" name="bpack 24/7"> ... </product>
+        $a = $xml->attributes();
 
-        $product = new self();
-        $product->setDefault($attributes['default'] == 'true');
-        $product->setName($attributes['name']);
+        $self = new self();
+        $self->setDefault(((string) $a['default']) === 'true');
+        $self->setName((string) $a['name']);
 
-        if (isset($children->price)) {
-            foreach ($children->price as $priceXml) {
-                $product->addPrice(Price::createFromXML($priceXml));
-            }
+        foreach ($xml->children()->price ?? [] as $priceXml) {
+            $self->addPrice(Price::createFromXML($priceXml));
         }
-        if (isset($children->option)) {
-            foreach ($children->option as $optionXml) {
-                $product->addOption(Option::createFromXML($optionXml));
-            }
+        foreach ($xml->children()->option ?? [] as $optionXml) {
+            $self->addOption(Option::createFromXML($optionXml));
         }
 
-        return $product;
+        return $self;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->default;
     }
-
-    /**
-     * @param bool $default
-     */
-    public function setDefault($default)
+    public function setDefault(bool $default): void
     {
-        $this->default = (bool) $default;
+        $this->default = $default;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string) $name;
+        $this->name = $name;
     }
 
-    /**
-     * @return Price[]
-     */
-    public function getPrices()
+    public function getPrices(): array
     {
         return $this->prices;
     }
-
-    /**
-     * @param Price $price
-     */
-    public function addPrice(Price $price)
+    public function addPrice(Price $price): void
     {
         $this->prices[] = $price;
     }
 
-    /**
-     * @return Option[]
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
-
-    /**
-     * @param Option $option
-     */
-    public function addOption(Option $option)
+    public function addOption(Option $option): void
     {
         $this->options[] = $option;
     }
 
-    /**
-     * @return bool
-     */
-    public function isForNationalShipping()
+    public function isForNationalShipping(): bool
     {
-        switch ($this->getName()) {
-            case self::PRODUCT_NAME_BPACK_EASY_RETOUR:
-            case self::PRODUCT_NAME_BPACK_24H_PRO:
-            case self::PRODUCT_NAME_BPACK_24H_BUSINESS:
-            case self::PRODUCT_NAME_BPACK_AT_BPOST:
-            case self::PRODUCT_NAME_BPACK_CLICK_AND_COLLECT:
-            case self::PRODUCT_NAME_BPACK_24_7:
-                return true;
-
-            case self::PRODUCT_NAME_BPACK_WORLD_EASY_RETURN:
-            case self::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO:
-            case self::PRODUCT_NAME_BPACK_WORLD_BUSINESS:
-            case self::PRODUCT_NAME_BPACK_EUROPE_BUSINESS:
-            case self::PRODUCT_NAME_BPACK_AT_BPOST_INTERNATIONAL:
-            default:
-                return false;
-        }
+        return in_array(
+            $this->getName(),
+            [
+                self::PRODUCT_NAME_BPACK_EASY_RETOUR,
+                self::PRODUCT_NAME_BPACK_24H_PRO,
+                self::PRODUCT_NAME_BPACK_24H_BUSINESS,
+                self::PRODUCT_NAME_BPACK_AT_BPOST,
+                self::PRODUCT_NAME_BPACK_CLICK_AND_COLLECT,
+                self::PRODUCT_NAME_BPACK_24_7,
+            ],
+            true
+        );
     }
 }

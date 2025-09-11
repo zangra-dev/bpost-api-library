@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\ProductConfiguration;
 
@@ -9,78 +10,53 @@ use SimpleXMLElement;
  */
 class Characteristic
 {
-    /** @var string */
-    private $displayValue;
-    /** @var int */
-    private $value;
-    /** @var string */
-    private $name;
+    private string $displayValue;
+    private int $value;
+    private string $name;
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Characteristic
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
         /*
-        <characteristic displayValue="Basic (0-500 EUR)" value="1" name="Insurance range code"/>
-        */
+         * Exemple :
+         * <characteristic displayValue="Basic (0-500 EUR)" value="1" name="Insurance range code"/>
+         */
         $attributes = $xml->attributes();
 
-        $option = new self();
-        $option->setDisplayValue($attributes['displayValue']);
-        $option->setValue($attributes['value']);
-        $option->setName($attributes['name']);
+        $instance = new self();
+        $instance->setDisplayValue((string) $attributes['displayValue']);
+        $instance->setValue((int) $attributes['value']);
+        $instance->setName((string) $attributes['name']);
 
-        return $option;
+        return $instance;
     }
 
-    /**
-     * @return string
-     */
-    public function getDisplayValue()
+    public function getDisplayValue(): string
     {
         return $this->displayValue;
     }
 
-    /**
-     * @param string $displayValue
-     */
-    public function setDisplayValue($displayValue)
+    public function setDisplayValue(string $displayValue): void
     {
-        $this->displayValue = (string) $displayValue;
+        $this->displayValue = $displayValue;
     }
 
-    /**
-     * @return int
-     */
-    public function getValue()
+    public function getValue(): int
     {
         return $this->value;
     }
 
-    /**
-     * @param int $value
-     */
-    public function setValue($value)
+    public function setValue(int $value): void
     {
-        $this->value = (int) $value;
+        $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string) $name;
+        $this->name = $name;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
@@ -7,6 +8,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use DOMDocument;
@@ -25,210 +27,130 @@ use SimpleXMLElement;
  */
 class AtBpost extends National
 {
-    /** @var string */
-    protected $product = Product::PRODUCT_NAME_BPACK_AT_BPOST;
-
-    /** @var string */
-    private $pugoId;
-
-    /** @var string */
-    private $pugoName;
-
-    /** @var \Bpost\BpostApiClient\Bpost\Order\PugoAddress */
-    private $pugoAddress;
-
-    /** @var string */
-    private $receiverName;
-
-    /** @var string */
-    private $receiverCompany;
-
-    /** @var string */
-    protected $requestedDeliveryDate;
-
-    /** @var ShopHandlingInstruction */
-    private $shopHandlingInstruction;
+    protected ?string $product = Product::PRODUCT_NAME_BPACK_AT_BPOST;
+    private ?string $pugoId = null;
+    private ?string $pugoName = null;
+    private ?PugoAddress $pugoAddress = null;
+    private ?string $receiverName = null;
+    private ?string $receiverCompany = null;
+    protected ?string $requestedDeliveryDate = null;
+    private ?ShopHandlingInstruction $shopHandlingInstruction = null;
 
     /**
-     * @param string $product Possible values are: bpack@bpost
-     *
      * @throws BpostInvalidValueException
      */
-    public function setProduct($product)
+    public function setProduct(string $product): void
     {
-        if (!in_array($product, self::getPossibleProductValues())) {
+        if (!in_array($product, self::getPossibleProductValues(), true)) {
             throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
-
         parent::setProduct($product);
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleProductValues()
+    public static function getPossibleProductValues(): array
     {
-        return array(
+        return [
             Product::PRODUCT_NAME_BPACK_AT_BPOST,
-        );
+        ];
     }
 
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\PugoAddress $pugoAddress
-     */
-    public function setPugoAddress($pugoAddress)
+    public function setPugoAddress(?PugoAddress $pugoAddress): void
     {
         $this->pugoAddress = $pugoAddress;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\PugoAddress
-     */
-    public function getPugoAddress()
+    public function getPugoAddress(): ?PugoAddress
     {
         return $this->pugoAddress;
     }
 
-    /**
-     * @param string $pugoId
-     */
-    public function setPugoId($pugoId)
+    public function setPugoId(?string $pugoId): void
     {
         $this->pugoId = $pugoId;
     }
 
-    /**
-     * @return string
-     */
-    public function getPugoId()
+    public function getPugoId(): ?string
     {
         return $this->pugoId;
     }
 
-    /**
-     * @param string $pugoName
-     */
-    public function setPugoName($pugoName)
+    public function setPugoName(?string $pugoName): void
     {
         $this->pugoName = $pugoName;
     }
 
-    /**
-     * @return string
-     */
-    public function getPugoName()
+    public function getPugoName(): ?string
     {
         return $this->pugoName;
     }
 
-    /**
-     * @param string $receiverCompany
-     */
-    public function setReceiverCompany($receiverCompany)
+    public function setReceiverCompany(?string $receiverCompany): void
     {
         $this->receiverCompany = $receiverCompany;
     }
 
-    /**
-     * @return string
-     */
-    public function getReceiverCompany()
+    public function getReceiverCompany(): ?string
     {
         return $this->receiverCompany;
     }
 
-    /**
-     * @param string $receiverName
-     */
-    public function setReceiverName($receiverName)
+    public function setReceiverName(?string $receiverName): void
     {
         $this->receiverName = $receiverName;
     }
 
-    /**
-     * @return string
-     */
-    public function getReceiverName()
+    public function getReceiverName(): ?string
     {
         return $this->receiverName;
     }
 
-    /**
-     * @return string
-     */
-    public function getRequestedDeliveryDate()
+    public function getRequestedDeliveryDate(): ?string
     {
         return $this->requestedDeliveryDate;
     }
 
-    /**
-     * @param string $requestedDeliveryDate
-     */
-    public function setRequestedDeliveryDate($requestedDeliveryDate)
+    public function setRequestedDeliveryDate(?string $requestedDeliveryDate): void
     {
         $this->requestedDeliveryDate = $requestedDeliveryDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getShopHandlingInstruction()
+    public function getShopHandlingInstruction(): ?string
     {
-        if ($this->shopHandlingInstruction !== null) {
-            return $this->shopHandlingInstruction->getValue();
-        }
+        return $this->shopHandlingInstruction?->getValue();
+    }
 
-        return null;
+    public function setShopHandlingInstruction(?string $shopHandlingInstruction): void
+    {
+        $this->shopHandlingInstruction = $shopHandlingInstruction !== null
+            ? new ShopHandlingInstruction($shopHandlingInstruction)
+            : null;
     }
 
     /**
-     * @param string $shopHandlingInstruction
+     * @throws \DOMException
      */
-    public function setShopHandlingInstruction($shopHandlingInstruction)
-    {
-        $this->shopHandlingInstruction = new ShopHandlingInstruction($shopHandlingInstruction);
-    }
-
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DomElement
-     */
-    public function toXML(DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
     {
         $nationalElement = $document->createElement(XmlHelper::getPrefixedTagName('nationalBox', $prefix));
         $boxElement = parent::toXML($document, null, 'atBpost');
         $nationalElement->appendChild($boxElement);
 
-        if ($this->getPugoId() !== null) {
-            $boxElement->appendChild(
-                $document->createElement('pugoId', $this->getPugoId())
-            );
+        if ($this->pugoId !== null) {
+            $boxElement->appendChild($document->createElement('pugoId', $this->pugoId));
         }
-        if ($this->getPugoName() !== null) {
-            $boxElement->appendChild(
-                $document->createElement('pugoName', $this->getPugoName())
-            );
+        if ($this->pugoName !== null) {
+            $boxElement->appendChild($document->createElement('pugoName', $this->pugoName));
         }
-        if ($this->getPugoAddress() !== null) {
-            $boxElement->appendChild(
-                $this->getPugoAddress()->toXML($document, 'common')
-            );
+        if ($this->pugoAddress !== null) {
+            $boxElement->appendChild($this->pugoAddress->toXML($document));
         }
-        if ($this->getReceiverName() !== null) {
-            $boxElement->appendChild(
-                $document->createElement('receiverName', $this->getReceiverName())
-            );
+        if ($this->receiverName !== null) {
+            $boxElement->appendChild($document->createElement('receiverName', $this->receiverName));
         }
-        if ($this->getReceiverCompany() !== null) {
-            $boxElement->appendChild(
-                $document->createElement('receiverCompany', $this->getReceiverCompany())
-            );
+        if ($this->receiverCompany !== null) {
+            $boxElement->appendChild($document->createElement('receiverCompany', $this->receiverCompany));
         }
+
         $this->addToXmlRequestedDeliveryDate($document, $boxElement, $prefix);
         $this->addToXmlShopHandlingInstruction($document, $boxElement, $prefix);
 
@@ -236,63 +158,52 @@ class AtBpost extends National
     }
 
     /**
-     * @param DOMDocument $document
-     * @param DOMElement  $typeElement
-     * @param string      $prefix
+     * @throws \DOMException
      */
-    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, $prefix)
+    protected function addToXmlRequestedDeliveryDate(DOMDocument $document, DOMElement $typeElement, ?string $prefix): void
     {
-        if ($this->getRequestedDeliveryDate() !== null) {
+        if ($this->requestedDeliveryDate !== null) {
             $typeElement->appendChild(
-                $document->createElement('requestedDeliveryDate', $this->getRequestedDeliveryDate())
+                $document->createElement('requestedDeliveryDate', $this->requestedDeliveryDate)
             );
         }
     }
 
-    private function addToXmlShopHandlingInstruction(DOMDocument $document, DOMElement $typeElement, $prefix)
+    private function addToXmlShopHandlingInstruction(DOMDocument $document, DOMElement $typeElement, ?string $prefix): void
     {
-        if ($this->getShopHandlingInstruction() !== null) {
-            $typeElement->appendChild(
-                $document->createElement('shopHandlingInstruction', $this->getShopHandlingInstruction())
-            );
+        $value = $this->getShopHandlingInstruction();
+        if ($value !== null) {
+            $typeElement->appendChild($document->createElement('shopHandlingInstruction', $value));
         }
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     * @param National|null    $self
-     *
-     * @return AtBpost
-     *
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
-     * @throws \Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException
-     * @throws \Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException
+     * @throws BpostInvalidLengthException
      */
-    public static function createFromXML(SimpleXMLElement $xml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null): AtBpost
     {
         $atBpost = new AtBpost();
 
-        if (isset($xml->atBpost->product) && $xml->atBpost->product != '') {
-            $atBpost->setProduct(
-                (string) $xml->atBpost->product
-            );
+        if (isset($xml->atBpost->product) && (string)$xml->atBpost->product !== '') {
+            $atBpost->setProduct((string)$xml->atBpost->product);
         }
+
         if (isset($xml->atBpost->options)) {
-            /** @var SimpleXMLElement $optionData */
             foreach ($xml->atBpost->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
                 if (in_array(
                     $optionData->getName(),
-                    array(
+                    [
                         Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
                         Messaging::MESSAGING_TYPE_INFO_NEXT_DAY,
                         Messaging::MESSAGING_TYPE_INFO_REMINDER,
                         Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED,
-                    )
-                )
-                ) {
+                    ],
+                    true
+                )) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
                     $option = self::getOptionFromOptionData($optionData);
@@ -301,49 +212,32 @@ class AtBpost extends National
                 $atBpost->addOption($option);
             }
         }
-        if (isset($xml->atBpost->weight) && $xml->atBpost->weight != '') {
-            $atBpost->setWeight(
-                (int) $xml->atBpost->weight
-            );
+
+        if (isset($xml->atBpost->weight) && (string)$xml->atBpost->weight !== '') {
+            $atBpost->setWeight((int)$xml->atBpost->weight);
         }
-        if (isset($xml->atBpost->receiverName) && $xml->atBpost->receiverName != '') {
-            $atBpost->setReceiverName(
-                (string) $xml->atBpost->receiverName
-            );
+        if (isset($xml->atBpost->receiverName) && (string)$xml->atBpost->receiverName !== '') {
+            $atBpost->setReceiverName((string)$xml->atBpost->receiverName);
         }
-        if (isset($xml->atBpost->receiverCompany) && $xml->atBpost->receiverCompany != '') {
-            $atBpost->setReceiverCompany(
-                (string) $xml->atBpost->receiverCompany
-            );
+        if (isset($xml->atBpost->receiverCompany) && (string)$xml->atBpost->receiverCompany !== '') {
+            $atBpost->setReceiverCompany((string)$xml->atBpost->receiverCompany);
         }
-        if (isset($xml->atBpost->pugoId) && $xml->atBpost->pugoId != '') {
-            $atBpost->setPugoId(
-                (string) $xml->atBpost->pugoId
-            );
+        if (isset($xml->atBpost->pugoId) && (string)$xml->atBpost->pugoId !== '') {
+            $atBpost->setPugoId((string)$xml->atBpost->pugoId);
         }
-        if (isset($xml->atBpost->pugoName) && $xml->atBpost->pugoName != '') {
-            $atBpost->setPugoName(
-                (string) $xml->atBpost->pugoName
-            );
+        if (isset($xml->atBpost->pugoName) && (string)$xml->atBpost->pugoName !== '') {
+            $atBpost->setPugoName((string)$xml->atBpost->pugoName);
         }
         if (isset($xml->atBpost->pugoAddress)) {
-            /** @var SimpleXMLElement $pugoAddressData */
-            $pugoAddressData = $xml->atBpost->pugoAddress->children(
-                'http://schema.post.be/shm/deepintegration/v3/common'
-            );
-            $atBpost->setPugoAddress(
-                PugoAddress::createFromXML($pugoAddressData)
-            );
+            $pugoAddressData = $xml->atBpost->pugoAddress
+                ->children('http://schema.post.be/shm/deepintegration/v3/common');
+            $atBpost->setPugoAddress(PugoAddress::createFromXML($pugoAddressData));
         }
-        if (isset($xml->atBpost->requestedDeliveryDate) && $xml->atBpost->requestedDeliveryDate != '') {
-            $atBpost->setRequestedDeliveryDate(
-                (string) $xml->atBpost->requestedDeliveryDate
-            );
+        if (isset($xml->atBpost->requestedDeliveryDate) && (string)$xml->atBpost->requestedDeliveryDate !== '') {
+            $atBpost->setRequestedDeliveryDate((string)$xml->atBpost->requestedDeliveryDate);
         }
-        if (isset($xml->atBpost->shopHandlingInstruction) && $xml->atBpost->shopHandlingInstruction != '') {
-            $atBpost->setShopHandlingInstruction(
-                (string) $xml->atBpost->shopHandlingInstruction
-            );
+        if (isset($xml->atBpost->shopHandlingInstruction) && (string)$xml->atBpost->shopHandlingInstruction !== '') {
+            $atBpost->setShopHandlingInstruction((string)$xml->atBpost->shopHandlingInstruction);
         }
 
         return $atBpost;

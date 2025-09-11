@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Exception\BpostLogicException;
 
@@ -10,18 +11,12 @@ use Exception;
  */
 class BpostInvalidWeightException extends BpostLogicException
 {
-    /**
-     * @param string    $invalidWeight
-     * @param int       $maximumWeight
-     * @param int       $code
-     * @param Exception $previous
-     */
-    public function __construct($invalidWeight, $maximumWeight, $code = 0, Exception $previous = null)
+    public function __construct(int $invalidWeight, int $maximumWeight, int $code = 0, ?Exception $previous = null)
     {
         $message = sprintf(
-            'Invalid weight (%1$s kg), maximum is %2$s.',
+            'Invalid weight (%d g), maximum is %d g.',
             $invalidWeight,
-            $maximumWeight
+            $maximumWeight * 1000
         );
         parent::__construct($message, $code, $previous);
     }

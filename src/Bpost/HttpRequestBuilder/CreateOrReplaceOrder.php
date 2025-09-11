@@ -1,74 +1,51 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
 use Bpost\BpostApiClient\Bpost\Order;
+use Bpost\BpostApiClient\Common\ApiVersions;
 use DOMDocument;
 
 class CreateOrReplaceOrder implements HttpRequestBuilderInterface
 {
-    /**
-     * @var Order
-     */
-    private $order;
-    /**
-     * @var string
-     */
-    private $accountId;
+    public function __construct(
+        private readonly Order $order,
+        private readonly string $accountId,
+    ) {}
 
-    /**
-     * @param Order  $order
-     * @param string $accountId
-     */
-    public function __construct(Order $order, $accountId)
-    {
-        $this->order = $order;
-        $this->accountId = $accountId;
-    }
 
-    /**
-     * @return string
-     */
-    public function getXml()
+    public function getXml(): string
     {
-        $document = new DOMDocument('1.0', 'utf-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $document->preserveWhiteSpace = false;
         $document->formatOutput = true;
 
         $document->appendChild(
-            $this->order->toXML(
-                $document,
-                $this->accountId
-            )
+            $this->order->toXML($document, $this->accountId)
         );
 
-        return $document->saveXML();
+        return $document->saveXML() ?: '';
     }
 
-    /**
-     * @return string[]
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
-        return array(
-            'Content-type: application/vnd.bpost.shm-order-v3.3+XML',
-        );
+        return [
+            'Content-Type: application/vnd.bpost.shm-order-' . ApiVersions::V3_3 . '+XML',
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return '/orders';
     }
 
-    public function isExpectXml()
+    public function isExpectXml(): bool
     {
         return false;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return self::METHOD_POST;
     }

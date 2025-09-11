@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpack247;
 
@@ -16,530 +17,302 @@ use SimpleXMLElement;
  */
 class Customer
 {
-    const CUSTOMER_PREFERRED_LANGUAGE_NL = 'nl-BE';
-    const CUSTOMER_PREFERRED_LANGUAGE_FR = 'fr-BE';
-    const CUSTOMER_PREFERRED_LANGUAGE_EN = 'en-US';
+    public const CUSTOMER_PREFERRED_LANGUAGE_NL = 'nl-BE';
+    public const CUSTOMER_PREFERRED_LANGUAGE_FR = 'fr-BE';
+    public const CUSTOMER_PREFERRED_LANGUAGE_EN = 'en-US';
 
-    const CUSTOMER_TITLE_MR = 'Mr.';
-    const CUSTOMER_TITLE_MS = 'Ms.';
+    public const CUSTOMER_TITLE_MR = 'Mr.';
+    public const CUSTOMER_TITLE_MS = 'Ms.';
 
-    /**
-     * @var bool
-     */
-    private $activated;
+    public function __construct(
+        private ?bool $activated = null,
+        private ?string $userID = null,
+        private ?string $firstName = null,
+        private ?string $lastName = null,
+        private ?string $companyName = null,
+        private ?string $street = null,
+        private ?string $number = null,
+        private ?string $email = null,
+        private string $mobilePrefix = '0032',
+        private ?string $mobileNumber = null,
+        private ?string $postalCode = null,
+        private array $packStations = [],
+        private ?string $town = null,
+        private ?string $preferredLanguage = null,
+        private ?string $title = null,
+        private ?bool $isComfortZoneUser = null,
+        private ?DateTime $dateOfBirth = null,
+        private ?string $deliveryCode = null,
+        private ?bool $optIn = null,
+        private ?bool $receivePromotions = null,
+        private ?bool $useInformationForThirdParty = null,
+        private ?string $userName = null,
+    ) {}
 
-    /**
-     * @var string
-     */
-    private $userID;
 
-    /**
-     * @var string
-     */
-    private $firstName;
-
-    /**
-     * @var string
-     */
-    private $lastName;
-
-    /**
-     * @var string
-     */
-    private $companyName;
-
-    /**
-     * @var string
-     */
-    private $street;
-
-    /**
-     * @var string
-     */
-    private $number;
-
-    /**
-     * @var string
-     */
-    private $email;
-
-    /**
-     * @var string
-     */
-    private $mobilePrefix = '0032';
-
-    /**
-     * @var string
-     */
-    private $mobileNumber;
-
-    /**
-     * @var string
-     */
-    private $postalCode;
-
-    /**
-     * @var array
-     */
-    private $packStations = array();
-
-    /**
-     * @var string
-     */
-    private $town;
-
-    /**
-     * @var string
-     */
-    private $preferredLanguage;
-
-    /**
-     * @var string
-     */
-    private $title;
-
-    /**
-     * @var bool
-     */
-    private $isComfortZoneUser;
-
-    /**
-     * @var DateTime
-     */
-    private $dateOfBirth;
-
-    /**
-     * @var string
-     */
-    private $deliveryCode;
-
-    /**
-     * @var bool
-     */
-    private $optIn;
-
-    /**
-     * @var bool
-     */
-    private $receivePromotions;
-
-    /**
-     * @var bool
-     */
-    private $useInformationForThirdParty;
-
-    /**
-     * @var string
-     */
-    private $userName;
-
-    /**
-     * @param bool $activated
-     */
-    public function setActivated($activated)
+    public function setActivated(?bool $activated): void
     {
         $this->activated = $activated;
     }
 
-    /**
-     * @return bool
-     */
-    public function getActivated()
+    public function getActivated(): ?bool
     {
         return $this->activated;
     }
 
-    /**
-     * @param string $companyName
-     */
-    public function setCompanyName($companyName)
+    public function setCompanyName(?string $companyName): void
     {
         $this->companyName = $companyName;
     }
 
-    /**
-     * @return string
-     */
-    public function getCompanyName()
+    public function getCompanyName(): ?string
     {
         return $this->companyName;
     }
 
-    /**
-     * @param DateTime $dateOfBirth
-     */
-    public function setDateOfBirth($dateOfBirth)
+    public function setDateOfBirth(?DateTime $dateOfBirth): void
     {
         $this->dateOfBirth = $dateOfBirth;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getDateOfBirth()
+    public function getDateOfBirth(): ?DateTime
     {
         return $this->dateOfBirth;
     }
 
-    /**
-     * @param string $deliveryCode
-     */
-    public function setDeliveryCode($deliveryCode)
+    public function setDeliveryCode(?string $deliveryCode): void
     {
         $this->deliveryCode = $deliveryCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getDeliveryCode()
+    public function getDeliveryCode(): ?string
     {
         return $this->deliveryCode;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $firstName
-     */
-    public function setFirstName($firstName)
+    public function setFirstName(?string $firstName): void
     {
         $this->firstName = $firstName;
     }
 
-    /**
-     * @return string
-     */
-    public function getFirstName()
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    /**
-     * @param bool $isComfortZoneUser
-     */
-    public function setIsComfortZoneUser($isComfortZoneUser)
+    public function setIsComfortZoneUser(?bool $isComfortZoneUser): void
     {
         $this->isComfortZoneUser = $isComfortZoneUser;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsComfortZoneUser()
+    public function getIsComfortZoneUser(): ?bool
     {
         return $this->isComfortZoneUser;
     }
 
-    /**
-     * @param string $lastName
-     */
-    public function setLastName($lastName)
+    public function setLastName(?string $lastName): void
     {
         $this->lastName = $lastName;
     }
 
-    /**
-     * @return string
-     */
-    public function getLastName()
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    /**
-     * @param string $mobileNumber
-     */
-    public function setMobileNumber($mobileNumber)
+    public function setMobileNumber(?string $mobileNumber): void
     {
         $this->mobileNumber = $mobileNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getMobileNumber()
+    public function getMobileNumber(): ?string
     {
         return $this->mobileNumber;
     }
 
-    /**
-     * @param string $mobilePrefix
-     */
-    public function setMobilePrefix($mobilePrefix)
+    public function setMobilePrefix(string $mobilePrefix): void
     {
         $this->mobilePrefix = $mobilePrefix;
     }
 
-    /**
-     * @return string
-     */
-    public function getMobilePrefix()
+    public function getMobilePrefix(): string
     {
         return $this->mobilePrefix;
     }
 
-    /**
-     * @param string $number
-     */
-    public function setNumber($number)
+    public function setNumber(?string $number): void
     {
         $this->number = $number;
     }
 
-    /**
-     * @return string
-     */
-    public function getNumber()
+    public function getNumber(): ?string
     {
         return $this->number;
     }
 
-    /**
-     * @param bool $optIn
-     */
-    public function setOptIn($optIn)
+    public function setOptIn(?bool $optIn): void
     {
         $this->optIn = $optIn;
     }
 
-    /**
-     * @return bool
-     */
-    public function getOptIn()
+    public function getOptIn(): ?bool
     {
         return $this->optIn;
     }
 
-    /**
-     * @param CustomerPackStation $packStation
-     */
-    public function addPackStation(CustomerPackStation $packStation)
+    public function addPackStation(CustomerPackStation $packStation): void
     {
         $this->packStations[] = $packStation;
     }
 
-    /**
-     * @param array $packStations
-     */
-    public function setPackStations($packStations)
+    public function setPackStations(array $packStations): void
     {
         $this->packStations = $packStations;
     }
 
-    /**
-     * @return array
-     */
-    public function getPackStations()
+    public function getPackStations(): array
     {
         return $this->packStations;
     }
 
-    /**
-     * @param string $postalCode
-     */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(?string $postalCode): void
     {
         $this->postalCode = $postalCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getPostalCode()
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
 
     /**
-     * @param string $preferredLanguage
-     *
      * @throws BpostInvalidValueException
      */
-    public function setPreferredLanguage($preferredLanguage)
+    public function setPreferredLanguage(?string $preferredLanguage): void
     {
-        if (!in_array($preferredLanguage, self::getPossiblePreferredLanguageValues())) {
-            throw new BpostInvalidValueException(
-                'preferred language',
-                $preferredLanguage,
-                self::getPossiblePreferredLanguageValues()
-            );
+        if ($preferredLanguage === null) {
+            $this->preferredLanguage = null;
+            return;
         }
-
+        if (!in_array($preferredLanguage, self::getPossiblePreferredLanguageValues(), true)) {
+            throw new BpostInvalidValueException('preferred language', $preferredLanguage, self::getPossiblePreferredLanguageValues());
+        }
         $this->preferredLanguage = $preferredLanguage;
     }
 
-    /**
-     * @return string
-     */
-    public function getPreferredLanguage()
+    public function getPreferredLanguage(): ?string
     {
         return $this->preferredLanguage;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossiblePreferredLanguageValues()
+    public static function getPossiblePreferredLanguageValues(): array
     {
-        return array(
+        return [
             self::CUSTOMER_PREFERRED_LANGUAGE_NL,
             self::CUSTOMER_PREFERRED_LANGUAGE_FR,
             self::CUSTOMER_PREFERRED_LANGUAGE_EN,
-        );
+        ];
     }
 
-    /**
-     * @param bool $receivePromotions
-     */
-    public function setReceivePromotions($receivePromotions)
+    public function setReceivePromotions(?bool $receivePromotions): void
     {
         $this->receivePromotions = $receivePromotions;
     }
 
-    /**
-     * @return bool
-     */
-    public function getReceivePromotions()
+    public function getReceivePromotions(): ?bool
     {
         return $this->receivePromotions;
     }
 
-    /**
-     * @param string $street
-     */
-    public function setStreet($street)
+    public function setStreet(?string $street): void
     {
         $this->street = $street;
     }
 
-    /**
-     * @return string
-     */
-    public function getStreet()
+    public function getStreet(): ?string
     {
         return $this->street;
     }
 
     /**
-     * @param string $title
-     *
      * @throws BpostInvalidValueException
      */
-    public function setTitle($title)
+    public function setTitle(?string $title): void
     {
-        if (!in_array($title, self::getPossibleTitleValues())) {
+        if ($title === null) {
+            $this->title = null;
+            return;
+        }
+        if (!in_array($title, self::getPossibleTitleValues(), true)) {
             throw new BpostInvalidValueException('title', $title, self::getPossibleTitleValues());
         }
-
         $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @return array
-     */
-    public static function getPossibleTitleValues()
+    public static function getPossibleTitleValues(): array
     {
-        return array(
+        return [
             self::CUSTOMER_TITLE_MR,
             self::CUSTOMER_TITLE_MS,
-        );
+        ];
     }
 
-    /**
-     * @param string $town
-     */
-    public function setTown($town)
+    public function setTown(?string $town): void
     {
         $this->town = $town;
     }
 
-    /**
-     * @return string
-     */
-    public function getTown()
+    public function getTown(): ?string
     {
         return $this->town;
     }
 
-    /**
-     * @param bool $useInformationForThirdParty
-     */
-    public function setUseInformationForThirdParty($useInformationForThirdParty)
+    public function setUseInformationForThirdParty(?bool $useInformationForThirdParty): void
     {
         $this->useInformationForThirdParty = $useInformationForThirdParty;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUseInformationForThirdParty()
+    public function getUseInformationForThirdParty(): ?bool
     {
         return $this->useInformationForThirdParty;
     }
 
-    /**
-     * @param string $userID
-     */
-    public function setUserID($userID)
+    public function setUserID(?string $userID): void
     {
         $this->userID = $userID;
     }
 
-    /**
-     * @return string
-     */
-    public function getUserID()
+    public function getUserID(): ?string
     {
         return $this->userID;
     }
 
-    /**
-     * @param string $userName
-     */
-    public function setUserName($userName)
+    public function setUserName(?string $userName): void
     {
         $this->userName = $userName;
     }
 
-    /**
-     * @return string
-     */
-    public function getUserName()
+    public function getUserName(): ?string
     {
         return $this->userName;
     }
 
-    /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DOMDocument $document
-     *
-     * @return DOMElement
-     */
-    public function toXML(DOMDocument $document)
+    public function toXML(DOMDocument $document): DOMElement
     {
         $customer = $document->createElement(
             'Customer'
@@ -570,14 +343,11 @@ class Customer
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Customer
-     *
-     * @throws BpostInvalidValueException
+     * @throws \DateMalformedStringException
      * @throws BpostXmlNoUserIdFoundException
+     * @throws BpostInvalidValueException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): Customer
     {
         // @todo work with classmaps ...
         if (!isset($xml->UserID)) {
@@ -637,17 +407,17 @@ class Customer
             );
         }
         if (isset($xml->ReceivePromotions) && $xml->ReceivePromotions != '') {
-            $receivePromotions = in_array((string) $xml->ReceivePromotions, array('true', '1'));
+            $receivePromotions = in_array((string)$xml->ReceivePromotions, ['true','1'], true);
             $customer->setReceivePromotions($receivePromotions);
         }
         if (isset($xml->actived) && $xml->actived != '') {
-            $activated = in_array((string) $xml->actived, array('true', '1'));
+            $activated = in_array((string)$xml->actived, ['true','1'], true);
             $customer->setActivated($activated);
         }
         if (isset($xml->Title) && $xml->Title != '') {
             $title = (string) $xml->Title;
             $title = ucfirst(strtolower($title));
-            if (substr($title, -1) != '.') {
+            if (!str_ends_with($title, '.')) {
                 $title .= '.';
             }
 
@@ -666,11 +436,7 @@ class Customer
         return $customer;
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function namingToXML(DOMDocument $document, DOMElement $customer)
+    private function namingToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getFirstName() !== null) {
             $customer->appendChild(
@@ -690,11 +456,7 @@ class Customer
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function contactToXML(DOMDocument $document, DOMElement $customer)
+    private function contactToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getEmail() !== null) {
             $customer->appendChild(
@@ -722,11 +484,7 @@ class Customer
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function addressToXML(DOMDocument $document, DOMElement $customer)
+    private function addressToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getStreet() !== null) {
             $customer->appendChild(
@@ -746,11 +504,7 @@ class Customer
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function preferredLanguageToXML(DOMDocument $document, DOMElement $customer)
+    private function preferredLanguageToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getPreferredLanguage() !== null) {
             $customer->appendChild(
@@ -762,11 +516,7 @@ class Customer
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function titleToXML(DOMDocument $document, DOMElement $customer)
+    private function titleToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getTitle() !== null) {
             $customer->appendChild(
@@ -778,11 +528,7 @@ class Customer
         }
     }
 
-    /**
-     * @param DOMDocument $document
-     * @param DOMElement  $customer
-     */
-    private function postalCodeToXML(DOMDocument $document, DOMElement $customer)
+    private function postalCodeToXML(DOMDocument $document, DOMElement $customer): void
     {
         if ($this->getPostalCode() !== null) {
             $customer->appendChild(

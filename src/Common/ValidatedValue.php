@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Common;
 
@@ -16,78 +17,64 @@ abstract class ValidatedValue
     private $value;
 
     /**
-     * ValidatedValue constructor.
-     *
      * @param mixed $value
+     * @throws BpostLogicException
      */
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         $this->setValue($value);
         $this->validate();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
+    public function setValue(mixed $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
-        return (string) $this->getValue();
+        return (string)$this->getValue();
     }
 
     /**
-     * @param int $length
-     *
      * @throws BpostInvalidLengthException
      */
-    public function validateLength($length)
+    public function validateLength(int $length): void
     {
-        if (mb_strlen($this->getValue()) > $length) {
-            throw new BpostInvalidLengthException('', mb_strlen($this->getValue()), $length);
+        if (mb_strlen((string)$this->getValue()) > $length) {
+            throw new BpostInvalidLengthException('', mb_strlen((string)$this->getValue()), $length);
         }
     }
 
     /**
-     * @param array $allowedValues
-     *
      * @throws BpostInvalidValueException
      */
-    public function validateChoice(array $allowedValues)
+    public function validateChoice(array $allowedValues): void
     {
-        if (!in_array($this->getValue(), $allowedValues)) {
+        if (!in_array($this->getValue(), $allowedValues, true)) {
             throw new BpostInvalidValueException('', $this->getValue(), $allowedValues);
         }
     }
 
     /**
-     * @param string $regexPattern
-     *
      * @throws BpostInvalidPatternException
      */
-    public function validatePattern($regexPattern)
+    public function validatePattern(string $regexPattern): void
     {
-        if (!preg_match("/^$regexPattern\$/", $this->getValue())) {
+        if (!preg_match("/^$regexPattern\$/", (string)$this->getValue())) {
             throw new BpostInvalidPatternException('', $this->getValue(), $regexPattern);
         }
     }
 
     /**
+     * Each child class must implement its own validation logic.
+     *
      * @throws BpostLogicException
      */
-    public abstract function validate();
+    abstract public function validate(): void;
 }

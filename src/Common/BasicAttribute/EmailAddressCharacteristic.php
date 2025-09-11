@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Common\BasicAttribute;
 
@@ -12,16 +13,13 @@ class EmailAddressCharacteristic extends BasicAttribute
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidPatternException
      */
-    public function validate()
+    public function validate(): void
     {
         $this->validateLength(40);
         $this->validatePattern('([a-zA-Z0-9_\.\-+])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+');
     }
 
-    /**
-     * @return string
-     */
-    protected function getDefaultKey()
+    protected function getDefaultKey(): string
     {
         return 'emailAddress';
     }

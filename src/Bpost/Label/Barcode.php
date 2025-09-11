@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Label;
 
@@ -9,63 +10,43 @@ use SimpleXMLElement;
  */
 class Barcode
 {
-    /**
-     * @var string
-     */
-    private $barcode;
+    public function __construct(
+        private ?string $barcode = null,
+        private ?string $reference = null,
+    ) {}
 
-    /**
-     * @var string
-     */
-    private $reference;
-
-    /**
-     * @param string $barcode
-     */
-    public function setBarcode($barcode)
+    public function setBarcode(?string $barcode): void
     {
-        $this->barcode = (string) $barcode;
+        $this->barcode = $barcode;
     }
 
-    /**
-     * @return string
-     */
-    public function getBarcode()
+    public function getBarcode(): ?string
     {
         return $this->barcode;
     }
 
-    /**
-     * @param string $reference
-     */
-    public function setReference($reference)
+    public function setReference(?string $reference): void
     {
         $this->reference = $reference;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return self
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
         $self = new self();
-        if (isset($xml->barcode) && $xml->barcode != '') {
-            $self->setBarcode((string) $xml->barcode);
+
+        if (isset($xml->barcode) && (string)$xml->barcode !== '') {
+            $self->setBarcode((string)$xml->barcode);
         }
-        if (isset($xml->reference) && $xml->reference != '') {
-            $self->setReference((string) $xml->reference);
+        if (isset($xml->reference) && (string)$xml->reference !== '') {
+            $self->setReference((string)$xml->reference);
         }
 
         return $self;
     }
 }
+

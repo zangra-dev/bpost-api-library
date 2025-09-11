@@ -1,41 +1,36 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
+use Bpost\BpostApiClient\Common\ApiVersions;
+
 class FetchProductConfig implements HttpRequestBuilderInterface
 {
-    /**
-     * @return string|null
-     */
-    public function getXml()
+    public function getXml(): ?string
     {
         return null;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getHeaders()
+
+    public function getHeaders(): array
     {
-        return array(
-            'Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML',
-        );
+        return [
+            'Accept: application/vnd.bpost.shm-productConfiguration-' . ApiVersions::V3_1 . '+XML',
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return '/productconfig';
     }
 
-    public function isExpectXml()
+    public function isExpectXml(): bool
     {
         return true;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return self::METHOD_GET;
     }

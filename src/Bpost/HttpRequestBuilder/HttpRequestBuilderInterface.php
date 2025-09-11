@@ -1,19 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
 interface HttpRequestBuilderInterface
 {
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
+    public const METHOD_GET = 'GET';
+    public const METHOD_POST = 'POST';
 
-    public function getHeaders();
+    public function getHeaders(): array;
 
-    public function getUrl();
+    public function getUrl(): string;
 
-    public function getXml();
+    public function getXml(): ?string;
 
-    public function isExpectXml();
+    public function isExpectXml(): bool;
 
-    public function getMethod();
+    public function getMethod(): string;
 }

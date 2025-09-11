@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpack247;
 
@@ -11,86 +12,54 @@ use SimpleXMLElement;
  */
 class CustomerPackStation
 {
-    /**
-     * @var string
-     */
-    private $customLabel;
+    public function __construct(
+        private ?string $customLabel = null,
+        private ?string $orderNumber = null,
+        private ?string $packstationId = null,
+    ) {}
 
-    /**
-     * @var string
-     */
-    private $orderNumber;
-
-    /**
-     * @var string
-     */
-    private $packstationId;
-
-    /**
-     * @param string $customLabel
-     */
-    public function setCustomLabel($customLabel)
+    public function setCustomLabel(?string $customLabel): void
     {
         $this->customLabel = $customLabel;
     }
 
-    /**
-     * @return string
-     */
-    public function getCustomLabel()
+    public function getCustomLabel(): ?string
     {
         return $this->customLabel;
     }
 
-    /**
-     * @param string $orderNumber
-     */
-    public function setOrderNumber($orderNumber)
+    public function setOrderNumber(?string $orderNumber): void
     {
         $this->orderNumber = $orderNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getOrderNumber()
+    public function getOrderNumber(): ?string
     {
         return $this->orderNumber;
     }
 
-    /**
-     * @param string $packstationId
-     */
-    public function setPackstationId($packstationId)
+    public function setPackstationId(?string $packstationId): void
     {
         $this->packstationId = $packstationId;
     }
 
-    /**
-     * @return string
-     */
-    public function getPackstationId()
+    public function getPackstationId(): ?string
     {
         return $this->packstationId;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return CustomerPackStation
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $packStation = new CustomerPackStation();
+        $packStation = new self();
 
-        if (isset($xml->OrderNumber) && $xml->OrderNumber != '') {
-            $packStation->setOrderNumber((string) $xml->OrderNumber);
+        if (isset($xml->OrderNumber) && (string)$xml->OrderNumber !== '') {
+            $packStation->setOrderNumber((string)$xml->OrderNumber);
         }
-        if (isset($xml->CustomLabel) && $xml->CustomLabel != '') {
-            $packStation->setCustomLabel((string) $xml->CustomLabel);
+        if (isset($xml->CustomLabel) && (string)$xml->CustomLabel !== '') {
+            $packStation->setCustomLabel((string)$xml->CustomLabel);
         }
-        if (isset($xml->PackstationID) && $xml->PackstationID != '') {
-            $packStation->setPackstationId((string) $xml->PackstationID);
+        if (isset($xml->PackstationID) && (string)$xml->PackstationID !== '') {
+            $packStation->setPackstationId((string)$xml->PackstationID);
         }
 
         return $packStation;

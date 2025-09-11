@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\National;
 
@@ -13,175 +14,135 @@ use SimpleXMLElement;
 
 class Unregistered extends ComplexAttribute
 {
-    /** @var Language */
-    private $language;
+    private ?Language $language = null;
+    private ?PhoneNumber $mobilePhone = null;
+    private ?EmailAddressCharacteristic $emailAddress = null;
+    private ?ParcelLockerReducedMobilityZone $parcelLockerReducedMobilityZone = null;
 
-    /** @var PhoneNumber */
-    private $mobilePhone;
-
-    /** @var EmailAddressCharacteristic */
-    private $emailAddress;
-
-    /** @var ParcelLockerReducedMobilityZone */
-    private $parcelLockerReducedMobilityZone;
-
-    /**
-     * @return bool
-     */
-    public function hasLanguage()
+    public function hasLanguage(): bool
     {
         return $this->language !== null;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
-        return $this->hasLanguage() ? $this->language->getValue() : null;
+        return $this->language?->getValue();
     }
 
-    /**
-     * @param string $language
-     */
-    public function setLanguage($language)
+    public function setLanguage(?string $language): void
     {
-        $this->language = new Language($language);
+        $this->language = $language !== null ? new Language($language) : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasMobilePhone()
+    public function hasMobilePhone(): bool
     {
         return $this->mobilePhone !== null;
     }
 
-    /**
-     * @return string
-     */
-    public function getMobilePhone()
+    public function getMobilePhone(): ?string
     {
-        return $this->hasMobilePhone() ? $this->mobilePhone->getValue() : null;
+        return $this->mobilePhone?->getValue();
     }
 
-    /**
-     * @param string $mobilePhone
-     */
-    public function setMobilePhone($mobilePhone)
+    public function setMobilePhone(?string $mobilePhone): void
     {
-        $this->mobilePhone = new PhoneNumber($mobilePhone);
+        $this->mobilePhone = $mobilePhone !== null ? new PhoneNumber($mobilePhone) : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasEmailAddress()
+    public function hasEmailAddress(): bool
     {
         return $this->emailAddress !== null;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmailAddress()
+    public function getEmailAddress(): ?string
     {
-        return $this->hasEmailAddress() ? $this->emailAddress->getValue() : null;
+        return $this->emailAddress?->getValue();
     }
 
-    /**
-     * @param string $emailAddress
-     */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(?string $emailAddress): void
     {
-        $this->emailAddress = new EmailAddressCharacteristic($emailAddress);
+        $this->emailAddress = $emailAddress !== null ? new EmailAddressCharacteristic($emailAddress) : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasParcelLockerReducedMobilityZone()
+    public function hasParcelLockerReducedMobilityZone(): bool
     {
         return $this->parcelLockerReducedMobilityZone !== null;
     }
 
-    /**
-     * @return ParcelLockerReducedMobilityZone
-     */
-    public function getParcelLockerReducedMobilityZone()
+    public function getParcelLockerReducedMobilityZone(): ?ParcelLockerReducedMobilityZone
     {
         return $this->parcelLockerReducedMobilityZone;
     }
 
-    /**
-     * @param ParcelLockerReducedMobilityZone $parcelLockerReducedMobilityZone
-     */
-    public function setParcelLockerReducedMobilityZone(ParcelLockerReducedMobilityZone $parcelLockerReducedMobilityZone)
+    public function setParcelLockerReducedMobilityZone(?ParcelLockerReducedMobilityZone $zone): void
     {
-        $this->parcelLockerReducedMobilityZone = $parcelLockerReducedMobilityZone;
+        $this->parcelLockerReducedMobilityZone = $zone;
     }
 
     /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DOMElement
+     * @throws \DOMException
      */
-    public function toXml(DOMDocument $document, $prefix = null, $type = null)
+    public function toXml(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
     {
         $tagName = XmlHelper::getPrefixedTagName('unregistered', $prefix);
-
         $xml = $document->createElement($tagName);
 
         if ($this->hasLanguage()) {
-            $tagName = XmlHelper::getPrefixedTagName('language', $prefix);
-            $xml->appendChild($document->createElement($tagName, $this->getLanguage()));
+            $xml->appendChild(
+                $document->createElement(
+                    XmlHelper::getPrefixedTagName('language', $prefix),
+                    (string)$this->getLanguage()
+                )
+            );
         }
 
-        if ($this->getMobilePhone() !== null) {
-            $tagName = XmlHelper::getPrefixedTagName('mobilePhone', $prefix);
-            $xml->appendChild($document->createElement($tagName, $this->getMobilePhone()));
+        if (($mobile = $this->getMobilePhone()) !== null) {
+            $xml->appendChild(
+                $document->createElement(
+                    XmlHelper::getPrefixedTagName('mobilePhone', $prefix),
+                    $mobile
+                )
+            );
         }
 
-        if ($this->getEmailAddress() !== null) {
-            $tagName = XmlHelper::getPrefixedTagName('emailAddress', $prefix);
-            $xml->appendChild($document->createElement($tagName, $this->getEmailAddress()));
+        if (($email = $this->getEmailAddress()) !== null) {
+            $xml->appendChild(
+                $document->createElement(
+                    XmlHelper::getPrefixedTagName('emailAddress', $prefix),
+                    $email
+                )
+            );
         }
 
         if ($this->hasParcelLockerReducedMobilityZone()) {
+            // Attention: notre classe ParcLocker... expose bien toXml(), pas toXML()
             $xml->appendChild(
-                $this->getParcelLockerReducedMobilityZone()->toXML($document, $prefix, $type)
+                $this->parcelLockerReducedMobilityZone->toXml($document, $prefix, $type)
             );
         }
 
         return $xml;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Unregistered
-     */
-    public static function createFromXml(SimpleXMLElement $xml)
+    public static function createFromXml(SimpleXMLElement $xml): self
     {
         $self = new self();
 
-        if (isset($xml->language) && $xml->language != '') {
-            $self->setLanguage((string) $xml->language);
+        if (isset($xml->language) && (string)$xml->language !== '') {
+            $self->setLanguage((string)$xml->language);
         }
 
-        if (isset($xml->mobilePhone) && $xml->mobilePhone != '') {
-            $self->setMobilePhone((string) $xml->mobilePhone);
+        if (isset($xml->mobilePhone) && (string)$xml->mobilePhone !== '') {
+            $self->setMobilePhone((string)$xml->mobilePhone);
         }
 
-        if (isset($xml->emailAddress) && $xml->emailAddress != '') {
-            $self->setEmailAddress((string) $xml->emailAddress);
+        if (isset($xml->emailAddress) && (string)$xml->emailAddress !== '') {
+            $self->setEmailAddress((string)$xml->emailAddress);
         }
 
         if (isset($xml->parcelLockerReducedMobilityZone)) {
             $self->setParcelLockerReducedMobilityZone(
-                parcelLockerReducedMobilityZone::createFromXml($xml->parcelLockerReducedMobilityZone)
+                ParcelLockerReducedMobilityZone::createFromXml($xml->parcelLockerReducedMobilityZone)
             );
         }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\International;
 
@@ -15,36 +16,29 @@ class ParcelContent
 {
     /**
      * Number of items of each type for the specified parcel content.
-     *
-     * @var int
      */
-    private $numberOfItemType;
+    private ?int $numberOfItemType = null;
 
     /**
      * Value for the number of items and NOT per item
      * Max length = 50
-     * Integer format in cents, for example for 10€, you must sent 1000, NO decima.
-     *
-     * @var string
+     * Integer format in cents, for example for 10€, you must sent 1000, NO decimal.
      */
-    private $valueOfItem;
+    private ?int $valueOfItem = null;
 
     /**
      * description of parcel content
      * Max length = 30 characters.
-     *
-     * @var string
      */
-    private $itemDescription;
+    private ?string $itemDescription = null;
 
     /**
-     * Weight for the number of itemsof each typeand NOT per item.
+    /**
+     * Weight for the number of items of each type and NOT per item.
      * Integer format, NO decimal ! In gramme (gr).
      * Range 1-30000.
-     *
-     * @var int
      */
-    private $nettoWeight;
+    private ?int $nettoWeight = null;
 
     /**
      * HS stands for Harmonized System.
@@ -52,228 +46,149 @@ class ParcelContent
      * Today, customs officers must use HS code to clear every commodity that enters or crosses any international borders.
      * Integer format, maximum 9 digits
      * you can find the code on https://www.tariffnumber.com/.
-     *
-     * @var string
      */
-    private $hsTariffCode;
+    private ?string $hsTariffCode = null;
 
     /**
      * 2 letters country code from the orign of goods
      * you can find the code on https://countrycode.org/.
-     *
-     * @var string
      */
-    private $originOfGoods;
+    private ?string $originOfGoods = null;
 
-    /**
-     * @return int
-     */
-    public function getNumberOfItemType()
+    public function getNumberOfItemType(): ?int
     {
         return $this->numberOfItemType;
     }
 
-    /**
-     * @param int $numberOfItemType
-     *
-     * @return self
-     */
-    public function setNumberOfItemType($numberOfItemType)
+    public function setNumberOfItemType(?int $numberOfItemType): void
     {
         $this->numberOfItemType = $numberOfItemType;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getValueOfItem()
+    public function getValueOfItem(): ?int
     {
         return $this->valueOfItem;
     }
 
-    /**
-     * @param string $valueOfItem
-     *
-     * @return self
-     */
-    public function setValueOfItem($valueOfItem)
+    public function setValueOfItem(?int $valueOfItem): void
     {
         $this->valueOfItem = $valueOfItem;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getItemDescription()
+    public function getItemDescription(): ?string
     {
         return $this->itemDescription;
     }
 
-    /**
-     * @param string $itemDescription
-     *
-     * @return self
-     */
-    public function setItemDescription($itemDescription)
+    public function setItemDescription(?string $itemDescription): void
     {
         if (strlen($itemDescription) > 30) {
             $itemDescription = substr($itemDescription, 0, 30);
         }
 
         $this->itemDescription = $itemDescription;
-
-        return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getNettoWeight()
+    public function getNettoWeight(): ?int
     {
         return $this->nettoWeight;
     }
 
-    /**
-     * @param int $nettoWeight
-     *
-     * @return self
-     */
-    public function setNettoWeight($nettoWeight)
+    public function setNettoWeight(?int $nettoWeight): void
     {
         $this->nettoWeight = $nettoWeight;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHsTariffCode()
+    public function getHsTariffCode(): ?string
     {
         return $this->hsTariffCode;
     }
 
-    /**
-     * @param string $hsTariffCode
-     *
-     * @return self
-     */
-    public function setHsTariffCode($hsTariffCode)
+    public function setHsTariffCode(?string $hsTariffCode): void
     {
         $this->hsTariffCode = $hsTariffCode;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getOriginOfGoods()
+    public function getOriginOfGoods(): ?string
     {
         return $this->originOfGoods;
     }
 
-    /**
-     * @param string $originOfGoods
-     *
-     * @return self
-     */
-    public function setOriginOfGoods($originOfGoods)
+    public function setOriginOfGoods(?string $originOfGoods): void
     {
         $this->originOfGoods = $originOfGoods;
-
-        return $this;
     }
 
     /**
-     * @param DOMDocument $document
-     * @param string|null $prefix
-     *
-     * @return DOMElement|false
-     *
      * @throws DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         $parcelContent = $document->createElement(XmlHelper::getPrefixedTagName('parcelContent', $prefix));
 
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('numberOfItemType', $prefix),
-                $this->getNumberOfItemType()
+                (string) $this->getNumberOfItemType()
             )
         );
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('valueOfItem', $prefix),
-                $this->getValueOfItem()
+                (string) $this->getValueOfItem()
             )
         );
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('itemDescription', $prefix),
-                $this->getItemDescription()
+                (string) $this->getItemDescription()
             )
         );
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('nettoWeight', $prefix),
-                $this->getNettoWeight()
+                (string) $this->getNettoWeight()
             )
         );
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('hsTariffCode', $prefix),
-                $this->getHsTariffCode()
+                (string) $this->getHsTariffCode()
             )
         );
         $parcelContent->appendChild(
             $document->createElement(
                 XmlHelper::getPrefixedTagName('originOfGoods', $prefix),
-                $this->getOriginOfGoods()
+                (string) $this->getOriginOfGoods()
             )
         );
 
         return $parcelContent;
     }
 
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $parcelContent = new ParcelContent();
+        $parcelContent = new self();
 
-        if (isset($xml->numberOfItemType) && $xml->numberOfItemType != '') {
-            $parcelContent->setNumberOfItemType(
-                (int) $xml->numberOfItemType
-            );
+        if (isset($xml->numberOfItemType) && (string)$xml->numberOfItemType !== '') {
+            $parcelContent->setNumberOfItemType((int)$xml->numberOfItemType);
         }
-        if (isset($xml->valueOfItem) && $xml->valueOfItem != '') {
-            $parcelContent->setValueOfItem(
-                (int) $xml->valueOfItem
-            );
+        if (isset($xml->valueOfItem) && (string)$xml->valueOfItem !== '') {
+            // XML porte des cents → int
+            $parcelContent->setValueOfItem((int)$xml->valueOfItem);
         }
-        if (isset($xml->itemDescription) && $xml->itemDescription != '') {
-            $parcelContent->setItemDescription(
-                (string) $xml->itemDescription
-            );
+        if (isset($xml->itemDescription) && (string)$xml->itemDescription !== '') {
+            $parcelContent->setItemDescription((string)$xml->itemDescription);
         }
-        if (isset($xml->nettoWeight) && $xml->nettoWeight != '') {
-            $parcelContent->setNettoWeight(
-                (int) $xml->nettoWeight
-            );
+        if (isset($xml->nettoWeight) && (string)$xml->nettoWeight !== '') {
+            $parcelContent->setNettoWeight((int)$xml->nettoWeight);
         }
-        if (isset($xml->hsTariffCode) && $xml->hsTariffCode != '') {
-            $parcelContent->setHsTariffCode(
-                (int) $xml->hsTariffCode
-            );
+        if (isset($xml->hsTariffCode) && (string)$xml->hsTariffCode !== '') {
+            // FIX: garder en string (pas (int))
+            $parcelContent->setHsTariffCode((string)$xml->hsTariffCode);
         }
-        if (isset($xml->originOfGoods) && $xml->originOfGoods != '') {
-            $parcelContent->setOriginOfGoods(
-                (string) $xml->originOfGoods
-            );
+        if (isset($xml->originOfGoods) && (string)$xml->originOfGoods !== '') {
+            $parcelContent->setOriginOfGoods((string)$xml->originOfGoods);
         }
 
         return $parcelContent;

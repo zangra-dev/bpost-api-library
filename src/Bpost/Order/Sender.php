@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
@@ -11,18 +12,12 @@ use SimpleXMLElement;
  */
 class Sender extends Customer
 {
-    const TAG_NAME = 'sender';
+    public const TAG_NAME = 'sender';
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Sender
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $sender = new Sender();
-        $sender = parent::createFromXMLHelper($xml, $sender);
-
+        /** @var self $sender */
+        $sender = parent::createFromXMLHelper($xml, new self());
         return $sender;
     }
 }

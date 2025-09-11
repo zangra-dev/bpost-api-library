@@ -1,70 +1,44 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
+use Bpost\BpostApiClient\Common\ApiVersions;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 
 abstract class CreateLabel implements HttpRequestBuilderInterface
 {
-    /**
-     * @var string
-     */
-    protected $reference;
-    /**
-     * @var LabelFormat
-     */
-    protected $labelFormat;
-    /**
-     * @var bool
-     */
-    protected $asPdf;
-    /**
-     * @var bool
-     */
-    protected $withReturnLabels;
-
-    /**
-     * @param string      $reference
-     * @param LabelFormat $labelFormat
-     * @param bool        $asPdf
-     * @param bool        $withReturnLabels
-     */
-    public function __construct($reference, LabelFormat $labelFormat, $asPdf, $withReturnLabels)
-    {
-        $this->reference = $reference;
-        $this->labelFormat = $labelFormat;
-        $this->asPdf = $asPdf;
-        $this->withReturnLabels = $withReturnLabels;
-    }
+    public function __construct(
+        protected readonly string $reference,
+        protected readonly LabelFormat $labelFormat,
+        protected readonly bool $asPdf,
+        protected readonly bool $withReturnLabels
+    ) {}
 
     /**
      * @return string
      */
-    abstract protected function getUrlPrefix();
+    abstract protected function getUrlPrefix(): string;
 
-    /**
-     * @return null
-     */
-    public function getXml()
+    public function getXml(): ?string
     {
         return null;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
-        return array(
-            'Accept: application/vnd.bpost.shm-label-' . ($this->asPdf ? 'pdf' : 'image') . '-v3.3+XML',
-            'Content-Type: application/vnd.bpost.shm-labelRequest-v3.3+XML',
-        );
+        $acceptSuffix = $this->asPdf ? 'pdf' : 'image';
+
+        return [
+            'Accept: application/vnd.bpost.shm-label-' . $acceptSuffix . '-' . ApiVersions::V3_3 . '+XML',
+            'Content-Type: application/vnd.bpost.shm-labelRequest-' . ApiVersions::V3_3 . '+XML',
+        ];
     }
 
     /**
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return sprintf(
             '/%s/%s/labels/%s%s',
@@ -75,18 +49,12 @@ abstract class CreateLabel implements HttpRequestBuilderInterface
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getMethod()
+    public function getMethod(): string
     {
         return self::METHOD_GET;
     }
 
-    /**
-     * @return bool
-     */
-    public function isExpectXml()
+    public function isExpectXml(): bool
     {
         return true;
     }

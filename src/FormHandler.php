@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient;
 
@@ -12,40 +13,25 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
  */
 class FormHandler
 {
-    /**
-     * bPost instance
-     *
-     * @var Bpost
-     */
-    private $bpost;
+    private Bpost $bpost;
 
-    /**
-     * The parameters
-     *
-     * @var array
-     */
-    private $parameters = array();
+    /** @var array<string,mixed> */
+    private array $parameters = [];
 
     /**
      * Create bPostFormHandler instance
-     *
-     * @param string $accountId
-     * @param string $passPhrase
-     * @param string $apiUrl
      */
-    public function __construct($accountId, $passPhrase, $apiUrl = Bpost::API_URL)
+    public function __construct(string $accountId, string $passPhrase, string $apiUrl = Bpost::API_URL)
     {
         $this->bpost = new Bpost($accountId, $passPhrase, $apiUrl);
     }
 
     /**
      * Calculate the hash
-     *
-     * @return string
      */
-    private function getChecksum()
+    private function getChecksum(): string
     {
-        $keysToHash = array(
+        $keysToHash = [
             'accountId',
             'action',
             'costCenter',
@@ -54,51 +40,53 @@ class FormHandler
             'extraSecure',
             'orderReference',
             'orderWeight',
-        );
+        ];
+
         $base = 'accountId=' . $this->bpost->getAccountId() . '&';
 
         foreach ($keysToHash as $key) {
-            if (isset($this->parameters[$key])) {
-                if (!is_array($this->parameters[$key])) {
-                    $base .= $key . '=' . $this->parameters[$key] . '&';
-                } else {
-                    foreach ($this->parameters[$key] as $entry) {
-                        $base .= $key . '=' . $entry . '&';
-                    }
-                }
+            if (!array_key_exists($key, $this->parameters)) {
+                continue;
+            }
+
+            $value = $this->parameters[$key];
+
+            if (!is_array($value)) {
+                $base .= $key . '=' . $value . '&';
+                continue;
+            }
+
+            // Si c’est un tableau, concaténer chaque entrée (tri déjà fait dans setParameter)
+            foreach ($value as $entry) {
+                $base .= $key . '=' . $entry . '&';
             }
         }
 
         // add passphrase
         $base .= $this->bpost->getPassPhrase();
 
-        // return the hash
         return hash('sha256', $base);
     }
 
     /**
      * Get the parameters
      *
-     * @param bool $form
-     * @param bool $includeChecksum
-     *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getParameters($form = false, $includeChecksum = true)
+    public function getParameters(bool $form = false, bool $includeChecksum = true): array
     {
         $return = $this->parameters;
 
-        if ($form && isset($return['orderLine'])) {
+        if ($form && isset($return['orderLine']) && is_array($return['orderLine'])) {
             foreach ($return['orderLine'] as $key => $value) {
                 $return['orderLine[' . $key . ']'] = $value;
             }
-
             unset($return['orderLine']);
         }
 
         if ($includeChecksum) {
             $return['accountId'] = $this->bpost->getAccountId();
-            $return['checksum'] = $this->getChecksum();
+            $return['checksum']  = $this->getChecksum();
         }
 
         return $return;
@@ -107,98 +95,93 @@ class FormHandler
     /**
      * Set a parameter
      *
-     * @param string $key
-     * @param mixed  $value
-     *
      * @throws BpostInvalidValueException
      * @throws BpostInvalidLengthException
      */
-    public function setParameter($key, $value)
+    public function setParameter(string $key, mixed $value): void
     {
-        switch ((string) $key) {
+        switch ($key) {
             // limited values
             case 'action':
             case 'lang':
-                $allowedValues = array();
-                $allowedValues['action'] = array('START', 'CONFIRM');
-                $allowedValues['lang'] = array('NL', 'FR', 'EN', 'DE', 'Default');
-
-                if (!in_array($value, $allowedValues[$key])) {
-                    throw new BpostInvalidValueException($key, $value, $allowedValues[$key]);
+                $allowedValues = [
+                    'action' => ['START', 'CONFIRM'],
+                    'lang'   => ['NL', 'FR', 'EN', 'DE', 'Default'],
+                ];
+                if (!in_array($value, $allowedValues[$key], true)) {
+                    throw new BpostInvalidValueException($key, (string) $value, $allowedValues[$key]);
                 }
                 $this->parameters[$key] = $value;
                 break;
 
-                // maximum 2 chars
+            // maximum 2 chars
             case 'customerCountry':
-                if (mb_strlen($value) > 2) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 2);
+                if (mb_strlen((string) $value) > 2) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 2);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 8 chars
+            // maximum 8 chars
             case 'customerStreetNumber':
             case 'customerBox':
-                if (mb_strlen($value) > 8) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 8);
+                if (mb_strlen((string) $value) > 8) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 8);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 20 chars
+            // maximum 20 chars
             case 'customerPhoneNumber':
-                if (mb_strlen($value) > 20) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 20);
+                if (mb_strlen((string) $value) > 20) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 20);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 32 chars
+            // maximum 32 chars
             case 'customerPostalCode':
-                if (mb_strlen($value) > 32) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 32);
+                if (mb_strlen((string) $value) > 32) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 32);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 40 chars
+            // maximum 40 chars
             case 'customerFirstName':
             case 'customerLastName':
             case 'customerCompany':
             case 'customerStreet':
             case 'customerCity':
-                if (mb_strlen($value) > 40) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 40);
+                if (mb_strlen((string) $value) > 40) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 40);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 50 chars
+            // maximum 50 chars
             case 'orderReference':
             case 'costCenter':
             case 'customerEmail':
-                if (mb_strlen($value) > 50) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 50);
+                if (mb_strlen((string) $value) > 50) {
+                    throw new BpostInvalidLengthException($key, mb_strlen((string) $value), 50);
                 }
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // integers
+            // integers
             case 'orderTotalPrice':
             case 'orderWeight':
                 $this->parameters[$key] = (int) $value;
                 break;
 
-                // array
+            // array (order lines)
             case 'orderLine':
-                if (!isset($this->parameters[$key])) {
-                    $this->parameters[$key] = array();
-                }
+                $this->parameters[$key] ??= [];
                 $this->parameters[$key][] = $value;
                 break;
 
-                // unknown
+            // unknown (free fields/URLs/flags/overrides...)
             case 'deliveryMethodOverrides':
             case 'extra':
             case 'extraSecure':
@@ -207,6 +190,7 @@ class FormHandler
             case 'errorUrl':
             default:
                 if (is_array($value)) {
+                    // garantir un ordre stable pour le checksum
                     sort($value);
                 }
                 $this->parameters[$key] = $value;

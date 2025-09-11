@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Geo6;
 
@@ -15,180 +16,121 @@ use SimpleXMLElement;
  * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license   BSD License
  */
-class Day
+final class Day
 {
-    const DAY_INDEX_MONDAY = 1;
-    const DAY_INDEX_TUESDAY = 2;
-    const DAY_INDEX_WEDNESDAY = 3;
-    const DAY_INDEX_THURSDAY = 4;
-    const DAY_INDEX_FRIDAY = 5;
-    const DAY_INDEX_SATURDAY = 6;
-    const DAY_INDEX_SUNDAY = 7;
+    public const DAY_INDEX_MONDAY    = 1;
+    public const DAY_INDEX_TUESDAY   = 2;
+    public const DAY_INDEX_WEDNESDAY = 3;
+    public const DAY_INDEX_THURSDAY  = 4;
+    public const DAY_INDEX_FRIDAY    = 5;
+    public const DAY_INDEX_SATURDAY  = 6;
+    public const DAY_INDEX_SUNDAY    = 7;
 
-    const DAY_NAME_MONDAY = 'Monday';
-    const DAY_NAME_TUESDAY = 'Tuesday';
-    const DAY_NAME_WEDNESDAY = 'Wednesday';
-    const DAY_NAME_THURSDAY = 'Thursday';
-    const DAY_NAME_FRIDAY = 'Friday';
-    const DAY_NAME_SATURDAY = 'Saturday';
-    const DAY_NAME_SUNDAY = 'Sunday';
+    public const DAY_NAME_MONDAY    = 'Monday';
+    public const DAY_NAME_TUESDAY   = 'Tuesday';
+    public const DAY_NAME_WEDNESDAY = 'Wednesday';
+    public const DAY_NAME_THURSDAY  = 'Thursday';
+    public const DAY_NAME_FRIDAY    = 'Friday';
+    public const DAY_NAME_SATURDAY  = 'Saturday';
+    public const DAY_NAME_SUNDAY    = 'Sunday';
 
-    private static $dayMap = array(
-        self::DAY_NAME_MONDAY => self::DAY_INDEX_MONDAY,
-        self::DAY_NAME_TUESDAY => self::DAY_INDEX_TUESDAY,
+    private const DAY_MAP = [
+        self::DAY_NAME_MONDAY    => self::DAY_INDEX_MONDAY,
+        self::DAY_NAME_TUESDAY   => self::DAY_INDEX_TUESDAY,
         self::DAY_NAME_WEDNESDAY => self::DAY_INDEX_WEDNESDAY,
-        self::DAY_NAME_THURSDAY => self::DAY_INDEX_THURSDAY,
-        self::DAY_NAME_FRIDAY => self::DAY_INDEX_FRIDAY,
-        self::DAY_NAME_SATURDAY => self::DAY_INDEX_SATURDAY,
-        self::DAY_NAME_SUNDAY => self::DAY_INDEX_SUNDAY,
-    );
+        self::DAY_NAME_THURSDAY  => self::DAY_INDEX_THURSDAY,
+        self::DAY_NAME_FRIDAY    => self::DAY_INDEX_FRIDAY,
+        self::DAY_NAME_SATURDAY  => self::DAY_INDEX_SATURDAY,
+        self::DAY_NAME_SUNDAY    => self::DAY_INDEX_SUNDAY,
+    ];
 
-    /**
-     * @var string
-     */
-    private $amOpen;
+    private ?string $amOpen  = null;
+    private ?string $amClose = null;
+    private ?string $pmOpen  = null;
+    private ?string $pmClose = null;
+    private string $day = self::DAY_NAME_MONDAY;
 
-    /**
-     * @var string
-     */
-    private $amClose;
-
-    /**
-     * @var string
-     */
-    private $pmOpen;
-
-    /**
-     * @var string
-     */
-    private $pmClose;
-
-    /**
-     * @var string
-     */
-    private $day;
-
-    /**
-     * @param string $amClose
-     */
-    public function setAmClose($amClose)
+    public function setAmClose(string $amClose): void
     {
         $this->amClose = $amClose;
     }
 
-    /**
-     * @return string
-     */
-    public function getAmClose()
+    public function getAmClose(): ?string
     {
         return $this->amClose;
     }
 
-    /**
-     * @param string $amOpen
-     */
-    public function setAmOpen($amOpen)
+    public function setAmOpen(string $amOpen): void
     {
         $this->amOpen = $amOpen;
     }
 
-    /**
-     * @return string
-     */
-    public function getAmOpen()
+    public function getAmOpen(): ?string
     {
         return $this->amOpen;
     }
 
-    /**
-     * @param string $day
-     */
-    public function setDay($day)
+    public function setDay(string $day): void
     {
-        $this->day = $day;
+        $this->day = $normalized;
     }
 
-    /**
-     * @return string
-     */
-    public function getDay()
+    public function getDay(): string
     {
         return $this->day;
     }
 
     /**
-     * Get the index for a day
-     *
-     * @return int
-     *
      * @throws BpostInvalidDayException
      */
-    public function getDayIndex()
+    public function getDayIndex(): int
     {
-        $day = ucfirst(strtolower($this->getDay()));
-
-        if (isset(self::$dayMap[$day])) {
-            return self::$dayMap[$day];
+        if (isset(self::DAY_MAP[$this->day])) {
+            return self::DAY_MAP[$this->day];
         }
 
-        throw new BpostInvalidDayException($day, array_keys(self::$dayMap));
+        throw new BpostInvalidDayException($this->day, array_keys(self::DAY_MAP));
     }
 
-    /**
-     * @param string $pmClose
-     */
-    public function setPmClose($pmClose)
+    public function setPmClose(string $pmClose): void
     {
         $this->pmClose = $pmClose;
     }
 
-    /**
-     * @return string
-     */
-    public function getPmClose()
+    public function getPmClose(): ?string
     {
         return $this->pmClose;
     }
 
-    /**
-     * @param string $pmOpen
-     */
-    public function setPmOpen($pmOpen)
+    public function setPmOpen(string $pmOpen): void
     {
         $this->pmOpen = $pmOpen;
     }
 
-    /**
-     * @return string
-     */
-    public function getPmOpen()
+    public function getPmOpen(): ?string
     {
         return $this->pmOpen;
     }
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Day
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
-        $day = new Day();
+        $day = new self();
         $day->setDay($xml->getName());
 
-        if (isset($xml->AMOpen) && $xml->AMOpen != '') {
+        if (isset($xml->AMOpen) && (string) $xml->AMOpen !== '') {
             $day->setAmOpen((string) $xml->AMOpen);
         }
-        if (isset($xml->AMClose) && $xml->AMClose != '') {
+        if (isset($xml->AMClose) && (string) $xml->AMClose !== '') {
             $day->setAmClose((string) $xml->AMClose);
         }
-        if (isset($xml->PMOpen) && $xml->PMOpen != '') {
+        if (isset($xml->PMOpen) && (string) $xml->PMOpen !== '') {
             $day->setPmOpen((string) $xml->PMOpen);
         }
-        if (isset($xml->PMClose) && $xml->PMClose != '') {
+        if (isset($xml->PMClose) && (string) $xml->PMClose !== '') {
             $day->setPmClose((string) $xml->PMClose);
         }
 
         return $day;
     }
 }
+

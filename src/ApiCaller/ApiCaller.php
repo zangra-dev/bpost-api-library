@@ -1,14 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\ApiCaller;
 
-use Bpost\BpostApiClient\Exception\BpostApiResponseException;
-use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostApiBusinessException;
-use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostApiSystemException;
 use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostCurlException;
-use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidResponseException;
-use Bpost\BpostApiClient\Exception\BpostApiResponseException\BpostInvalidXmlResponseException;
-use Bpost\BpostApiClient\Logger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Class ApiCaller
@@ -17,100 +14,71 @@ use Bpost\BpostApiClient\Logger;
  */
 class ApiCaller
 {
-    /** @var Logger */
-    private $logger;
+    private ?int $responseHttpCode = null;
+    private string $responseBody = '';
+    private ?string $responseContentType = null;
 
-    /** @var int */
-    private $responseHttpCode;
+    public function __construct(
+        private readonly LoggerInterface $logger = new NullLogger()
+    ) {}
 
-    /** @var string */
-    private $responseBody;
 
-    /** @var string */
-    private $responseContentType;
-
-    /**
-     * ApiCaller constructor.
-     *
-     * @param Logger $logger
-     */
-    public function __construct(Logger $logger = null)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return int
-     */
-    public function getResponseHttpCode()
+    public function getResponseHttpCode(): ?int
     {
         return $this->responseHttpCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getResponseBody()
+    public function getResponseBody(): string
     {
         return $this->responseBody;
     }
 
-    /**
-     * @return string
-     */
-    public function getResponseContentType()
+    public function getResponseContentType(): ?string
     {
         return $this->responseContentType;
     }
 
     /**
-     * @param array $options
-     *
-     * @return bool
-     *
-     * @throws BpostApiBusinessException
-     * @throws BpostApiResponseException
-     * @throws BpostApiSystemException
      * @throws BpostCurlException
-     * @throws BpostInvalidResponseException
-     * @throws BpostInvalidXmlResponseException
      */
-    public function doCall(array $options)
+    public function doCall(array $options): bool
     {
         $curl = curl_init();
+        if (!$curl instanceof \CurlHandle) {
+            throw new BpostCurlException('Unable to initialize cURL');
+        }
 
-        // set options
         curl_setopt_array($curl, $options);
 
         $this->logger->debug('curl request', $options);
 
-        // execute
-        $this->responseBody = curl_exec($curl);
-        $errorNumber = curl_errno($curl);
-        $errorMessage = curl_error($curl);
+        try {
+            $result = curl_exec($curl);
+            $errno  = curl_errno($curl);
+            $error  = curl_error($curl);
 
-        $headers = curl_getinfo($curl);
+            $info = curl_getinfo($curl); // array<string,mixed>
 
-        $this->logger->debug('curl response', array(
-            'status' => $errorNumber . ' (' . $errorMessage . ')',
-            'headers' => $headers,
-            'response' => $this->responseBody,
-        ));
+            $this->logger->debug('curl response', [
+                'status'   => $errno . ' (' . $error . ')',
+                'headers'  => $info,
+                'response' => $result,
+            ]);
 
-        // error?
-        if ($errorNumber !== 0) {
-            throw new BpostCurlException($errorMessage, $errorNumber);
+            if ($errno !== 0) {
+                throw new BpostCurlException($error !== '' ? $error : 'cURL error', $errno);
+            }
+
+            // seulement maintenant qu'on sait que ce n’est pas une erreur
+            $this->responseBody = is_string($result) ? $result : '';
+
+            $this->responseHttpCode   = isset($info['http_code']) ? (int) $info['http_code'] : null;
+            $this->responseContentType = $info['content_type'] ?? null;
+
+            return true;
+        } finally {
+            curl_close($curl);
         }
-
-        if (isset($headers['http_code'])) {
-            $this->responseHttpCode = $headers['http_code'];
-        }
-
-        if (isset($headers['Content-Type'])) {
-            $this->responseContentType = $headers['Content-Type'];
-        }
-
-        return true;
     }
 
     /**
@@ -121,8 +89,8 @@ class ApiCaller
      *
      * @return int
      */
-    public function getHttpCodeType()
+    public function getHttpCodeType(): int
     {
-        return 100 * (int) ($this->responseHttpCode / 100);
+        return (int) (100 * floor($this->responseHttpCode / 100));
     }
 }

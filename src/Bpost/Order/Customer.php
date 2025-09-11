@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 use SimpleXMLElement;
 
 /**
@@ -15,71 +16,38 @@ use SimpleXMLElement;
  */
 class Customer
 {
-    const TAG_NAME = 'customer';
+    public const TAG_NAME = 'customer';
 
-    /**
-     * @var string
-     */
-    private $name;
+    private ?string $name = null;
+    private ?string $company = null;
+    private ?Address $address = null;
+    private ?string $emailAddress = null;
+    private ?string $phoneNumber = null;
 
-    /**
-     * @var string
-     */
-    private $company;
-
-    /**
-     * @var Address
-     */
-    private $address;
-
-    /**
-     * @var string
-     */
-    private $emailAddress;
-
-    /**
-     * @var string
-     */
-    private $phoneNumber;
-
-    /**
-     * @param \Bpost\BpostApiClient\Bpost\Order\Address $address
-     */
-    public function setAddress($address)
+    public function setAddress(Address $address): void
     {
         $this->address = $address;
     }
 
-    /**
-     * @return \Bpost\BpostApiClient\Bpost\Order\Address
-     */
-    public function getAddress()
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    /**
-     * @param string $company
-     */
-    public function setCompany($company)
+    public function setCompany(string $company): void
     {
         $this->company = $company;
     }
 
-    /**
-     * @return string
-     */
-    public function getCompany()
+    public function getCompany(): ?string
     {
         return $this->company;
     }
 
     /**
-     * @param string $emailAddress
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress): void
     {
         $length = 50;
         if (mb_strlen($emailAddress) > $length) {
@@ -88,36 +56,25 @@ class Customer
         $this->emailAddress = $emailAddress;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmailAddress()
+    public function getEmailAddress(): ?string
     {
         return $this->emailAddress;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @param string $phoneNumber
-     *
      * @throws BpostInvalidLengthException
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber): void
     {
         $length = 20;
         if (mb_strlen($phoneNumber) > $length) {
@@ -126,94 +83,55 @@ class Customer
         $this->phoneNumber = $phoneNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getPhoneNumber()
+    public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
     }
 
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
         $customer = $document->createElement(XmlHelper::getPrefixedTagName(static::TAG_NAME, $prefix));
 
-        if ($this->getName() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'common:name',
-                    $this->getName()
-                )
-            );
+        if ($this->name !== null) {
+            $customer->appendChild($document->createElement('common:name', $this->name));
         }
-        if ($this->getCompany() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'common:company',
-                    $this->getCompany()
-                )
-            );
+        if ($this->company !== null) {
+            $customer->appendChild($document->createElement('common:company', $this->company));
         }
-        if ($this->getAddress() !== null) {
-            $customer->appendChild(
-                $this->getAddress()->toXML($document)
-            );
+        if ($this->address !== null) {
+            $customer->appendChild($this->address->toXML($document, 'common'));
         }
-        if ($this->getEmailAddress() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'common:emailAddress',
-                    $this->getEmailAddress()
-                )
-            );
+        if ($this->emailAddress !== null) {
+            $customer->appendChild($document->createElement('common:emailAddress', $this->emailAddress));
         }
-        if ($this->getPhoneNumber() !== null) {
-            $customer->appendChild(
-                $document->createElement(
-                    'common:phoneNumber',
-                    $this->getPhoneNumber()
-                )
-            );
+        if ($this->phoneNumber !== null) {
+            $customer->appendChild($document->createElement('common:phoneNumber', $this->phoneNumber));
         }
 
         return $customer;
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     * @param Customer         $instance
-     *
-     * @return Customer
-     *
      * @throws BpostInvalidLengthException
      */
-    public static function createFromXMLHelper(SimpleXMLElement $xml, Customer $instance)
+    public static function createFromXMLHelper(SimpleXMLElement $xml, Customer $instance): Customer
     {
-        if (isset($xml->name) && $xml->name != '') {
+        if (isset($xml->name) && (string) $xml->name !== '') {
             $instance->setName((string) $xml->name);
         }
-        if (isset($xml->company) && $xml->company != '') {
+        if (isset($xml->company) && (string) $xml->company !== '') {
             $instance->setCompany((string) $xml->company);
         }
         if (isset($xml->address)) {
-            $instance->setAddress(
-                Address::createFromXML($xml->address)
-            );
+            $instance->setAddress(Address::createFromXML($xml->address));
         }
-        if (isset($xml->emailAddress) && $xml->emailAddress != '') {
-            $instance->setEmailAddress(
-                (string) $xml->emailAddress
-            );
+        if (isset($xml->emailAddress) && (string) $xml->emailAddress !== '') {
+            $instance->setEmailAddress((string) $xml->emailAddress);
         }
-        if (isset($xml->phoneNumber) && $xml->phoneNumber != '') {
+        if (isset($xml->phoneNumber) && (string) $xml->phoneNumber !== '') {
             $instance->setPhoneNumber((string) $xml->phoneNumber);
         }
 

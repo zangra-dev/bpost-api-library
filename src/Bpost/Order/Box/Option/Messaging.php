@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 use SimpleXMLElement;
 
 /**
@@ -21,164 +22,26 @@ use SimpleXMLElement;
  */
 class Messaging extends Option
 {
-    const MESSAGING_LANGUAGE_EN = 'EN';
-    const MESSAGING_LANGUAGE_NL = 'NL';
-    const MESSAGING_LANGUAGE_FR = 'FR';
-    const MESSAGING_LANGUAGE_DE = 'DE';
+    public const MESSAGING_LANGUAGE_EN = 'EN';
+    public const MESSAGING_LANGUAGE_NL = 'NL';
+    public const MESSAGING_LANGUAGE_FR = 'FR';
+    public const MESSAGING_LANGUAGE_DE = 'DE';
 
-    const MESSAGING_TYPE_INFO_DISTRIBUTED = 'infoDistributed';
-    const MESSAGING_TYPE_INFO_NEXT_DAY = 'infoNextDay';
-    const MESSAGING_TYPE_INFO_REMINDER = 'infoReminder';
-    const MESSAGING_TYPE_KEEP_ME_INFORMED = 'keepMeInformed';
+    public const MESSAGING_TYPE_INFO_DISTRIBUTED  = 'infoDistributed';
+    public const MESSAGING_TYPE_INFO_NEXT_DAY     = 'infoNextDay';
+    public const MESSAGING_TYPE_INFO_REMINDER     = 'infoReminder';
+    public const MESSAGING_TYPE_KEEP_ME_INFORMED  = 'keepMeInformed';
 
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $language;
+    private string $type;
+    private string $language;
+    private ?string $emailAddress = null;
+    private ?string $mobilePhone  = null;
 
     /**
-     * @var string
-     */
-    private $emailAddress;
-
-    /**
-     * @var string
-     */
-    private $mobilePhone;
-
-    /**
-     * @param string $emailAddress
-     *
-     * @throws BpostInvalidLengthException
-     */
-    public function setEmailAddress($emailAddress)
-    {
-        $length = 50;
-        if (mb_strlen($emailAddress) > $length) {
-            throw new BpostInvalidLengthException('emailAddress', mb_strlen($emailAddress), $length);
-        }
-
-        $this->emailAddress = $emailAddress;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmailAddress()
-    {
-        return $this->emailAddress;
-    }
-
-    /**
-     * @param string $language
-     *
-     * @throws BpostInvalidValueException
-     */
-    public function setLanguage($language)
-    {
-        $language = strtoupper($language);
-
-        if (!in_array($language, self::getPossibleLanguageValues())) {
-            throw new BpostInvalidValueException('language', $language, self::getPossibleLanguageValues());
-        }
-
-        $this->language = $language;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getPossibleLanguageValues()
-    {
-        return array(
-            self::MESSAGING_LANGUAGE_EN,
-            self::MESSAGING_LANGUAGE_NL,
-            self::MESSAGING_LANGUAGE_FR,
-            self::MESSAGING_LANGUAGE_DE,
-        );
-    }
-
-    /**
-     * @param string $mobilePhone
-     *
-     * @throws BpostInvalidLengthException
-     */
-    public function setMobilePhone($mobilePhone)
-    {
-        $length = 20;
-        if (mb_strlen($mobilePhone) > $length) {
-            throw new BpostInvalidLengthException('mobilePhone', mb_strlen($mobilePhone), $length);
-        }
-
-        $this->mobilePhone = $mobilePhone;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMobilePhone()
-    {
-        return $this->mobilePhone;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getPossibleTypeValues()
-    {
-        return array(
-            self::MESSAGING_TYPE_INFO_DISTRIBUTED,
-            self::MESSAGING_TYPE_INFO_NEXT_DAY,
-            self::MESSAGING_TYPE_INFO_REMINDER,
-            self::MESSAGING_TYPE_KEEP_ME_INFORMED,
-        );
-    }
-
-    /**
-     * @param string $type
-     *
-     * @throws BpostInvalidValueException
-     */
-    public function setType($type)
-    {
-        if (!in_array($type, self::getPossibleTypeValues())) {
-            throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
-        }
-
-        $this->type = $type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string      $type
-     * @param string      $language
-     * @param string|null $emailAddress
-     * @param string|null $mobilePhone
-     *
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      */
-    public function __construct($type, $language, $emailAddress = null, $mobilePhone = null)
+    public function __construct(string $type, string $language, ?string $emailAddress = null, ?string $mobilePhone = null)
     {
         $this->setType($type);
         $this->setLanguage($language);
@@ -191,33 +54,109 @@ class Messaging extends Option
         }
     }
 
+    public static function getPossibleLanguageValues(): array
+    {
+        return [
+            self::MESSAGING_LANGUAGE_EN,
+            self::MESSAGING_LANGUAGE_NL,
+            self::MESSAGING_LANGUAGE_FR,
+            self::MESSAGING_LANGUAGE_DE,
+        ];
+    }
+
+    public static function getPossibleTypeValues(): array
+    {
+        return [
+            self::MESSAGING_TYPE_INFO_DISTRIBUTED,
+            self::MESSAGING_TYPE_INFO_NEXT_DAY,
+            self::MESSAGING_TYPE_INFO_REMINDER,
+            self::MESSAGING_TYPE_KEEP_ME_INFORMED,
+        ];
+    }
+
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     *
-     * @return DomElement
+     * @throws BpostInvalidValueException
      */
-    public function toXML(DOMDocument $document, $prefix = 'common')
+    public function setType(string $type): void
+    {
+        if (!in_array($type, self::getPossibleTypeValues(), true)) {
+            throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
+        }
+        $this->type = $type;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @throws BpostInvalidValueException
+     */
+    public function setLanguage(string $language): void
+    {
+        $language = strtoupper($language);
+        if (!in_array($language, self::getPossibleLanguageValues(), true)) {
+            throw new BpostInvalidValueException('language', $language, self::getPossibleLanguageValues());
+        }
+        $this->language = $language;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    /**
+     * @throws BpostInvalidLengthException
+     */
+    public function setEmailAddress(string $emailAddress): void
+    {
+        $length = 50;
+        if (mb_strlen($emailAddress) > $length) {
+            throw new BpostInvalidLengthException('emailAddress', mb_strlen($emailAddress), $length);
+        }
+        $this->emailAddress = $emailAddress;
+    }
+
+    public function getEmailAddress(): ?string
+    {
+        return $this->emailAddress;
+    }
+
+    /**
+     * @throws BpostInvalidLengthException
+     */
+    public function setMobilePhone(string $mobilePhone): void
+    {
+        $length = 20;
+        if (mb_strlen($mobilePhone) > $length) {
+            throw new BpostInvalidLengthException('mobilePhone', mb_strlen($mobilePhone), $length);
+        }
+        $this->mobilePhone = $mobilePhone;
+    }
+
+    public function getMobilePhone(): ?string
+    {
+        return $this->mobilePhone;
+    }
+
+    /**
+     * @throws \DOMException
+     */
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
         $messaging = $document->createElement(XmlHelper::getPrefixedTagName($this->getType(), $prefix));
         $messaging->setAttribute('language', $this->getLanguage());
 
-        if ($this->getEmailAddress() !== null) {
+        if ($this->emailAddress !== null) {
             $messaging->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('emailAddress', $prefix),
-                    $this->getEmailAddress()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('emailAddress', $prefix), $this->emailAddress)
             );
         }
-        if ($this->getMobilePhone() !== null) {
+        if ($this->mobilePhone !== null) {
             $messaging->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('mobilePhone', $prefix),
-                    $this->getMobilePhone()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('mobilePhone', $prefix), $this->mobilePhone)
             );
         }
 
@@ -225,22 +164,18 @@ class Messaging extends Option
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return Messaging
-     *
      * @throws BpostInvalidLengthException
      * @throws BpostInvalidValueException
      */
-    public static function createFromXML(SimpleXMLElement $xml)
+    public static function createFromXML(SimpleXMLElement $xml): static
     {
-        $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
+        $messaging = new static($xml->getName(), (string)$xml->attributes()->language);
 
-        if ((string) $xml->emailAddress !== '') {
-            $messaging->setEmailAddress((string) $xml->emailAddress);
+        if ((string)$xml->emailAddress !== '') {
+            $messaging->setEmailAddress((string)$xml->emailAddress);
         }
-        if ((string) $xml->mobilePhone !== '') {
-            $messaging->setMobilePhone((string) $xml->mobilePhone);
+        if ((string)$xml->mobilePhone !== '') {
+            $messaging->setMobilePhone((string)$xml->mobilePhone);
         }
 
         return $messaging;

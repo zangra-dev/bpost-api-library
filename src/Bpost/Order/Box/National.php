@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
@@ -8,10 +9,12 @@ use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
-use DomDocument;
-use DomElement;
+use DOMDocument;
+use DOMElement;
 use SimpleXMLElement;
 
 /**
@@ -26,183 +29,126 @@ use SimpleXMLElement;
  */
 abstract class National extends ComplexAttribute implements IBox
 {
-    /** @var string */
-    protected $product;
+    protected ?string $product = null;
 
     /** @var Option[] */
-    protected $options;
+    protected array $options = [];
 
-    /** @var int */
-    protected $weight;
+    protected ?int $weight = null;
 
     /** @var Day[] */
-    private $openingHours;
+    private array $openingHours = [];
 
-    /** @var string */
-    private $desiredDeliveryPlace;
+    private ?string $desiredDeliveryPlace = null;
 
-    /**
-     * @param Option[] $options
-     */
-    public function setOptions($options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
-    /**
-     * @return Option[]
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param Option $option
-     */
-    public function addOption(Option $option)
+    public function addOption(Option $option): void
     {
         $this->options[] = $option;
     }
 
-    /**
-     * @param string $product
-     */
-    public function setProduct($product)
+    public function setProduct(string $product): void
     {
         $this->product = $product;
     }
 
-    /**
-     * @return string
-     */
-    public function getProduct()
+    public function getProduct(): ?string
     {
         return $this->product;
     }
 
     /**
      * @remark should be implemented by the child class
-     *
-     * @return array
      */
-    public static function getPossibleProductValues()
+    public static function getPossibleProductValues(): array
     {
-        return array();
+        return [];
     }
 
-    /**
-     * @param int $weight
-     */
-    public function setWeight($weight)
+    public function setWeight(int $weight): void
     {
         $this->weight = $weight;
     }
 
-    /**
-     * @return int
-     */
-    public function getWeight()
+    public function getWeight(): ?int
     {
         return $this->weight;
     }
 
-    /**
-     * @param Day[] $openingHours
-     */
-    public function setOpeningHours(array $openingHours)
+    public function setOpeningHours(array $openingHours): void
     {
         $this->openingHours = $openingHours;
     }
 
-    /**
-     * @param Day $day
-     */
-    public function addOpeningHour(Day $day)
+    public function addOpeningHour(Day $day): void
     {
         $this->openingHours[] = $day;
     }
 
-    /**
-     * @return Day[]
-     */
-    public function getOpeningHours()
+    public function getOpeningHours(): array
     {
         return $this->openingHours;
     }
 
-    /**
-     * @param string $desiredDeliveryPlace
-     */
-    public function setDesiredDeliveryPlace($desiredDeliveryPlace)
+    public function setDesiredDeliveryPlace(?string $desiredDeliveryPlace): void
     {
         $this->desiredDeliveryPlace = $desiredDeliveryPlace;
     }
 
-    /**
-     * @return string
-     */
-    public function getDesiredDeliveryPlace()
+    public function getDesiredDeliveryPlace(): ?string
     {
         return $this->desiredDeliveryPlace;
     }
 
     /**
-     * Return the object as an array for usage in the XML
-     *
-     * @param DomDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DomElement
+     * @throws \DOMException
      */
-    public function toXML(DOMDocument $document, $prefix = null, $type = null)
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
     {
-        $typeElement = $document->createElement($type);
+        $typeElement = $document->createElement((string)$type);
 
-        if ($this->getProduct() !== null) {
+        if ($this->product !== null) {
             $typeElement->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('product', $prefix),
-                    $this->getProduct()
-                )
+                $document->createElement(XmlHelper::getPrefixedTagName('product', $prefix), $this->product)
             );
         }
 
-        $options = $this->getOptions();
-        if (!empty($options)) {
+        if (!empty($this->options)) {
             $optionsElement = $document->createElement('options');
-            foreach ($options as $option) {
-                $optionsElement->appendChild(
-                    $option->toXML($document)
-                );
+            foreach ($this->options as $option) {
+                $optionsElement->appendChild($option->toXML($document));
             }
             $typeElement->appendChild($optionsElement);
         }
 
-        if ($this->getWeight() !== null) {
+        if ($this->weight !== null) {
             $typeElement->appendChild(
-                $document->createElement(XmlHelper::getPrefixedTagName('weight', $prefix), $this->getWeight())
+                $document->createElement(XmlHelper::getPrefixedTagName('weight', $prefix), (string)$this->weight)
             );
         }
 
-        $openingHours = $this->getOpeningHours();
-        if (!empty($openingHours)) {
+        if (!empty($this->openingHours)) {
             $openingHoursElement = $document->createElement('openingHours');
-            /** @var Day $day */
-            foreach ($openingHours as $day) {
-                $openingHoursElement->appendChild(
-                    $day->toXML($document)
-                );
+            foreach ($this->openingHours as $day) {
+                $openingHoursElement->appendChild($day->toXML($document));
             }
             $typeElement->appendChild($openingHoursElement);
         }
 
-        if ($this->getDesiredDeliveryPlace() !== null) {
+        if ($this->desiredDeliveryPlace !== null) {
             $typeElement->appendChild(
                 $document->createElement(
                     XmlHelper::getPrefixedTagName('desiredDeliveryPlace', $prefix),
-                    $this->getDesiredDeliveryPlace()
+                    $this->desiredDeliveryPlace
                 )
             );
         }
@@ -211,38 +157,35 @@ abstract class National extends ComplexAttribute implements IBox
     }
 
     /**
-     * @param SimpleXMLElement $nationalXml
-     * @param National         $self
-     *
-     * @return AtHome
-     *
+     * @throws BpostInvalidLengthException
+     * @throws BpostNotImplementedException
+     * @throws BpostInvalidValueException
      * @throws BpostException
-     * @throws BpostXmlInvalidItemException
      */
-    public static function createFromXML(SimpleXMLElement $nationalXml, National $self = null)
+    public static function createFromXML(SimpleXMLElement $xml, National $self = null): National
     {
         if ($self === null) {
             throw new BpostException('Set an instance of National');
         }
 
-        if (isset($nationalXml->product) && $nationalXml->product != '') {
-            $self->setProduct(
-                (string) $nationalXml->product
-            );
+        if (isset($nationalXml->product) && (string)$nationalXml->product !== '') {
+            $self->setProduct((string)$nationalXml->product);
         }
 
         if (isset($nationalXml->options) && !empty($nationalXml->options)) {
-            /** @var SimpleXMLElement $optionData */
             foreach ($nationalXml->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 
-                if (in_array($optionData->getName(), array(
+                if (in_array(
+                    $optionData->getName(),
+                    [
                         Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
                         Messaging::MESSAGING_TYPE_INFO_NEXT_DAY,
                         Messaging::MESSAGING_TYPE_INFO_REMINDER,
                         Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED,
-                    ))
-                ) {
+                    ],
+                    true
+                )) {
                     $option = Messaging::createFromXML($optionData);
                 } else {
                     $option = self::getOptionFromOptionData($optionData);
@@ -252,42 +195,33 @@ abstract class National extends ComplexAttribute implements IBox
             }
         }
 
-        if (isset($nationalXml->weight) && $nationalXml->weight != '') {
-            $self->setWeight(
-                (int) $nationalXml->weight
-            );
+        if (isset($nationalXml->weight) && (string)$nationalXml->weight !== '') {
+            $self->setWeight((int)$nationalXml->weight);
         }
 
-        if (isset($nationalXml->openingHours) && $nationalXml->openingHours != '') {
+        if (isset($nationalXml->openingHours) && (string)$nationalXml->openingHours !== '') {
             foreach ($nationalXml->openingHours->children() as $day => $value) {
-                $self->addOpeningHour(new Day($day, (string) $value));
+                $self->addOpeningHour(new Day((string)$day, (string)$value));
             }
         }
 
-        if (isset($nationalXml->desiredDeliveryPlace) && $nationalXml->desiredDeliveryPlace != '') {
-            $self->setDesiredDeliveryPlace(
-                (string) $nationalXml->desiredDeliveryPlace
-            );
+        if (isset($nationalXml->desiredDeliveryPlace) && (string)$nationalXml->desiredDeliveryPlace !== '') {
+            $self->setDesiredDeliveryPlace((string)$nationalXml->desiredDeliveryPlace);
         }
 
         return $self;
     }
 
     /**
-     * @param SimpleXMLElement $optionData
-     *
-     * @return Option
-     *
      * @throws BpostNotImplementedException
      */
-    protected static function getOptionFromOptionData(SimpleXMLElement $optionData)
+    protected static function getOptionFromOptionData(SimpleXMLElement $optionData): Option
     {
         $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
         XmlHelper::assertMethodCreateFromXmlExists($className);
 
-        return call_user_func(
-            array($className, 'createFromXML'),
-            $optionData
-        );
+        /** @var callable $factory */
+        $factory = [$className, 'createFromXML'];
+        return $factory($optionData);
     }
 }

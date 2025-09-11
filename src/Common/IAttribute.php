@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bpost\BpostApiClient\Common;
 
@@ -8,19 +9,7 @@ use SimpleXMLElement;
 
 interface IAttribute
 {
-    /**
-     * @param DOMDocument $document
-     * @param string      $prefix
-     * @param string      $type
-     *
-     * @return DOMElement
-     */
-    public function toXml(DOMDocument $document, $prefix = null, $type = null);
+    public function toXML(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement;
 
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return IAttribute
-     */
-    public static function createFromXml(SimpleXMLElement $xml);
+    public static function createFromXML(SimpleXMLElement $xml): static;
 }

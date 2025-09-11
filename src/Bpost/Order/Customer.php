@@ -102,7 +102,7 @@ class Customer
             $customer->appendChild($document->createElement('common:company', $this->company));
         }
         if ($this->address !== null) {
-            $customer->appendChild($this->address->toXML($document));
+            $customer->appendChild($this->address->toXML($document, 'common'));
         }
         if ($this->emailAddress !== null) {
             $customer->appendChild($document->createElement('common:emailAddress', $this->emailAddress));

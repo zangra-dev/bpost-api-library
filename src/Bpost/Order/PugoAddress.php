@@ -16,7 +16,7 @@ class PugoAddress extends Address
 {
     public const TAG_NAME = 'pugoAddress';
 
-    public function toXML(DOMDocument $document, string $prefix = 'common'): DOMElement
+    public function toXML(DOMDocument $document, ?string $prefix = 'common'): DOMElement
     {
         // <national:pugoAddress>
         $el = $document->createElement(

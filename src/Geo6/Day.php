@@ -72,6 +72,7 @@ final class Day
 
     public function setDay(string $day): void
     {
+        $normalized = ucfirst(strtolower($day));
         $this->day = $normalized;
     }
 

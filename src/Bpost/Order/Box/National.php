@@ -172,7 +172,7 @@ abstract class National extends ComplexAttribute implements IBox
             $self->setProduct((string)$nationalXml->product);
         }
 
-        if (isset($nationalXml->options) && !empty($nationalXml->options)) {
+        if (!empty($nationalXml->options)) {
             foreach ($nationalXml->options as $optionData) {
                 $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
 

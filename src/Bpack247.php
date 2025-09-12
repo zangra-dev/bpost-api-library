@@ -33,9 +33,6 @@ class Bpack247
     private string $accountId;
     private string $passPhrase;
 
-    /** @var CurlHandle|null */
-    private ?CurlHandle $curl = null;
-
     /** * The port to use. */
     private ?int $port = null;
 
@@ -82,15 +79,15 @@ class Bpack247
             $options[CURLOPT_POSTFIELDS] = $body ?? '';
         }
 
-        $this->curl = curl_init();
-        curl_setopt_array($this->curl, $options);
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
 
         try {
-            $response = curl_exec($this->curl);
-            $info     = curl_getinfo($this->curl);
+            $response = curl_exec($curl);
+            $info     = curl_getinfo($curl);
 
-            $errorNumber  = curl_errno($this->curl);
-            $errorMessage = curl_error($this->curl);
+            $errorNumber  = curl_errno($curl);
+            $errorMessage = curl_error($curl);
 
             if ($errorNumber !== 0) {
                 throw new BpostCurlException($errorMessage, $errorNumber);
@@ -133,10 +130,8 @@ class Bpack247
 
             return $xml;
         } finally {
-            if (is_resource($this->curl) || $this->curl instanceof CurlHandle) {
-                curl_close($this->curl);
-            }
-            $this->curl = null;
+            curl_close($curl);
+            $curl = null;
         }
     }
 

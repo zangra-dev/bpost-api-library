@@ -42,11 +42,15 @@ class Option
         // characteristics (supporte l’ancienne faute "chracteristic")
         if (isset($children->characteristic)) {
             foreach ($children->characteristic as $charXml) {
-                $self->addCharacteristic(Characteristic::createFromXML($charXml));
+                if ($charXml instanceof \SimpleXMLElement) {
+                    $self->addCharacteristic(Characteristic::createFromXML($charXml));
+                }
             }
         } elseif (isset($children->chracteristic)) {
             foreach ($children->chracteristic as $charXml) {
-                $self->addCharacteristic(Characteristic::createFromXML($charXml));
+                if ($charXml instanceof \SimpleXMLElement) {
+                    $self->addCharacteristic(Characteristic::createFromXML($charXml));
+                }
             }
         }
 

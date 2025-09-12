@@ -26,6 +26,7 @@ use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueExceptio
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlNoReferenceFoundException;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrderBuilder;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SimpleXMLElement;

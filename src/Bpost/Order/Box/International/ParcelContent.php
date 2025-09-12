@@ -82,6 +82,7 @@ class ParcelContent
 
     public function setItemDescription(?string $itemDescription): void
     {
+        $itemDescription = (string) $itemDescription;
         if (strlen($itemDescription) > 30) {
             $itemDescription = substr($itemDescription, 0, 30);
         }

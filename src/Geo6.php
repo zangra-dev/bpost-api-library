@@ -48,18 +48,18 @@ class Geo6
     /** Suffixe d’UA applicatif */
     private string $userAgent = '';
 
-    private Logger $logger;
+    private LoggerInterface $logger;
 
     /**
      * @param string $partner Paramètre statique de protection/statistiques
      * @param string $appId   Paramètre statique de protection/statistiques
      * @param LoggerInterface|null $psrLogger Logger PSR optionnel (NullLogger par défaut)
      */
-    public function __construct(string $partner, string $appId, ?LoggerInterface $psrLogger = null)
+    public function __construct(string $partner, string $appId, ?LoggerInterface $logger = null)
     {
         $this->setPartner($partner);
         $this->setAppId($appId);
-        $this->logger = new Logger($psrLogger ?? new NullLogger());
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function getApiCaller(): ApiCaller

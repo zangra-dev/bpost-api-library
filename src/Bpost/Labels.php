@@ -20,7 +20,9 @@ class Labels
 
         if (isset($xml->label)) {
             foreach ($xml->label as $labelXml) {
-                $labels[] = Label::createFromXML($labelXml);
+                if ($labelXml instanceof \SimpleXMLElement) {
+                    $labels[] = Label::createFromXML($labelXml);
+                }
             }
         }
 

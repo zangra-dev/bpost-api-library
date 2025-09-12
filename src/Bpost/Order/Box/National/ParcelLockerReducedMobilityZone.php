@@ -11,17 +11,13 @@ use SimpleXMLElement;
 
 class ParcelLockerReducedMobilityZone extends ComplexAttribute
 {
-    public function toXml(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
-        $tagName = XmlHelper::getPrefixedTagName('parcelLockerReducedMobilityZone', $prefix);
-        return $document->createElement($tagName);
+        return $document->createElement(XmlHelper::getPrefixedTagName('reducedMobilityZone', $prefix));
     }
 
-    /**
-     * @todo Implement it, because today, nothing is specified
-     * @return ParcelLockerReducedMobilityZone|ComplexAttribute
-     */
-    public static function createFromXml(SimpleXMLElement $xml): self
+
+    public static function createFromXML(SimpleXMLElement $xml): self
     {
         return new self();
     }

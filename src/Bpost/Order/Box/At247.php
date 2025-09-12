@@ -158,9 +158,9 @@ class At247 extends National
         }
         if ($this->memberId !== null) {
             $boxElement->appendChild($document->createElement('memberId', $this->memberId));
+        }else if ($this->unregistered !== null) {
+            $boxElement->appendChild($this->unregistered->toXML($document));
         }
-
-        $this->addToXmlUnregistered($document, $boxElement, $prefix);
 
         if ($this->receiverName !== null) {
             $boxElement->appendChild($document->createElement('receiverName', $this->receiverName));
@@ -181,16 +181,6 @@ class At247 extends National
             $typeElement->appendChild(
                 $document->createElement(XmlHelper::getPrefixedTagName('requestedDeliveryDate', $prefix), $date)
             );
-        }
-    }
-
-    /**
-     * @throws \DOMException
-     */
-    protected function addToXmlUnregistered(DOMDocument $document, DOMElement $typeElement, ?string $prefix): void
-    {
-        if ($this->unregistered !== null) {
-            $typeElement->appendChild($this->unregistered->toXml($document, $prefix, null));
         }
     }
 

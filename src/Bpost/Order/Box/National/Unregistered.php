@@ -82,46 +82,24 @@ class Unregistered extends ComplexAttribute
     /**
      * @throws \DOMException
      */
-    public function toXml(DOMDocument $document, ?string $prefix = null, ?string $type = null): DOMElement
+    public function toXML(DOMDocument $document, ?string $prefix = null): DOMElement
     {
-        $tagName = XmlHelper::getPrefixedTagName('unregistered', $prefix);
-        $xml = $document->createElement($tagName);
+        $node = $document->createElement(XmlHelper::getPrefixedTagName('unregistered', $prefix));
 
-        if ($this->hasLanguage()) {
-            $xml->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('language', $prefix),
-                    (string)$this->getLanguage()
-                )
-            );
+        if ($this->language !== null) {
+            $node->appendChild($document->createElement('language', (string) $this->language->getValue()));
+        }
+        if ($this->mobilePhone !== null) {
+            $node->appendChild($document->createElement('mobilePhone', (string) $this->mobilePhone->getValue()));
+        }
+        if ($this->emailAddress !== null) {
+            $node->appendChild($document->createElement('emailAddress', (string) $this->emailAddress->getValue()));
+        }
+        if ($this->parcelLockerReducedMobilityZone !== null) {
+            $node->appendChild($this->parcelLockerReducedMobilityZone->toXML($document));
         }
 
-        if (($mobile = $this->getMobilePhone()) !== null) {
-            $xml->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('mobilePhone', $prefix),
-                    $mobile
-                )
-            );
-        }
-
-        if (($email = $this->getEmailAddress()) !== null) {
-            $xml->appendChild(
-                $document->createElement(
-                    XmlHelper::getPrefixedTagName('emailAddress', $prefix),
-                    $email
-                )
-            );
-        }
-
-        if ($this->hasParcelLockerReducedMobilityZone()) {
-            // Attention: notre classe ParcLocker... expose bien toXml(), pas toXML()
-            $xml->appendChild(
-                $this->parcelLockerReducedMobilityZone->toXml($document, $prefix, $type)
-            );
-        }
-
-        return $xml;
+        return $node;
     }
 
     public static function createFromXml(SimpleXMLElement $xml): self

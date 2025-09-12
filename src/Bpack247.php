@@ -79,7 +79,6 @@ class Bpack247
             $options[CURLOPT_POSTFIELDS] = $body ?? '';
         }
 
-        $curl = null;
         $curl = curl_init();
         curl_setopt_array($curl, $options);
 
@@ -131,9 +130,7 @@ class Bpack247
 
             return $xml;
         } finally {
-            if (is_resource($curl) || $curl instanceof CurlHandle) {
-                curl_close($curl);
-            }
+            curl_close($curl);
             $curl = null;
         }
     }
